@@ -1,6 +1,6 @@
 /**
  * @name assert.js
- * @version 1.0.0 dev
+ * @version 1.0.1 dev
  * @see https://github.com/Serrin/assert.js
  * @license MIT https://opensource.org/licenses/MIT
  */
