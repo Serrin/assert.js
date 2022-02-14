@@ -7,6 +7,6 @@
  */
 (function(celestra){
 "use strict";
-function assert(c){if(!c){var s=":";Array.prototype.slice.call(arguments,1).forEach(function(item){s+=" "+JSON.stringify(item);});throw new Error("Assertion failed"+s);}return true;}
+function assert(c){if(!c){throw new Error("Assertion failed:"+Array.prototype.slice.call(arguments,1).reduce(function(acc,v){return acc+" "+JSON.stringify(v);},""));}return true;}
 celestra.assert=assert;
 }(celestra));

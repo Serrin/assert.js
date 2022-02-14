@@ -1,12 +1,13 @@
+
 # assert.js
 
 A very simple assert function and microlibrary.
 
-Latest version: 1.0.0
+Latest version: 1.0.1
 
-Date: 2021-10-17T11:19:21.089Z
+Date: 2022-02-14T12:38:07.829Z
 
-Tested on desktop browsers with ES6+ compatibility (latest Firefox, latest Chrome, latest Edge, Internet Explorer 11) and mobile devices (iOS Safari, Chrome, Firefox and Android Chrome, Firefox, Samsung Internet, Edge).
+Tested on desktop browsers (latest Firefox, latest Chrome, latest Edge, Internet Explorer 11) and mobile devices (iOS Safari, Chrome, Firefox and Android Chrome, Firefox, Samsung Internet, Edge).
 
 ````
 assert(<condition>[,message1][...messageN]): return true or throw error with the messages
@@ -15,18 +16,18 @@ assert(<condition>[,message1][...messageN]): return true or throw error with the
 ````javascript
 function assert (c) {
   if (!c) {
-    var s = ":";
-    Array.prototype.slice.call(arguments, 1).forEach(
-      function (item) { s += " " + JSON.stringify(item); }
+    throw new Error("Assertion failed:" +
+      Array.prototype.slice.call(arguments, 1).reduce(
+        function (acc, v) { return acc + " " + JSON.stringify(v); }, ""
+      )
     );
-    throw new Error("Assertion failed" + s);
   }
   return true;
 }
 ````
 Minified code:
 ````javascript
-function assert(c){if(!c){var s=":";Array.prototype.slice.call(arguments,1).forEach(function(item){s+=" "+JSON.stringify(item);});throw new Error("Assertion failed"+s);}return true;}
+function assert(c){if(!c){throw new Error("Assertion failed:"+Array.prototype.slice.call(arguments,1).reduce(function(acc,v){return acc+" "+JSON.stringify(v);},""));}return true;}
 ````
 
 
@@ -34,10 +35,10 @@ function assert(c){if(!c){var s=":";Array.prototype.slice.call(arguments,1).forE
 
 edition|filename|size|testpage
 -------|--------|----|--------
-developer|__assert.js__|520 byte|__test-dev.html__
-minified|__assert.min.js__|383 byte|__test-min.html__
-ES6 module|__assert.esm.js__|336 byte|__test-esm.html__
-Celestra plugin|__assert.cel.js__|459 byte|__test-cel.html__
+developer|__assert.dev.js__|522 byte|__test-dev.html__
+minified|__assert.min.js__|380 byte|__test-min.html__
+ES6 module|__assert.esm.js__|333 byte|__test-esm.html__
+Celestra plugin|__assert.cel.js__|456 byte|__test-cel.html__
 
 
 ## Test code
