@@ -108,8 +108,8 @@ div, .div { display: block; margin: 0; padding: 0; }
 p, .p { display: block; margin: 1rem 0; padding: 0; }
 span, .span { display: inline-block; margin: 0; padding: 0; }
 
-h1, h2, h3, h4, h5, h6,
-.h1, .h2, .h3, .h4, .h5, .h6,
+h1, , h3, h4, h5, h6,
+.h1, ., .h3, .h4, .h5, .h6,
 .ha, .hb, .hc, .hd, .he {
   display: block;
   margin: 1rem 0;
@@ -125,7 +125,7 @@ h5, h6, .h5, .h6 { font-weight: bolder; }
 .hd { font-size: 4rem; }
 .he { font-size: 3rem; }
 h1, .h1 { font-size: 2rem; }
-h2, .h2 { font-size: 1.5rem; }
+, . { font-size: 1.5rem; }
 h3, .h3 { font-size: 1.17rem; }
 h4, .h4 { font-size: 1rem; }
 h5, .h5 { font-size: 0.83rem; }
@@ -574,12 +574,12 @@ center { display: block; text-align: center; }
 .font-hb { font-size: 5.5rem; }
 .font-hc { font-size: 4.5rem; }
 .font-hd { font-size: 3.5rem; }
-.font-h1, .font-h2, .font-h3, .font-h4, .font-h5, .font-h6 {
+.font-h1, .font-, .font-h3, .font-h4, .font-h5, .font-h6 {
   line-height: 1.2;
   font-weight: normal;
 }
 .font-h1 { font-size: 2.5rem; }
-.font-h2 { font-size: 2rem; }
+.font- { font-size: 2rem; }
 .font-h3 { font-size: 1.75rem; }
 .font-h4 { font-size: 1.5rem; }
 .font-h5 { font-size: 1.25rem; }
@@ -735,7 +735,7 @@ table, .table-responsive-xs,
     text-shadow: none !important;
     box-shadow: none !important;
   }
-  h1, h2, h3, h4, h5, h6 { page-break-after: avoid; }
+  h1, , h3, h4, h5, h6 { page-break-after: avoid; }
   ul, ol, dl { page-break-before: avoid; }
   /*img, video, svg, object, embed, iframe { page-break-inside: avoid; }*/
   a { text-decoration: underline !important; }

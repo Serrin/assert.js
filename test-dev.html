@@ -17,61 +17,56 @@
 <hr/>
 
 <pre>
-alert(assert(true));
+alert(CEL.assert(true));
 // return true
 
-alert(assert(true, "lorem"));
+alert(CEL.assert(true, "lorem"));
 // return true
 
 try {
-  assert(false);
+  CEL.assert(false);
 } catch (e) {
   alert(e);
 }
-// Uncaught Error: Assertion failed:
+// Error: Assertion failed
 
 try {
-  assert(false, "lorem");
+  CEL.assert(false, "lorem");
 } catch (e) {
   alert(e);
 }
-// Uncaught Error: Assertion failed: lorem
+// Error: Assertion failed: lorem
 
 try {
-  assert(false, "lorem", 3.14, [4,5,6], {a:1,b:2}, 42, "ipsum");
+  CEL.assert(false, "lorem", 3.14, [4,5,6], {a:1,b:2}, 42, "ipsum");
 } catch (e) {
   alert(e);
 }
-// Uncaught Error: Assertion failed: "lorem" 3.14 [4,5,6] {"a":1,"b":2} 42 "ipsum"
+// Error: Assertion failed: "lorem", 3.14, [4, 5, 6], {"a":1, "b":2}, 42, "ipsum"
 </pre>
 
 <script>
 alert(assert(true));
-// return true
 
 alert(assert(true, "lorem"));
-// return true
 
 try {
   assert(false);
 } catch (e) {
   alert(e);
 }
-// Uncaught Error: Assertion failed
 
 try {
   assert(false, "lorem");
 } catch (e) {
   alert(e);
 }
-// Uncaught Error: Assertion failed: lorem
 
 try {
   assert(false, "lorem", 3.14, [4,5,6], {a:1,b:2}, 42, "ipsum");
 } catch (e) {
   alert(e);
 }
-// Uncaught Error: Assertion failed: "lorem" 3.14 [4,5,6] {"a":1,"b":2} 42 "ipsum"
 </script>
 
 <hr/>

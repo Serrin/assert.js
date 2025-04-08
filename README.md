@@ -3,23 +3,22 @@
 
 A very simple assert function and microlibrary.
 
-Latest version: 1.0.1
+Latest version: 1.1.0
 
-Date: 2022-02-14T12:38:07.829Z
+Date: 2025-04-08T19:55:14.724Z
 
-Tested on desktop browsers (latest Firefox, latest Chrome, latest Edge, Internet Explorer 11) and mobile devices (iOS Safari, Chrome, Firefox and Android Chrome, Firefox, Samsung Internet, Edge).
+Tested on desktop browsers (latest Firefox, latest Chrome, latest Edge) and mobile devices (iOS Safari, Chrome, Firefox and Android Chrome, Firefox, Samsung Internet, Edge).
 
 ````
-assert(<condition>[,message1][...messageN]): return true or throw error with the messages
+assert(<condition>[,message1][...messageN]): return true or throw an error with the messages
 ````
 
 ````javascript
-function assert (c) {
+function assert (c, ...a) {
   if (!c) {
-    throw new Error("Assertion failed:" +
-      Array.prototype.slice.call(arguments, 1).reduce(
-        function (acc, v) { return acc + " " + JSON.stringify(v); }, ""
-      )
+    throw new Error(a.length
+      ? "Assertion failed: " + JSON.stringify(a).slice(1,-1).replaceAll(",", ", ")
+      : "Assertion failed"
     );
   }
   return true;
@@ -27,18 +26,18 @@ function assert (c) {
 ````
 Minified code:
 ````javascript
-function assert(c){if(!c){throw new Error("Assertion failed:"+Array.prototype.slice.call(arguments,1).reduce(function(acc,v){return acc+" "+JSON.stringify(v);},""));}return true;}
+function assert(c,...a){if(!c){throw new Error(a.length?"Assertion failed: "+JSON.stringify(a).slice(1,-1).replaceAll(",",", "):"Assertion failed");}return true;}
 ````
 
 
 ## Download
 
-edition|filename|size|testpage
--------|--------|----|--------
-developer|__assert.dev.js__|522 byte|__test-dev.html__
-minified|__assert.min.js__|380 byte|__test-min.html__
-ES6 module|__assert.esm.js__|333 byte|__test-esm.html__
-Celestra plugin|__assert.cel.js__|456 byte|__test-cel.html__
+edition|filename|testpage
+-------|--------|--------
+developer|__assert.dev.js__|__test-dev.html__
+minified|__assert.min.js__|__test-min.html__
+ES6 module|__assert.esm.js__|__test-esm.html__
+Celestra plugin|__assert.cel.js__|__test-cel.html__
 
 
 ## Test code
@@ -49,11 +48,11 @@ assert(true);
 assert(true, "lorem");
 // return true
 assert(false);
-// Uncaught Error: Assertion failed:
+// Error: Assertion failed
 assert(false, "lorem");
-// Uncaught Error: Assertion failed: lorem
+// Error: Assertion failed: "lorem", 3.14, [4, 5, 6], {"a":1, "b":2}, 42, "ipsum"
 assert(false, "lorem", 3.14, [4,5,6], {a:1,b:2}, 42, "ipsum");
-// Uncaught Error: Assertion failed: "lorem" 3.14 [4,5,6] {"a":1,"b":2} 42 "ipsum"
+// Error: Assertion failed: "lorem", 3.14, [4, 5, 6], {"a":1, "b":2}, 42, "ipsum"
 ````
 
 ## License
