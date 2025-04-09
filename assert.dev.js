@@ -1,20 +1,17 @@
 /**
  * @name assert.js
- * @version 1.1.0 dev
+ * @version 1.2.0 dev
  * @see https://github.com/Serrin/assert.js
  * @license MIT https://opensource.org/licenses/MIT
  */
 (function(window){
 "use strict";
 
-function assert (c, ...a) {
-  if (!c) {
-    throw new Error(a.length
-      ? "Assertion failed: " + JSON.stringify(a).slice(1,-1).replaceAll(",", ", ")
-      : "Assertion failed"
-    );
-  }
-  return true;
+function assert(c, ...a) {
+  if (c) { return true; }
+  throw new Error("Assertion failed"
+    + (a.length ? a.reduce((acc, e) => acc + e + ", ", ": ").slice(0, -2) : "")
+  );
 }
 
 if (typeof window !== "undefined") {

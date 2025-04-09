@@ -17,56 +17,61 @@
 <hr/>
 
 <pre>
-alert(CEL.assert(true));
-// return true
-
-alert(CEL.assert(true, "lorem"));
-// return true
-
-try {
-  CEL.assert(false);
-} catch (e) {
-  alert(e);
-}
-// Error: Assertion failed
-
-try {
-  CEL.assert(false, "lorem");
-} catch (e) {
-  alert(e);
-}
-// Error: Assertion failed: lorem
-
-try {
-  CEL.assert(false, "lorem", 3.14, [4,5,6], {a:1,b:2}, 42, "ipsum");
-} catch (e) {
-  alert(e);
-}
-// Error: Assertion failed: "lorem", 3.14, [4, 5, 6], {"a":1, "b":2}, 42, "ipsum"
-</pre>
-
-<script>
 alert(assert(true));
+// return true
 
 alert(assert(true, "lorem"));
+// return true
 
 try {
   assert(false);
 } catch (e) {
   alert(e);
 }
+// Error: Assertion failed
 
 try {
   assert(false, "lorem");
 } catch (e) {
   alert(e);
 }
+// Error: Assertion failed: lorem
 
 try {
-  assert(false, "lorem", 3.14, [4,5,6], {a:1,b:2}, 42, "ipsum");
+  assert(false, "lorem", 42, 3.14, [1,2], JSON.stringify({"a":3, "b":4}), null, undefined, +"a");
+} catch (error) {
+  alert(error);
+}
+// Error: Assertion failed: lorem, 42, 3.14, 1,2, {"a":3,"b":4}, null, undefined, NaN
+</pre>
+
+<script>
+alert(assert(true));
+// return true
+
+alert(assert(true, "lorem"));
+// return true
+
+try {
+  assert(false);
 } catch (e) {
   alert(e);
 }
+// Error: Assertion failed
+
+try {
+  assert(false, "lorem");
+} catch (e) {
+  alert(e);
+}
+// Error: Assertion failed: lorem
+
+try {
+  assert(false, "lorem", 42, 3.14, [1,2], JSON.stringify({"a":3, "b":4}), null, undefined, +"a");
+} catch (error) {
+  alert(error);
+}
+// Error: Assertion failed: lorem, 42, 3.14, 1,2, {"a":3,"b":4}, null, undefined, NaN
 </script>
 
 <hr/>

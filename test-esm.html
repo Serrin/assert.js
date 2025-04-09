@@ -21,25 +21,32 @@
 import { assert } from "./assert.esm.js";
 window.assert1 = assert;
 
-alert(assert1(true));
+alert(assert(true));
 // return true
 
-alert(assert1(true, "lorem"));
+alert(assert(true, "lorem"));
 // return true
 
 try {
-  assert1(false);
+  assert(false);
 } catch (e) {
   alert(e);
 }
 // Error: Assertion failed
 
 try {
-  assert1(false, "lorem 1");
+  assert(false, "lorem");
 } catch (e) {
   alert(e);
 }
-// Error: Assertion failed: "lorem 1"
+// Error: Assertion failed: lorem
+
+try {
+  assert(false, "lorem", 42, 3.14, [1,2], JSON.stringify({"a":3, "b":4}), null, undefined, +"a");
+} catch (error) {
+  alert(error);
+}
+// Error: Assertion failed: lorem, 42, 3.14, 1,2, {"a":3,"b":4}, null, undefined, NaN
 
 
 /* default export */
@@ -47,25 +54,32 @@ try {
 import { default as assert2 } from "./assert.esm.js";
 window.assert2 = assert2;
 
-alert(alert(assert2(true)));
+alert(assert(true));
 // return true
 
-alert(assert2(true, "lorem"));
+alert(assert(true, "lorem"));
 // return true
 
 try {
-  assert2(false);
+  assert(false);
 } catch (e) {
   alert(e);
 }
 // Error: Assertion failed
 
 try {
-  assert2(false, "lorem", 3.14, [4,5,6], {a:1,b:2}, 42, "ipsum");
+  assert(false, "lorem");
 } catch (e) {
   alert(e);
 }
-// Error: Assertion failed: "lorem", 3.14, [4, 5, 6], {"a":1, "b":2}, 42, "ipsum"
+// Error: Assertion failed: lorem
+
+try {
+  assert(false, "lorem", 42, 3.14, [1,2], JSON.stringify({"a":3, "b":4}), null, undefined, +"a");
+} catch (error) {
+  alert(error);
+}
+// Error: Assertion failed: lorem, 42, 3.14, 1,2, {"a":3,"b":4}, null, undefined, NaN
 </pre>
 
 <script type="module">
@@ -74,21 +88,32 @@ try {
 import { assert } from "./assert.esm.js";
 window.assert1 = assert;
 
-alert(assert1(true));
+alert(assert(true));
+// return true
 
-alert(assert1(true, "lorem"));
+alert(assert(true, "lorem"));
+// return true
 
 try {
-  assert1(false);
+  assert(false);
 } catch (e) {
   alert(e);
 }
+// Error: Assertion failed
 
 try {
-  assert1(false, "lorem 1");
+  assert(false, "lorem");
 } catch (e) {
   alert(e);
 }
+// Error: Assertion failed: lorem
+
+try {
+  assert(false, "lorem", 42, 3.14, [1,2], JSON.stringify({"a":3, "b":4}), null, undefined, +"a");
+} catch (error) {
+  alert(error);
+}
+// Error: Assertion failed: lorem, 42, 3.14, 1,2, {"a":3,"b":4}, null, undefined, NaN
 
 
 /* default export */
@@ -96,21 +121,32 @@ try {
 import { default as assert2 } from "./assert.esm.js";
 window.assert2 = assert2;
 
-alert(assert2(true));
+alert(assert(true));
+// return true
 
-alert(assert2(true, "lorem"));
+alert(assert(true, "lorem"));
+// return true
 
 try {
-  assert2(false);
+  assert(false);
 } catch (e) {
   alert(e);
 }
+// Error: Assertion failed
 
 try {
-  assert2(false, "lorem", 3.14, [4,5,6], {a:1,b:2}, 42, "ipsum");
+  assert(false, "lorem");
 } catch (e) {
   alert(e);
 }
+// Error: Assertion failed: lorem
+
+try {
+  assert(false, "lorem", 42, 3.14, [1,2], JSON.stringify({"a":3, "b":4}), null, undefined, +"a");
+} catch (error) {
+  alert(error);
+}
+// Error: Assertion failed: lorem, 42, 3.14, 1,2, {"a":3,"b":4}, null, undefined, NaN
 </script>
 
 <hr/>

@@ -3,34 +3,35 @@
 
 A very simple assert function and microlibrary.
 
-Latest version: 1.1.0
+Latest version: 1.2.0
 
-Date: 2025-04-08T19:55:14.724Z
+Date: 2025-04-09T19:27:02.796Z
 
 Tested on desktop browsers (latest Firefox, latest Chrome, latest Edge) and mobile devices (iOS Safari, Chrome, Firefox and Android Chrome, Firefox, Samsung Internet, Edge).
 
 ````
-assert(<condition>[,message1][...messageN]): return true or throw an error with the messages
+assert(<condition>[,message1][,...messageN]): return true or throw an error with the messages
 ````
 
 ````javascript
-function assert (c, ...a) {
-  if (!c) {
-    throw new Error(a.length
-      ? "Assertion failed: " + JSON.stringify(a).slice(1,-1).replaceAll(",", ", ")
-      : "Assertion failed"
-    );
-  }
-  return true;
+function assert(c, ...a) {
+  if (c) { return true; }
+  throw new Error("Assertion failed"
+    + (a.length ? a.reduce((acc, e) => acc + e + ", ", ": ").slice(0, -2) : "")
+  );
 }
 ````
+
 Minified code:
+
 ````javascript
-function assert(c,...a){if(!c){throw new Error(a.length?"Assertion failed: "+JSON.stringify(a).slice(1,-1).replaceAll(",",", "):"Assertion failed");}return true;}
+function assert(c,...a){if(c){return true;}throw new Error("Assertion failed"+(a.length?a.reduce((acc,e)=>acc+e+", ",": ").slice(0,-2):""));}
 ````
 
 
 ## Download
+
+Github page: https://github.com/Serrin/assert.js
 
 edition|filename|testpage
 -------|--------|--------
@@ -43,16 +44,32 @@ Celestra plugin|__assert.cel.js__|__test-cel.html__
 ## Test code
 
 ````javascript
-assert(true);
+alert(assert(true));
 // return true
-assert(true, "lorem");
+
+alert(assert(true, "lorem"));
 // return true
-assert(false);
+
+try {
+  assert(false);
+} catch (e) {
+  alert(e);
+}
 // Error: Assertion failed
-assert(false, "lorem");
-// Error: Assertion failed: "lorem", 3.14, [4, 5, 6], {"a":1, "b":2}, 42, "ipsum"
-assert(false, "lorem", 3.14, [4,5,6], {a:1,b:2}, 42, "ipsum");
-// Error: Assertion failed: "lorem", 3.14, [4, 5, 6], {"a":1, "b":2}, 42, "ipsum"
+
+try {
+  assert(false, "lorem");
+} catch (e) {
+  alert(e);
+}
+// Error: Assertion failed: lorem
+
+try {
+  assert(false, "lorem", 42, 3.14, [1,2], JSON.stringify({"a":3, "b":4}), null, undefined, +"a");
+} catch (error) {
+  alert(error);
+}
+// Error: Assertion failed: lorem, 42, 3.14, 1,2, {"a":3,"b":4}, null, undefined, NaN
 ````
 
 ## License
