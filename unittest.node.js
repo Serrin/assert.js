@@ -1,0 +1,221 @@
+// @ts-nocheck
+"uses strict";
+
+// Import the assert function
+import assert from "./assert.js";
+globalThis.assert = assert;
+
+// import the defaultExport object
+//import defaultExport from "./assert.js";
+//globalThis.assert = defaultExport;
+
+
+function testIsOK (message, callback) {
+  try {
+    let result = callback();
+    if (result || result === undefined) { return true; } else { return false; }
+  } catch (e) { return false; }
+}
+
+function testIsError (message, callback) {
+  try {
+    let result = callback();
+    if (result) { return false; }
+  } catch (e) { return true; }
+  return false;
+}
+
+function test (message, error = false, callback) {
+  if (error) {
+    var res = testIsError(message, callback);
+  } else {
+    var res = testIsOK(message, callback);
+  }
+  if (!res) { console.error(message); }
+}
+
+function autoTest () {
+
+  test("assert(); 01", false, () => assert(true));
+  test("assert(); 02", true, () => assert(false));
+  test("assert(); 03", true, () => assert(false, "should be true"));
+
+  test("assert.ok(); 01", false, () => assert.ok(true));
+  test("assert.ok(); 02", true, () => assert.ok(false));
+  test("assert.ok(); 03", true, () => assert.ok(false, "should be true"));
+
+  test("assert.fail(); 01", true, () => assert.fail(new Error("lorem")));
+  test("assert.fail(); 02", true, () => assert.fail("This should fail"));
+
+  test("assert.Equal(); 01", false, () => assert.Equal(1, "1"));
+  test("assert.Equal(); 02", false, () => assert.Equal(true, 1));
+  test("assert.Equal(); 03", true, () => assert.Equal(1, 2));
+  test("assert.Equal(); 04", true, () => assert.Equal(1, 2, "lorem"));
+
+  test("assert.notEqual(); 01", false, () => assert.notEqual(1, 2));
+  test("assert.notEqual(); 01", true, () => assert.notEqual(1, "1"));
+  test("assert.notEqual(); 01", true, () => assert.notEqual(1, "1", "lorem"));
+
+  test("assert.strictEqual(); 01", false, () => assert.strictEqual(1, 1));
+  test("assert.strictEqual(); 02", false, () => assert.strictEqual(NaN, NaN));
+  test("assert.strictEqual(); 03", true, () => assert.strictEqual(1, "1"));
+  test("assert.strictEqual(); 04", true,
+    () => assert.strictEqual((1, "1", "lorem"))
+  );
+
+  test("assert.notStrictEqual(); 01", false, () => assert.notStrictEqual(1, "1"));
+  test("assert.notStrictEqual(); 02", true,
+    () => assert.notStrictEqual(NaN, NaN)
+  );
+  test("assert.notStrictEqual(); 03", true,
+    () => assert.notStrictEqual(NaN, NaN, "lorem")
+  );
+
+  test("assert.deepEqual(); 01", false,
+    () => assert.deepEqual({ a: 1 }, { a: 1 })
+  );
+  test("assert.deepEqual(); 02", false,
+    () => assert.deepEqual([1, 2], [1, 2])
+  );
+  test("assert.deepEqual(); 01", true,
+    () => assert.deepEqual({ a: 1 }, { a: 2 })
+  );
+  test("assert.deepEqual(); 01", true,
+    () => assert.deepEqual({ a: 1 }, { a: 2 }, "lorem")
+  );
+
+  test("assert.notDeepEqual(); 01", false,
+    () => assert.notDeepEqual({ a: 1 }, { a: 2 })
+  );
+  test("assert.notDeepEqual(); 01", true,
+    () => assert.notDeepEqual({ a: 1 }, { a: 1 })
+  );
+  test("assert.notDeepEqual(); 01", true,
+    () => assert.notDeepEqual({ a: 1 }, { a: 1 }, "lorem")
+  );
+
+  test("assert.throws(); 01", false,
+    () => assert.throws(() => { throw new TypeError("oops"); }, TypeError)
+  );
+  test("assert.throws(); 02", false,
+    () => assert.throws(() => { throw new Error("boom"); }, /boom/)
+  );
+  test("assert.throws(); 03", true, () => assert.throws(() => 42));
+  test("assert.throws(); 04", true, () => assert.throws(() => 42, "lorem"));
+
+/*
+await assert.rejects(async () => { throw new Error("fail"); }, /fail/);
+// await assert.rejects(async () => 42); // ❌ resolved, didn’t reject
+// await assert.rejects(async () => 42, "lorem"); // ❌ resolved, didn’t reject
+
+await assert.doesNotReject(async () => 42); // 42
+// await assert.doesNotReject(async () => { throw new Error("oops"); }); // ❌
+// await assert.doesNotReject(async () => { throw new Error("oops"); }, "lorem"); // ❌
+*/
+
+  test("assert.notOk(); 01", false, () => assert.notOk(0));
+  test("assert.notOk(); 02", false, () => assert.notOk(""));
+  test("assert.notOk(); 03", true, () => assert.notOk(true));
+  test("assert.notOk(); 04", true, () => assert.notOk(true, "lorem"));
+
+  test("assert.isTrue(); 01", false, () => assert.isTrue(true));
+  test("assert.isTrue(); 02", true, () => assert.isTrue(1));
+  test("assert.isTrue(); 03", true, () => assert.isTrue(1, "lorem"));
+
+  test("assert.isFalse(); 01", false, () => assert.isFalse(false));
+  test("assert.isFalse(); 02", true, () => assert.isFalse(0));
+  test("assert.isFalse(); 03", true, () => assert.isFalse(0, "lorem"));
+
+  test("assert.is(); 01", false, () => assert.is(123, "number"));
+  test("assert.is(); 02", false, () => assert.is([], Array));
+  test("assert.is(); 03", false, () => assert.is(new Map(), [Object, Map]));
+  test("assert.is(); 04", true, () => assert.is("hi", Number));
+  test("assert.is(); 05", true, () => assert.is("hi", Number, "lorem"));
+  test("assert.is(); 06", true, () => assert.is("hi", [Number, Map], "lorem"));
+
+  test("assert.isNot(); 01", false, () => assert.isNot("hello", Number));
+  test("assert.isNot(); 02", false, () => assert.isNot([], Set));
+  test("assert.isNot(); 02", false, () => assert.isNot([], [Set, "boolean"]));
+  test("assert.isNot(); 03", true, () => assert.isNot([], Array));
+  test("assert.isNot(); 03", true, () => assert.isNot([], ["string", Array]));
+  test("assert.isNot(); 04", true, () => assert.isNot([], Array, "lorem"));
+
+  test("assert.isNullish(); 01", false, () => assert.isNullish(undefined));
+  test("assert.isNullish(); 02", false, () => assert.isNullish(null));
+  test("assert.isNullish(); 03", true, () => assert.isNullish(0));
+  test("assert.isNullish(); 04", true, () => assert.isNullish(0, "lorem"));
+
+  test("assert.isNotNullish(); 01", false, () => assert.isNotNullish(42));
+  test("assert.isNotNullish(); 01", false, () => assert.isNotNullish("ok"));
+  test("assert.isNotNullish(); 01", true, () => assert.isNotNullish(undefined));
+  test("assert.isNotNullish(); 01", true, () => assert.isNotNullish(null));
+  test("assert.isNotNullish(); 01", true,
+    () => assert.isNotNullish(null, "lorem")
+  );
+
+  test("assert.match(); 01", false, () => assert.match("hello world", /world/));
+  test("assert.match(); 02", true, () => assert.match("hello", /bye/));
+  test("assert.match(); 03", true, () => assert.match("hello", /bye/, "lorem"));
+
+  test("assert.stringContains(); 01", false,
+    () => assert.stringContains("hello world", "world")
+  );
+  test("assert.stringContains(); 02", true,
+    () => assert.stringContains("hello", "z")
+  );
+  test("assert.stringContains(); 03", true,
+    () => assert.stringContains("hello", "z", "lorem")
+  );
+
+  test("assert.stringNotContains(); 01", false,
+    () => assert.stringNotContains("hello", "z")
+  );
+  test("assert.stringNotContains(); 02", true,
+    () => assert.stringNotContains("hello", "he")
+  );
+  test("assert.stringNotContains(); 03", true,
+    () => assert.stringNotContains("hello", "he", "lorem")
+  );
+
+  test("assert.lt(); 01", false, () => assert.lt(3, 5));
+  test("assert.lt(); 02", true, () => assert.lt(5, 3));
+  test("assert.lt(); 03", true, () => assert.lt(5, 3, "lorem"));
+  test("assert.lt(); 04", true, () => assert.lt(5, true));
+  test("assert.lt(); 05", true, () => assert.lt(5, true, "lorem"));
+
+  test("assert.lte(); 01", false, () => assert.lte(3, 3));
+  test("assert.lte(); 02", false, () => assert.lte(2, 4));
+  test("assert.lte(); 03", true, () => assert.lte(5, 3));
+  test("assert.lte(); 04", true, () => assert.lte(5, 3, "lorem"));
+  test("assert.lte(); 05", true, () => assert.lte(5, true));
+  test("assert.lte(); 06", true, () => assert.lte(5, true, "lorem"));
+
+  test("assert.gt(); 01", false, () => assert.gt(5, 3));
+  test("assert.gt(); 02", true, () => assert.gt(3, 5));
+  test("assert.gt(); 03", true, () => assert.gt(3, 5, "lorem"));
+  test("assert.gt(); 04", true, () => assert.gt(5, true));
+  test("assert.gt(); 05", true, () => assert.gt(5, true, "lorem"));
+
+  test("assert.gte(); 01", false, () => assert.gte(3, 3));
+  test("assert.gte(); 02", false, () => assert.gte(4, 2));
+  test("assert.gte(); 03", true, () => assert.gte(3, 5));
+  test("assert.gte(); 04", true, () => assert.gte(3, 5, "lorem"));
+  test("assert.gte(); 05", true, () => assert.gte(5, true));
+  test("assert.gte(); 06", true, () => assert.gte(5, true, "lorem"));
+
+  test("assert.VERSION; 01", false,
+    () => assert.stringContains(assert.VERSION, "assert.js v")
+  );
+
+  try {
+    assert(false, "example");
+  } catch (e) {
+    test("assert.AssertionError 01", false,
+      () => assert.is(e, assert.AssertionError)
+    );
+  }  
+
+  console.log("End of the test.");
+}
+
+autoTest();

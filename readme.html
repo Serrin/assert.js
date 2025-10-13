@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>assert.js</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="Author" content="Czigler Ferenc" />
+<meta name="Copyright" content="(C) Copyright Czigler Ferenc" />
+<link rel="stylesheet" href="u87.css" type="text/css" />
+
+<script type="module">
+// import the defaultExport object
+import defaultExport from "./assert.js";
+globalThis.assert = defaultExport;
+</script>
+
+<style>
+body {
+  font-size: 15px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1 class="center">assert.js</h1>
+
+<p>Latest version: 1.0.0</p>
+
+<p>Date: 2025-10-09T16:54:49.646Z</p>
+
+<p>A modern, zero-dependency assertion library for Node.js, Deno and browser (ESM) environments.</p>
+
+<p>Implements and extends the <a href="https://wiki.commonjs.org/wiki/Unit_Testing/1.0" target="_blank">CommonJS Unit Testing 1.0 spec</a>.</p>
+
+<hr>
+
+<h2>Autotest</h2>
+
+<p><button onclick="autoTest();">run autotests</button></p>
+<p><button onclick="globalThis.location.reload(true);">reset page</button></p>
+
+<hr>
+
+<h2>Summary</h2>
+<table class="table-responsive-sm table-striped">
+  <tr>
+    <th><strong>Category</strong></th>
+    <th><strong>Assertions</strong></th>
+  </tr>
+  <tr>
+    <td>Constants</td>
+    <td><code>VERSION;</code></td>
+  </tr>
+  <tr>
+    <td>Errors</td>
+    <td><code>AssertionError();</code></td>
+  </tr>
+  <tr>
+    <td>Basic</td>
+    <td><code>assert();</code>, <code>ok();</code>, <code>fail();</code></td>
+  </tr>
+  <tr>
+    <td>Equality</td>
+    <td><code>Equal();</code>, <code>notEqual();</code>, <code>strictEqual();</code>, <code>notStrictEqual();</code>, <code>deepEqual();</code>, <code>notDeepEqual();</code></td>
+  </tr>
+  <tr>
+    <td>Exceptions</td>
+    <td><code>throws();</code>, <code>rejects();</code>, <code>doesNotReject();</code></td>
+  </tr>
+  <tr>
+    <td>Boolean</td>
+    <td><code>isTrue();</code>, <code>isFalse();</code>, <code>notOk();</code></td>
+  </tr>
+  <tr>
+    <td>Type</td>
+    <td><code>is();</code>, <code>isNot();</code></td>
+  </tr>
+  <tr>
+    <td>Nullish</td>
+    <td><code>isNullish();</code>, <code>isNotNullish();</code></td>
+  </tr>
+  <tr>
+    <td>String</td>
+    <td><code>match();</code>, <code>stringContains();</code>, <code>stringNotContains();</code></td>
+  </tr>
+  <tr>
+    <td>Comparison</td>
+    <td><code>lt();</code>, <code>lte();</code>, <code>gt();</code>, <code>gte();</code></td>
+  </tr>
+</table>
+
+<hr>
+
+<h2>Import</h2>
+
+<h3>Import the assert function</h3>
+
+<pre>import assert from "./assert.js";
+globalThis.assert = assert;</pre>
+
+<h3>Import the assert function as defaultExport</h3>
+
+<pre>import defaultExport from "./assert.js";
+globalThis.assert = assert;</pre>
+
+<h3>Dynamic import</h3>
+
+<pre>const assert = await import("./assert.js");
+globalThis.assert = assert;</pre>
+
+<hr>
+
+<h2>Constants</h2>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.VERSION</h3>
+
+<p>Returns the library version string.</p>
+
+<pre>console.log(assert.VERSION); // "assert.js v1.0.0"</pre>
+
+<hr>
+
+<h2>Errors</h2>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.AssertionError</h3>
+
+<p>Custom error class used internally by all failed assertions.</p>
+
+<pre>try {
+  assert(false, "example");
+} catch (e) {
+  if (e instanceof assert.AssertionError) {
+    console.log("Caught assertion:", e.message);
+  }
+}</pre>
+
+<hr>
+
+<h2>Basic Assertions</h2>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert(condition, [message: string | Error]);</h3>
+
+<p>Checks that <code>condition</code> is truthy. Throws an <code>AssertionError</code> if falsy.</p>
+
+<pre>assert(true); // passes
+// assert(false, "should be true"); // throws an error fails</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.ok(condition, [message: string | Error]);</h3>
+
+<p>Alias for <code>assert(condition, [message: string | Error]);</code>.</p>
+
+<pre>assert.ok(1 === 1); // passes
+// assert.ok(0, "0 is falsy"); // throws an error</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.fail([message: string | Error]);</h3>
+
+<p>Forces a failure.</p>
+
+<pre>// assert.fail("This should fail"); // throws an error</pre>
+
+<hr>
+
+<h2>Equality Assertions</h2>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.Equal(actual, expected, [message: string | Error]);</h3>
+
+<p>Loose equality (<code>==</code>).</p>
+
+<pre>assert.Equal(1, "1"); // passes
+assert.Equal(true, 1); // passes
+// assert.Equal(1, 2); // throws an error</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.notEqual(actual, expected, [message: string | Error]);</h3>
+
+<p>Inverse of <code>Equal(actual, expected, [message: string | Error]);</code>.</p>
+
+<pre>assert.notEqual(1, 2); // passes
+// assert.notEqual(1, "1"); // throws an error</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.strictEqual(actual, expected, [message: string | Error]);</h3>
+
+<p>Strict equality (<code>Object.is();</code>).</p>
+
+<pre>assert.strictEqual(1, 1); // passes
+assert.strictEqual(NaN, NaN); // passes
+// assert.strictEqual(1, "1"); // throws an error</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.notStrictEqual(actual, expected, [message: string | Error]);</h3>
+
+<p>Inverse of <code>strictEqual(actual, expected, [message: string | Error]);</code>.</p>
+
+<pre>assert.notStrictEqual(1, "1"); // passes
+// assert.notStrictEqual(NaN, NaN); // throws an error</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.deepEqual(actual, expected, [message: string | Error]);</h3>
+
+<p>Deep equality check.</p>
+
+<pre>assert.deepEqual({ a: 1 }, { a: 1 }); // passes
+assert.deepEqual([1, 2], [1, 2]); // passes
+// assert.deepEqual({ a: 1 }, { a: 2 }); // throws an error</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.notDeepEqual(actual, expected, [message: string | Error]);</h3>
+
+<p>Inverse of <code>deepEqual(actual, expected, [message: string | Error]);</code>.</p>
+
+<pre>assert.notDeepEqual({ a: 1 }, { a: 2 }); // passes
+// assert.notDeepEqual({ a: 1 }, { a: 1 }); // throws an error</pre>
+
+<hr>
+
+<h2>Exception Assertions</h2>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.throws(fn, [ErrorType|string|RegExp], [message: string | Error]);</h3>
+
+<p>Checks that a function <strong>throws</strong>.</p>
+
+<pre>assert.throws(() =&gt; { throw new TypeError("oops"); }, TypeError); // passes
+assert.throws(() =&gt; { throw new Error("boom"); }, /boom/); // passes
+// assert.throws(() =&gt; 42); // did not throw</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">await assert.rejects(asyncFnOrPromise, [ErrorType|string|RegExp], [message: string | Error]);</h3>
+
+<p>Checks that an async function or promise <strong>rejects</strong>.</p>
+
+<pre>await assert.rejects(async () =&gt; { throw new Error("fail"); }, /fail/);  // passes
+// await assert.rejects(async () =&gt; 42); // resolved, didn’t reject</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">await assert.doesNotReject(asyncFnOrPromise, [ErrorType|string|RegExp], [message: string | Error]);</h3>
+
+<p>Ensures an async function or promise <strong>resolves</strong> (does <em>not</em> reject).</p>
+
+<pre>await assert.doesNotReject(async () =&gt; 42); // passes
+// await assert.doesNotReject(async () =&gt; { throw new Error("oops"); }); // throws an error</pre>
+
+<hr>
+
+<h2>Boolean Assertions</h2>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.notOk(value, [message: string | Error]);</h3>
+
+<p>Ensures a value is falsy.</p>
+
+<pre>assert.notOk(0); // passes
+assert.notOk(""); // passes
+// assert.notOk(true); // throws an error</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.isTrue(value, [message: string | Error]);</h3>
+
+<p>Ensures value is exactly <code>true</code>.</p>
+
+<pre>assert.isTrue(true); // passes
+// assert.isTrue(1); // throws an error</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.isFalse(value, [message: string | Error]);</h3>
+
+<p>Ensures value is exactly <code>false</code>.</p>
+
+<pre>assert.isFalse(false); // passes
+// assert.isFalse(0); // throws an error</pre>
+
+<hr>
+
+<h2>Type Assertions</h2>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.is(value, expectedType, [message: string | Error]);</h3>
+
+<p>Ensures a value matches a type or constructor. The expected type can be a string, function or an array of strings and functions.</p>
+
+<pre>assert.is(123, "number"); // passes
+assert.is([], Array); // passes
+assert.is(new Map(), [Map, Object]); // passes
+// assert.is("hi", Number); // throws an error</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNot(value, expectedType, [message: string | Error]);</h3>
+
+<p>Inverse of <code>is(value, expectedType, [message: string | Error]);</code>. The expected type can be a string, function or an array of strings and functions.</p>
+
+<pre>assert.isNot("hello", Number); // passes
+assert.isNot([], Set); // passes
+// assert.isNot([], Array); // throws an error
+</pre>
+
+<hr>
+
+<h2>Nullish Assertions</h2>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNullish(value, [message: string | Error]);</h3>
+
+<p>Ensures value is <code>null</code> or <code>undefined</code>.</p>
+
+<pre>assert.isNullish(undefined); // passes
+assert.isNullish(null); // passes
+// assert.isNullish(0); // throws an error</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNotNullish(value, [message: string | Error]);</h3>
+
+<p>Ensures value is <em>not</em> <code>null</code> or <code>undefined</code>.</p>
+
+<pre>assert.isNotNullish(42); // passes
+assert.isNotNullish("ok"); // passes
+// assert.isNotNullish(null); // throws an error</pre>
+
+<hr>
+
+<h2>String Assertions</h2>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.match(string, regexp, [message: string | Error]);</h3>
+
+<p>Ensures a string matches a regular expression.</p>
+
+<pre>assert.match("hello world", /world/); // passes
+// assert.match("hello", /bye/); // throws an error</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.stringContains(actual, substring, [message: string | Error]);</h3>
+
+<p>Ensures a string contains a substring.</p>
+
+<pre>assert.stringContains("hello world", "world"); // passes
+// assert.stringContains("hello", "z"); // throws an error</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.stringNotContains(actual, substring, [message: string | Error]);</h3>
+
+<p>Ensures a string <em>does not</em> contain a substring.</p>
+
+<pre>assert.stringNotContains("hello", "z"); // passes
+// assert.stringNotContains("hello", "he"); // throws an error</pre>
+
+<hr>
+
+<h2>Comparison Assertions</h2>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.lt(value1, value2, [message: string | Error]);</h3>
+
+<p>Checks <code>a &lt; b</code>.</p>
+
+<pre>assert.lt(3, 5); // passes
+// assert.lt(5, 3); // throws an error</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.lte(value1, value2, [message: string | Error]);</h3>
+
+<p>Checks <code>a &lt;= b</code>.</p>
+
+<pre>assert.lte(3, 3); // passes
+assert.lte(2, 4); // passes
+// assert.lte(5, 3); // throws an error</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.gt(value1, value2, [message: string | Error]);</h3>
+
+<p>Checks <code>a &gt; b</code>.</p>
+
+<pre>assert.gt(5, 3); // passes
+// assert.gt(3, 5); // throws an error</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.gte(value1, value2, [message: string | Error]);</h3>
+
+<p>Checks <code>a &gt;= b</code>.</p>
+
+<pre>assert.gte(3, 3); // passes
+assert.gte(5, 3); // passes
+// assert.gte(2, 3); // throws an error</pre>
+
+<hr>
+
+<h2>Example Test File</h2>
+
+<pre>import assert from "./assert.js"
+
+function add(a, b) {
+  return a + b;
+}
+
+assert.strictEqual(add(2, 3), 5); // passes
+assert.notEqual(add(1, 1), 3); // passes
+assert.is(add, Function); // passes
+assert.doesNotReject(async () =&gt; add(1, 2)); // passes</pre>
+
+<hr>
+
+<h2>License</h2>
+
+<p><a href="https://opensource.org/licenses/MIT" target="_blank">https://opensource.org/licenses/MIT</a></p>
+
+<p>MIT License</p>
+
+<p>SPDX short identifier: MIT</p>
+
+<p>Copyright (c) 2025 Ferenc Czigler</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</p>
+
+<hr>
+
+<p>&copy; Copyright 2025 Ferenc Czigler <a href="https://github.com/Serrin" target="_blank">https://github.com/Serrin</a></p>
+
+
+<script>
+
+function testIsOK (message, callback) {
+  try {
+    let result = callback();
+    if (result || result === undefined) { return true; } else { return false; }
+  } catch (e) { return false; }
+}
+
+function testIsError (message, callback) {
+  try {
+    let result = callback();
+    if (result) { return false; }
+  } catch (e) { return true; }
+  return false;
+}
+
+function test (message, error = false, callback) {
+  if (error) {
+    var res = testIsError(message, callback);
+  } else {
+    var res = testIsOK(message, callback);
+  }
+  if (!res) { alert(message); }
+}
+
+function autoTest () {
+
+  test("assert(); 01", false, () => assert(true));
+  test("assert(); 02", true, () => assert(false));
+  test("assert(); 03", true, () => assert(false, "should be true"));
+
+  test("assert.ok(); 01", false, () => assert.ok(true));
+  test("assert.ok(); 02", true, () => assert.ok(false));
+  test("assert.ok(); 03", true, () => assert.ok(false, "should be true"));
+
+  test("assert.fail(); 01", true, () => assert.fail(new Error("lorem")));
+  test("assert.fail(); 02", true, () => assert.fail("This should fail"));
+
+  test("assert.Equal(); 01", false, () => assert.Equal(1, "1"));
+  test("assert.Equal(); 02", false, () => assert.Equal(true, 1));
+  test("assert.Equal(); 03", true, () => assert.Equal(1, 2));
+  test("assert.Equal(); 04", true, () => assert.Equal(1, 2, "lorem"));
+
+  test("assert.notEqual(); 01", false, () => assert.notEqual(1, 2));
+  test("assert.notEqual(); 01", true, () => assert.notEqual(1, "1"));
+  test("assert.notEqual(); 01", true, () => assert.notEqual(1, "1", "lorem"));
+
+  test("assert.strictEqual(); 01", false, () => assert.strictEqual(1, 1));
+  test("assert.strictEqual(); 02", false, () => assert.strictEqual(NaN, NaN));
+  test("assert.strictEqual(); 03", true, () => assert.strictEqual(1, "1"));
+  test("assert.strictEqual(); 04", true,
+    () => assert.strictEqual((1, "1", "lorem"))
+  );
+
+  test("assert.notStrictEqual(); 01", false, () => assert.notStrictEqual(1, "1"));
+  test("assert.notStrictEqual(); 02", true,
+    () => assert.notStrictEqual(NaN, NaN)
+  );
+  test("assert.notStrictEqual(); 03", true,
+    () => assert.notStrictEqual(NaN, NaN, "lorem")
+  );
+
+  test("assert.deepEqual(); 01", false,
+    () => assert.deepEqual({ a: 1 }, { a: 1 })
+  );
+  test("assert.deepEqual(); 02", false,
+    () => assert.deepEqual([1, 2], [1, 2])
+  );
+  test("assert.deepEqual(); 01", true,
+    () => assert.deepEqual({ a: 1 }, { a: 2 })
+  );
+  test("assert.deepEqual(); 01", true,
+    () => assert.deepEqual({ a: 1 }, { a: 2 }, "lorem")
+  );
+
+  test("assert.notDeepEqual(); 01", false,
+    () => assert.notDeepEqual({ a: 1 }, { a: 2 })
+  );
+  test("assert.notDeepEqual(); 01", true,
+    () => assert.notDeepEqual({ a: 1 }, { a: 1 })
+  );
+  test("assert.notDeepEqual(); 01", true,
+    () => assert.notDeepEqual({ a: 1 }, { a: 1 }, "lorem")
+  );
+
+  test("assert.throws(); 01", false,
+    () => assert.throws(() => { throw new TypeError("oops"); }, TypeError)
+  );
+  test("assert.throws(); 02", false,
+    () => assert.throws(() => { throw new Error("boom"); }, /boom/)
+  );
+  test("assert.throws(); 03", true, () => assert.throws(() => 42));
+  test("assert.throws(); 04", true, () => assert.throws(() => 42, "lorem"));
+
+/*
+await assert.rejects(async () => { throw new Error("fail"); }, /fail/);
+// await assert.rejects(async () => 42); // ❌ resolved, didn’t reject
+// await assert.rejects(async () => 42, "lorem"); // ❌ resolved, didn’t reject
+
+await assert.doesNotReject(async () => 42); // ✅
+// await assert.doesNotReject(async () => { throw new Error("oops"); }); // ❌
+// await assert.doesNotReject(async () => { throw new Error("oops"); }, "lorem"); // ❌
+*/
+
+  test("assert.notOk(); 01", false, () => assert.notOk(0));
+  test("assert.notOk(); 02", false, () => assert.notOk(""));
+  test("assert.notOk(); 03", true, () => assert.notOk(true));
+  test("assert.notOk(); 04", true, () => assert.notOk(true, "lorem"));
+
+  test("assert.isTrue(); 01", false, () => assert.isTrue(true));
+  test("assert.isTrue(); 02", true, () => assert.isTrue(1));
+  test("assert.isTrue(); 03", true, () => assert.isTrue(1, "lorem"));
+
+  test("assert.isFalse(); 01", false, () => assert.isFalse(false));
+  test("assert.isFalse(); 02", true, () => assert.isFalse(0));
+  test("assert.isFalse(); 03", true, () => assert.isFalse(0, "lorem"));
+
+  test("assert.is(); 01", false, () => assert.is(123, "number"));
+  test("assert.is(); 02", false, () => assert.is([], Array));
+  test("assert.is(); 03", false, () => assert.is(new Map(), [Object, Map]));
+  test("assert.is(); 04", true, () => assert.is("hi", Number));
+  test("assert.is(); 05", true, () => assert.is("hi", Number, "lorem"));
+  test("assert.is(); 06", true, () => assert.is("hi", [Number, Map], "lorem"));
+
+  test("assert.isNot(); 01", false, () => assert.isNot("hello", Number));
+  test("assert.isNot(); 02", false, () => assert.isNot([], Set));
+  test("assert.isNot(); 02", false, () => assert.isNot([], [Set, "boolean"]));
+  test("assert.isNot(); 03", true, () => assert.isNot([], Array));
+  test("assert.isNot(); 03", true, () => assert.isNot([], ["string", Array]));
+  test("assert.isNot(); 04", true, () => assert.isNot([], Array, "lorem"));
+
+  test("assert.isNullish(); 01", false, () => assert.isNullish(undefined));
+  test("assert.isNullish(); 02", false, () => assert.isNullish(null));
+  test("assert.isNullish(); 03", true, () => assert.isNullish(0));
+  test("assert.isNullish(); 04", true, () => assert.isNullish(0, "lorem"));
+
+  test("assert.isNotNullish(); 01", false, () => assert.isNotNullish(42));
+  test("assert.isNotNullish(); 01", false, () => assert.isNotNullish("ok"));
+  test("assert.isNotNullish(); 01", true, () => assert.isNotNullish(undefined));
+  test("assert.isNotNullish(); 01", true, () => assert.isNotNullish(null));
+  test("assert.isNotNullish(); 01", true,
+    () => assert.isNotNullish(null, "lorem")
+  );
+
+  test("assert.match(); 01", false, () => assert.match("hello world", /world/));
+  test("assert.match(); 02", true, () => assert.match("hello", /bye/));
+  test("assert.match(); 03", true, () => assert.match("hello", /bye/, "lorem"));
+
+  test("assert.stringContains(); 01", false,
+    () => assert.stringContains("hello world", "world")
+  );
+  test("assert.stringContains(); 02", true,
+    () => assert.stringContains("hello", "z")
+  );
+  test("assert.stringContains(); 03", true,
+    () => assert.stringContains("hello", "z", "lorem")
+  );
+
+  test("assert.stringNotContains(); 01", false,
+    () => assert.stringNotContains("hello", "z")
+  );
+  test("assert.stringNotContains(); 02", true,
+    () => assert.stringNotContains("hello", "he")
+  );
+  test("assert.stringNotContains(); 03", true,
+    () => assert.stringNotContains("hello", "he", "lorem")
+  );
+
+  test("assert.lt(); 01", false, () => assert.lt(3, 5));
+  test("assert.lt(); 02", true, () => assert.lt(5, 3));
+  test("assert.lt(); 03", true, () => assert.lt(5, 3, "lorem"));
+  test("assert.lt(); 04", true, () => assert.lt(5, true));
+  test("assert.lt(); 05", true, () => assert.lt(5, true, "lorem"));
+
+  test("assert.lte(); 01", false, () => assert.lte(3, 3));
+  test("assert.lte(); 02", false, () => assert.lte(2, 4));
+  test("assert.lte(); 03", true, () => assert.lte(5, 3));
+  test("assert.lte(); 04", true, () => assert.lte(5, 3, "lorem"));
+  test("assert.lte(); 05", true, () => assert.lte(5, true));
+  test("assert.lte(); 06", true, () => assert.lte(5, true, "lorem"));
+
+  test("assert.gt(); 01", false, () => assert.gt(5, 3));
+  test("assert.gt(); 02", true, () => assert.gt(3, 5));
+  test("assert.gt(); 03", true, () => assert.gt(3, 5, "lorem"));
+  test("assert.gt(); 04", true, () => assert.gt(5, true));
+  test("assert.gt(); 05", true, () => assert.gt(5, true, "lorem"));
+
+  test("assert.gte(); 01", false, () => assert.gte(3, 3));
+  test("assert.gte(); 02", false, () => assert.gte(4, 2));
+  test("assert.gte(); 03", true, () => assert.gte(3, 5));
+  test("assert.gte(); 04", true, () => assert.gte(3, 5, "lorem"));
+  test("assert.gte(); 05", true, () => assert.gte(5, true));
+  test("assert.gte(); 06", true, () => assert.gte(5, true, "lorem"));
+
+  test("assert.VERSION; 01", false,
+    () => assert.stringContains(assert.VERSION, "assert.js v")
+  );
+
+  try {
+    assert(false, "example");
+  } catch (e) {
+    test("assert.AssertionError 01", false,
+      () => assert.is(e, assert.AssertionError)
+    );
+  }  
+
+  alert("End of the test.");
+}
+
+</script>
+
+
+</body>
+</html>
