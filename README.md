@@ -16,7 +16,7 @@ Category | Assertions
 Constants | `VERSION;`
 Errors | `AssertionError();`
 Basic | `assert();`, `ok();`, `fail();`
-Equality | `Equal();`, `notEqual();`, `strictEqual();`, `notStrictEqual();`, `deepEqual();`, `notDeepEqual();`
+Equality | `equal();`, `notEqual();`, `strictEqual();`, `notStrictEqual();`, `deepEqual();`, `notDeepEqual();`
 Exceptions | `throws();`, `rejects();`, `doesNotReject();`
 Boolean | `isTrue();`, `isFalse();`, `notOk();`
 Type | `is();`, `isNot();`
