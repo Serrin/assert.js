@@ -47,10 +47,10 @@ function autoTest () {
   test("assert.fail(); 01", true, () => assert.fail(new Error("lorem")));
   test("assert.fail(); 02", true, () => assert.fail("This should fail"));
 
-  test("assert.Equal(); 01", false, () => assert.Equal(1, "1"));
-  test("assert.Equal(); 02", false, () => assert.Equal(true, 1));
-  test("assert.Equal(); 03", true, () => assert.Equal(1, 2));
-  test("assert.Equal(); 04", true, () => assert.Equal(1, 2, "lorem"));
+  test("assert.equal(); 01", false, () => assert.equal(1, "1"));
+  test("assert.equal(); 02", false, () => assert.equal(true, 1));
+  test("assert.equal(); 03", true, () => assert.equal(1, 2));
+  test("assert.equal(); 04", true, () => assert.equal(1, 2, "lorem"));
 
   test("assert.notEqual(); 01", false, () => assert.notEqual(1, 2));
   test("assert.notEqual(); 01", true, () => assert.notEqual(1, "1"));
@@ -157,6 +157,16 @@ await assert.doesNotReject(async () => 42); // 42
   test("assert.match(); 02", true, () => assert.match("hello", /bye/));
   test("assert.match(); 03", true, () => assert.match("hello", /bye/, "lorem"));
 
+  test("assert.doesNotMatch(); 01", false,
+    () => assert.doesNotMatch("hello", /bye/)
+  );
+  test("assert.doesNotMatch(); 02", true,
+    () => assert.doesNotMatch("hello world", /world/)
+  );
+  test("assert.doesNotMatch(); 03", true,
+    () => assert.doesNotMatch("hello world", /world/, "lorem")
+  );
+
   test("assert.stringContains(); 01", false,
     () => assert.stringContains("hello world", "world")
   );
@@ -213,7 +223,7 @@ await assert.doesNotReject(async () => 42); // 42
     test("assert.AssertionError 01", false,
       () => assert.is(e, assert.AssertionError)
     );
-  }  
+  }
 
   console.log("End of the test.");
 }

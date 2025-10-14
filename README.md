@@ -21,7 +21,7 @@ Exceptions | `throws();`, `rejects();`, `doesNotReject();`
 Boolean | `isTrue();`, `isFalse();`, `notOk();`
 Type | `is();`, `isNot();`
 Nullish | `isNullish();`, `isNotNullish();`
-String | `match();`, `stringContains();`, `stringNotContains();`
+String | `match();`, `doesNotMatch();`, `stringContains();`, `stringNotContains();`
 Comparison | `lt();`, `lte();`, `gt();`, `gte();`
 
 ---
@@ -113,19 +113,19 @@ Forces a failure.
 
 ## Equality Assertions
 
-### `assert.Equal(actual, expected, [message: string | Error]);`
+### `assert.equal(actual, expected, [message: string | Error]);`
 
 Loose equality (`==`).
 
 ````js
-assert.Equal(1, "1"); // passes
-assert.Equal(true, 1); // passes
-// assert.Equal(1, 2); // throws an error
+assert.equal(1, "1"); // passes
+assert.equal(true, 1); // passes
+// assert.equal(1, 2); // throws an error
 ````
 
 ### `assert.notEqual(actual, expected, [message: string | Error]);`
 
-Inverse of `Equal(actual, expected, [message: string | Error]);`.
+Inverse of `equal(actual, expected, [message: string | Error]);`.
 
 ````js
 assert.notEqual(1, 2); // passes
@@ -294,6 +294,15 @@ Ensures a string matches a regular expression.
 ````js
 assert.match("hello world", /world/); // passes
 // assert.match("hello", /bye/); // throws an error
+```
+
+### `assert.doesNotMatch(string, regexp, [message: string | Error]);`
+
+Ensures a string does not match a regular expression.
+
+````js
+assert.doesNotMatch("hello", /bye/); // passes
+// assert.doesNotMatch("hello world", /world/); // throws an error
 ````
 
 ### `assert.stringContains(actual, substring, [message: string | Error]);`
@@ -320,7 +329,7 @@ assert.stringNotContains("hello", "z"); // passes
 
 ### `assert.lt(value1, value2, [message: string | Error]);`
 
-Checks `a < b`.
+Checks `a < b`, but the value types have to be same type.
 
 ````js
 assert.lt(3, 5); // passes
@@ -329,7 +338,7 @@ assert.lt(3, 5); // passes
 
 ### `assert.lte(value1, value2, [message: string | Error]);`
 
-Checks `a <= b`.
+Checks `a <= b`, but the value types have to be same type.
 
 ````js
 assert.lte(3, 3); // passes
@@ -339,7 +348,7 @@ assert.lte(2, 4); // passes
 
 ### `assert.gt(value1, value2, [message: string | Error]);`
 
-Checks `a > b`.
+Checks `a > b`, but the value types have to be same type.
 
 ````js
 assert.gt(5, 3); // passes
@@ -348,7 +357,7 @@ assert.gt(5, 3); // passes
 
 ### `assert.gte(value1, value2, [message: string | Error]);`
 
-Checks `a >= b`.
+Checks `a >= b`, but the value types have to be same type.
 
 ````js
 assert.gte(3, 3); // passes

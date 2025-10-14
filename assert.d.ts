@@ -14,7 +14,7 @@ declare class AssertionError extends Error {
     code: string;
     constructor(message?: any, options?: AssertionErrorOptions);
 }
-declare function assert(condition: any, message_opt?: any): void;
+declare function assert(condition: any, message?: any): void;
 declare namespace assert {
     var VERSION: string;
     var ok: (condition: any, message?: any) => void;
@@ -22,14 +22,14 @@ declare namespace assert {
         new (message?: any, options?: AssertionErrorOptions): AssertionError;
         isError(error: unknown): error is Error;
     };
-    var Equal: (actual: any, expected: any, message?: any) => void;
+    var equal: (actual: any, expected: any, message?: any) => void;
     var notEqual: (actual: any, expected: any, message?: any) => void;
     var strictEqual: (actual: any, expected: any, message?: any) => void;
     var notStrictEqual: (actual: any, expected: any, message?: any) => void;
     var deepEqual: (actual: any, expected: any, message?: any) => void;
     var notDeepEqual: (actual: any, expected: any, message?: any) => void;
-    var throws: (block: Function, Error_opt?: any, message?: any) => Error;
-    var rejects: (block: Function, Error_opt?: any, message?: any) => Promise<unknown>;
+    var throws: (block: Function, Error_opt?: any, message?: any) => Error | undefined;
+    var rejects: (block: Function, Error_opt?: any, message?: any) => Promise<any>;
     var doesNotReject: (block: Function, Error_opt?: any, message?: any) => Promise<any>;
     var fail: (message?: any) => void;
     var notOk: (condition: any, message?: any) => void;
@@ -40,6 +40,7 @@ declare namespace assert {
     var isNullish: (value: unknown, message?: any) => void;
     var isNotNullish: (value: unknown, message?: any) => void;
     var match: (string: string, regexp: RegExp, message?: any) => void;
+    var doesNotMatch: (string: string, regexp: RegExp, message?: any) => void;
     var lt: (value1: any, value2: any, message?: any) => void;
     var lte: (value1: any, value2: any, message?: any) => void;
     var gt: (value1: any, value2: any, message?: any) => void;

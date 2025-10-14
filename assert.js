@@ -17,6 +17,7 @@ if (!("isError" in Error)) {
         return (className === "error" || className === "domexception");
     };
 }
+const typeOf = (value) => value === null ? "null" : typeof value;
 function isDeepStrictEqual(value1, value2) {
     const _deepType = (value) => (value === null) ? "null" : (value !== value) ? "NaN" : (typeof value);
     const _isPrimitive = (value) => value == null
@@ -156,10 +157,10 @@ function isDeepStrictEqual(value1, value2) {
 function isType(value, expectedType, Throw = false) {
     if (!(["string", "function", "undefined"].includes(typeof expectedType))
         && !Array.isArray(expectedType)) {
-        throw new TypeError(`[is] TypeError: expectedType must be string, function, array or undefined. Got ${typeof expectedType}`);
+        throw new TypeError(`[isType] TypeError: expectedType must be string, function, array or undefined. Got ${typeof expectedType}`);
     }
     if (typeof Throw !== "boolean") {
-        throw new TypeError(`[is] TypeError: Throw has to be a boolean. Got ${typeof Throw}`);
+        throw new TypeError(`[isType] TypeError: Throw has to be a boolean. Got ${typeof Throw}`);
     }
     const vType = (value === null ? "null" : typeof value);
     if (expectedType == null) {
@@ -175,12 +176,12 @@ function isType(value, expectedType, Throw = false) {
         if (typeof item === "function") {
             return value != null && value instanceof item;
         }
-        throw new TypeError(`[is] TypeError: expectedType array elements have to be a string or function. Got ${typeof item}`);
+        throw new TypeError(`[isType] TypeError: expectedType array elements have to be a string or function. Got ${typeof item}`);
     });
     if (Throw && !matched) {
         let vName = value.toString ? value.toString() : Object.prototype.toString.call(value);
         let eNames = expectedArray.map((item) => (typeof item === "string" ? item.toString() : item.name ?? "anonymous")).join(", ");
-        throw new TypeError(`[is] TypeError: ${vName} is not a ${eNames}`);
+        throw new TypeError(`[isType] TypeError: ${vName} is not a ${eNames}`);
     }
     return matched;
 }
@@ -228,10 +229,7 @@ function toSafeString(value) {
         return String(value);
     }
 }
-function lessThan(value1, value2) {
-    const _typeOf = (value) => value === null ? "null" : typeof value;
-    return _typeOf(value1) === _typeOf(value2) && value1 < value2;
-}
+const isLessThan = (value1, value2) => typeOf(value1) === typeOf(value2) && value1 < value2;
 class AssertionError extends Error {
     expected;
     actual;
@@ -248,12 +246,12 @@ class AssertionError extends Error {
         }
     }
 }
-function assert(condition, message_opt) {
+function assert(condition, message) {
     if (!condition) {
-        if (message_opt instanceof Error) {
-            throw message_opt;
+        if (message instanceof Error) {
+            throw message;
         }
-        let errorMessage = `[assert] Assertion failed: ${toSafeString(condition)} should be truly${message_opt ? " - " + toSafeString(message_opt) : ""}`;
+        let errorMessage = `[assert] Assertion failed: ${toSafeString(condition)} should be truly${message ? " - " + toSafeString(message) : ""}`;
         throw new assert.AssertionError(errorMessage, {
             message: errorMessage,
             cause: errorMessage,
@@ -263,13 +261,15 @@ function assert(condition, message_opt) {
         });
     }
 }
-function ok(condition, message) { assert(condition, message); }
-function Equal(actual, expected, message) {
+function ok(condition, message) {
+    assert(condition, message);
+}
+function equal(actual, expected, message) {
     if (actual != expected) {
         if (message instanceof Error) {
             throw message;
         }
-        let errorMessage = `[Equal] Assertion failed: ${toSafeString(actual)} and ${toSafeString(expected)} should be equal${message ? " - " + toSafeString(message) : ""}`;
+        let errorMessage = `[equal] Assertion failed: ${toSafeString(actual)} and ${toSafeString(expected)} should be equal${message ? " - " + toSafeString(message) : ""}`;
         throw new assert.AssertionError(errorMessage, {
             message: errorMessage,
             cause: errorMessage,
@@ -284,7 +284,7 @@ function notEqual(actual, expected, message) {
         if (message instanceof Error) {
             throw message;
         }
-        let errorMessage = `[Equal] Assertion failed: ${toSafeString(actual)} and ${toSafeString(expected)} should be equal${message ? " - " + toSafeString(message) : ""}`;
+        let errorMessage = `[notEqual] Assertion failed: ${toSafeString(actual)} and ${toSafeString(expected)} should be equal${message ? " - " + toSafeString(message) : ""}`;
         throw new assert.AssertionError(errorMessage, {
             message: errorMessage,
             cause: errorMessage,
@@ -314,7 +314,7 @@ function notStrictEqual(actual, expected, message) {
         if (message instanceof Error) {
             throw message;
         }
-        let errorMessage = `[Equal] Assertion failed: ${toSafeString(actual)} and ${toSafeString(expected)} should not be strictly equal${message ? " - " + toSafeString(message) : ""}`;
+        let errorMessage = `[notStrictEqual] Assertion failed: ${toSafeString(actual)} and ${toSafeString(expected)} should not be strictly equal${message ? " - " + toSafeString(message) : ""}`;
         throw new assert.AssertionError(errorMessage, {
             message: errorMessage,
             cause: errorMessage,
@@ -481,7 +481,7 @@ function isTrue(condition, message) {
         if (message instanceof Error) {
             throw message;
         }
-        let errorMessage = `[notOk] Assertion failed: ${toSafeString(condition)} should be true${message ? " - " + toSafeString(message) : ""}`;
+        let errorMessage = `[isTrue] Assertion failed: ${toSafeString(condition)} should be true${message ? " - " + toSafeString(message) : ""}`;
         throw new assert.AssertionError(errorMessage, {
             message: errorMessage,
             cause: errorMessage,
@@ -595,8 +595,37 @@ function match(string, regexp, message) {
         });
     }
 }
+function doesNotMatch(string, regexp, message) {
+    if (typeof string !== "string") {
+        if (message instanceof Error) {
+            throw message;
+        }
+        throw new TypeError("[doesNotMatch] TypeError: " + string + " is not a string"
+            + (message ? " - " + toSafeString(message) : ""));
+    }
+    if (!(regexp instanceof RegExp)) {
+        if (message instanceof Error) {
+            throw message;
+        }
+        throw new TypeError("[doesNotMatch] TypeError: " + regexp + " is not a RegExp"
+            + (message ? " - " + toSafeString(message) : ""));
+    }
+    if (regexp.test(string)) {
+        if (message instanceof Error) {
+            throw message;
+        }
+        let errorMessage = `[doesNotMatch] Assertion failed: ${string} is matched with ${regexp}${message ? " - " + toSafeString(message) : ""}`;
+        throw new assert.AssertionError(errorMessage, {
+            message: errorMessage,
+            cause: errorMessage,
+            actual: string,
+            expected: regexp,
+            operator: "doesNotMatch"
+        });
+    }
+}
 function lt(value1, value2, message) {
-    if (!lessThan(value1, value2)) {
+    if (!isLessThan(value1, value2)) {
         if (message instanceof Error) {
             throw message;
         }
@@ -611,7 +640,7 @@ function lt(value1, value2, message) {
     }
 }
 function lte(value1, value2, message) {
-    if (!lessThan(value1, value2) && !Object.is(value1, value2)) {
+    if (!isLessThan(value1, value2) && !Object.is(value1, value2)) {
         if (message instanceof Error) {
             throw message;
         }
@@ -626,7 +655,7 @@ function lte(value1, value2, message) {
     }
 }
 function gt(value1, value2, message) {
-    if (!lessThan(value2, value1)) {
+    if (!isLessThan(value2, value1)) {
         if (message instanceof Error) {
             throw message;
         }
@@ -641,7 +670,7 @@ function gt(value1, value2, message) {
     }
 }
 function gte(value1, value2, message) {
-    if (!lessThan(value2, value1) && !Object.is(value1, value2)) {
+    if (!isLessThan(value2, value1) && !Object.is(value1, value2)) {
         if (message instanceof Error) {
             throw message;
         }
@@ -712,7 +741,7 @@ function stringNotContains(actual, substring, message) {
 assert["VERSION"] = "assert.js v1.0.0";
 assert["ok"] = ok;
 assert["AssertionError"] = AssertionError;
-assert["Equal"] = Equal;
+assert["equal"] = equal;
 assert["notEqual"] = notEqual;
 assert["strictEqual"] = strictEqual;
 assert["notStrictEqual"] = notStrictEqual;
@@ -730,6 +759,7 @@ assert["isNot"] = isNot;
 assert["isNullish"] = isNullish;
 assert["isNotNullish"] = isNotNullish;
 assert["match"] = match;
+assert["doesNotMatch"] = doesNotMatch;
 assert["lt"] = lt;
 assert["lte"] = lte;
 assert["gt"] = gt;

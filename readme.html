@@ -87,7 +87,7 @@ body {
   </tr>
   <tr>
     <td>String</td>
-    <td><code>match();</code>, <code>stringContains();</code>, <code>stringNotContains();</code></td>
+    <td><code>match();</code>, <code>doesNotMatch();</code>, <code>stringContains();</code>, <code>stringNotContains();</code></td>
   </tr>
   <tr>
     <td>Comparison</td>
@@ -168,13 +168,13 @@ globalThis.assert = assert;</pre>
 
 <h2>Equality Assertions</h2>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.Equal(actual, expected, [message: string | Error]);</h3>
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.equal(actual, expected, [message: string | Error]);</h3>
 
 <p>Loose equality (<code>==</code>).</p>
 
-<pre>assert.Equal(1, "1"); // passes
-assert.Equal(true, 1); // passes
-// assert.Equal(1, 2); // throws an error</pre>
+<pre>assert.equal(1, "1"); // passes
+assert.equal(true, 1); // passes
+// assert.equal(1, 2); // throws an error</pre>
 
 <h3 class="round-25 padding font-monospace bg-lightblue">assert.notEqual(actual, expected, [message: string | Error]);</h3>
 
@@ -318,6 +318,13 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.match("hello world", /world/); // passes
 // assert.match("hello", /bye/); // throws an error</pre>
 
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.doesNotMatch(string, regexp, [message: string | Error]);</h3>
+
+<p>Ensures a string does not match a regular expression.</p>
+
+<pre>assert.doesNotMatch("hello", /bye/); // passes
+// assert.doesNotMatch("hello world", /world/); // throws an error</pre>
+
 <h3 class="round-25 padding font-monospace bg-lightblue">assert.stringContains(actual, substring, [message: string | Error]);</h3>
 
 <p>Ensures a string contains a substring.</p>
@@ -338,14 +345,14 @@ assert.isNotNullish("ok"); // passes
 
 <h3 class="round-25 padding font-monospace bg-lightblue">assert.lt(value1, value2, [message: string | Error]);</h3>
 
-<p>Checks <code>a &lt; b</code>.</p>
+<p>Checks <code>a &lt; b</code>, but the value types have to be same type.</p>
 
 <pre>assert.lt(3, 5); // passes
 // assert.lt(5, 3); // throws an error</pre>
 
 <h3 class="round-25 padding font-monospace bg-lightblue">assert.lte(value1, value2, [message: string | Error]);</h3>
 
-<p>Checks <code>a &lt;= b</code>.</p>
+<p>Checks <code>a &lt;= b</code>, but the value types have to be same type.</p>
 
 <pre>assert.lte(3, 3); // passes
 assert.lte(2, 4); // passes
@@ -353,14 +360,14 @@ assert.lte(2, 4); // passes
 
 <h3 class="round-25 padding font-monospace bg-lightblue">assert.gt(value1, value2, [message: string | Error]);</h3>
 
-<p>Checks <code>a &gt; b</code>.</p>
+<p>Checks <code>a &gt; b</code>, but the value types have to be same type.</p>
 
 <pre>assert.gt(5, 3); // passes
 // assert.gt(3, 5); // throws an error</pre>
 
 <h3 class="round-25 padding font-monospace bg-lightblue">assert.gte(value1, value2, [message: string | Error]);</h3>
 
-<p>Checks <code>a &gt;= b</code>.</p>
+<p>Checks <code>a &gt;= b</code>, but the value types have to be same type.</p>
 
 <pre>assert.gte(3, 3); // passes
 assert.gte(5, 3); // passes
@@ -455,10 +462,10 @@ function autoTest () {
   test("assert.fail(); 01", true, () => assert.fail(new Error("lorem")));
   test("assert.fail(); 02", true, () => assert.fail("This should fail"));
 
-  test("assert.Equal(); 01", false, () => assert.Equal(1, "1"));
-  test("assert.Equal(); 02", false, () => assert.Equal(true, 1));
-  test("assert.Equal(); 03", true, () => assert.Equal(1, 2));
-  test("assert.Equal(); 04", true, () => assert.Equal(1, 2, "lorem"));
+  test("assert.equal(); 01", false, () => assert.equal(1, "1"));
+  test("assert.equal(); 02", false, () => assert.equal(true, 1));
+  test("assert.equal(); 03", true, () => assert.equal(1, 2));
+  test("assert.equal(); 04", true, () => assert.equal(1, 2, "lorem"));
 
   test("assert.notEqual(); 01", false, () => assert.notEqual(1, 2));
   test("assert.notEqual(); 01", true, () => assert.notEqual(1, "1"));
@@ -565,6 +572,16 @@ await assert.doesNotReject(async () => 42); // ✅
   test("assert.match(); 02", true, () => assert.match("hello", /bye/));
   test("assert.match(); 03", true, () => assert.match("hello", /bye/, "lorem"));
 
+  test("assert.doesNotMatch(); 01", false,
+    () => assert.doesNotMatch("hello", /bye/)
+  );
+  test("assert.doesNotMatch(); 02", true,
+    () => assert.doesNotMatch("hello world", /world/)
+  );
+  test("assert.doesNotMatch(); 03", true,
+    () => assert.doesNotMatch("hello world", /world/, "lorem")
+  );
+
   test("assert.stringContains(); 01", false,
     () => assert.stringContains("hello world", "world")
   );
@@ -621,7 +638,7 @@ await assert.doesNotReject(async () => 42); // ✅
     test("assert.AssertionError 01", false,
       () => assert.is(e, assert.AssertionError)
     );
-  }  
+  }
 
   alert("End of the test.");
 }
