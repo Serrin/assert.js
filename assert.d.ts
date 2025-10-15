@@ -17,11 +17,11 @@ declare class AssertionError extends Error {
 declare function assert(condition: any, message?: any): void;
 declare namespace assert {
     var VERSION: string;
-    var ok: (condition: any, message?: any) => void;
     var AssertionError: {
         new (message?: any, options?: AssertionErrorOptions): AssertionError;
         isError(error: unknown): error is Error;
     };
+    var ok: (condition: any, message?: any) => void;
     var equal: (actual: any, expected: any, message?: any) => void;
     var notEqual: (actual: any, expected: any, message?: any) => void;
     var strictEqual: (actual: any, expected: any, message?: any) => void;

@@ -739,8 +739,8 @@ function stringNotContains(actual, substring, message) {
     }
 }
 assert["VERSION"] = "assert.js v1.0.0";
-assert["ok"] = ok;
 assert["AssertionError"] = AssertionError;
+assert["ok"] = ok;
 assert["equal"] = equal;
 assert["notEqual"] = notEqual;
 assert["strictEqual"] = strictEqual;
