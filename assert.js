@@ -738,6 +738,31 @@ function stringNotContains(actual, substring, message) {
         });
     }
 }
+function testSync(block) {
+    try {
+        return { ok: true, value: block() };
+    }
+    catch (error) {
+        return {
+            ok: false,
+            error: error instanceof Error ? error : new Error(String(error)),
+        };
+    }
+}
+async function testAsync(block) {
+    try {
+        return { ok: true, value: await block() };
+    }
+    catch (error) {
+        return {
+            ok: false,
+            error: error instanceof Error ? error : new Error(String(error)),
+        };
+    }
+}
+function testCheck(result) {
+    return result.ok;
+}
 assert["VERSION"] = "assert.js v1.0.0";
 assert["AssertionError"] = AssertionError;
 assert["ok"] = ok;
@@ -766,5 +791,8 @@ assert["gt"] = gt;
 assert["gte"] = gte;
 assert["stringContains"] = stringContains;
 assert["stringNotContains"] = stringNotContains;
+assert["testSync"] = testSync;
+assert["testAsync"] = testAsync;
+assert["testCheck"] = testCheck;
 export { assert };
 export default assert;

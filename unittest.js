@@ -214,6 +214,18 @@ await assert.doesNotReject(async () => 42); // ✅
     );
   }
 
+  if (assert.testCheck(assert.testSync(() => 42))) {
+    /* alert("testSync(); 01 - passed"); */
+  } else {
+    alert("testSync(); 01 - failed");
+  }
+
+  if (assert.testCheck(assert.testSync(function () { throw new Error("lorem"); }))) {
+    alert("testSync(); 02 - failed");
+  } else {
+    /* alert("testSync(); 02 - passed"); */
+  }
+
   alert("End of the sync test.");
 }
 
@@ -256,6 +268,24 @@ async function autoTestAsync () {
   )
   .then(() => { alert("doesNotReject(); 03 - bug"); })
   .catch((e) => { /* alert("doesNotReject(); 03 - passed"); */ });
+
+  (async () => {
+    const result = await assert.testAsync(async function () { return 42; });
+    if (assert.testCheck(result)) {
+      /* alert("testAsync(); 01 - passed"); */
+    } else {
+      alert("testAsync(); 01 - failed");
+    }
+  })();
+
+  (async () => {
+    const result = await assert.testAsync(async function () { throw new Error("lorem"); });
+    if (assert.testCheck(result)) {
+      alert("testAsync(); 02 - failed");
+    } else {
+      /* alert("testAsync(); 02 - passed"); */
+    }
+  })();
 
   alert("End of the async test.");
 }

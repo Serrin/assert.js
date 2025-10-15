@@ -7,6 +7,13 @@ type AssertionErrorOptions = {
     diff?: any;
     cause: any;
 };
+type TestResult<T> = {
+    ok: true;
+    value: T;
+} | {
+    ok: false;
+    error: Error;
+};
 declare class AssertionError extends Error {
     expected: any;
     actual: any;
@@ -47,6 +54,12 @@ declare namespace assert {
     var gte: (value1: any, value2: any, message?: any) => void;
     var stringContains: (actual: string, substring: string, message?: any) => void;
     var stringNotContains: (actual: string, substring: string, message: any) => void;
+    var testSync: <T>(block: () => T) => TestResult<T>;
+    var testAsync: <T>(block: () => Promise<T>) => Promise<TestResult<T>>;
+    var testCheck: <T>(result: TestResult<T>) => result is {
+        ok: true;
+        value: T;
+    };
 }
 export { assert };
 export default assert;

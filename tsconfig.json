@@ -1,0 +1,57 @@
+{
+  "compilerOptions": {
+    "rootDirs": ["."],
+    "lib": ["ESNext", "DOM", "DOM.iterable", "DOM.asynciterable", "ESNext.Iterator", "webworker.importscripts", "scripthost"],
+    // full list: https://github.com/microsoft/TypeScript/tree/main/src/lib
+    "target": "ESNext",
+    // "ES3", "ES5", "ES6", "ES2015", "ES2016", "ES2017", "ES2018", "ES2019" 
+    // "ES2020", "ES2021", "ES2022", "ES2023", "ES2024", "ES2020", "ESNext",
+    "module": "ESNext",
+    // "NONE, "CommonJS", "UMD", "AMD", "System",
+    // "ES6", "ES2015", "ES2020", "ES2022", "ES2022", "ESNext"
+    // "node16", "node18", "node20", "nodenext", "preserve",
+    //"moduleResolution": "nodenext",
+    // "node16", "nodenext", "node10", "bundler"
+    "checkJs": true,
+    "strict": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "alwaysStrict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "noUncheckedIndexedAccess": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "useUnknownInCatchVariables": true,
+    "allowUmdGlobalAccess": true,
+    "noUncheckedSideEffectImports": false,
+    "sourceMap": true,
+    "downlevelIteration": false,
+    "newLine": "CRLF", // "CRLF", "LF",
+    "allowSyntheticDefaultImports": false,
+    // from https://www.typescriptlang.org/docs/handbook/declaration-files/dts-from-js.html
+    // Tells TypeScript to read JS files, as normally they are ignored as source files
+    "allowJs": true,
+    // Generate d.ts files
+    "declaration": true,
+    // This compiler run should only output d.ts files
+    // go to js file when using IDE functions like "Go to Definition" in VSCode
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
+    // Types should go into this directory.
+    // Removing this would place the .d.ts files next to the .js files
+    "outDir": "."
+  },
+  "files": ["./assert.ts"],
+  // //"include": ["src/**/*"],
+  "include": ["./*.ts"],
+  /* "exclude": ["./assert.js"]  */
+}

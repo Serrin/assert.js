@@ -59,39 +59,43 @@ body {
   </tr>
   <tr>
     <td>Constants</td>
-    <td><code>VERSION;</code></td>
+    <td><code>assert.VERSION;</code></td>
   </tr>
   <tr>
     <td>Errors</td>
-    <td><code>AssertionError</code></td>
+    <td><code>assert.AssertionError</code></td>
   </tr>
   <tr>
     <td>Basic</td>
-    <td><code>assert();</code>, <code>ok();</code>, <code>notOk();</code>, <code>fail();</code></td>
+    <td><code>assert();</code>, <code>assert.ok();</code>, <code>assert.notOk();</code>, <code>assert.fail();</code></td>
   </tr>
   <tr>
     <td>Equality</td>
-    <td><code>equal();</code>, <code>notEqual();</code>, <code>strictEqual();</code>, <code>notStrictEqual();</code>, <code>deepEqual();</code>, <code>notDeepEqual();</code></td>
+    <td><code>assert.equal();</code>, <code>assert.notEqual();</code>, <code>assert.strictEqual();</code>, <code>assert.notStrictEqual();</code>, <code>assert.deepEqual();</code>, <code>assert.notDeepEqual();</code></td>
   </tr>
   <tr>
     <td>Exceptions</td>
-    <td><code>throws();</code>, <code>rejects();</code>, <code>doesNotReject();</code></td>
+    <td><code>assert.throws();</code>, <code>await assert.rejects();</code>, <code>await assert.doesNotReject();</code></td>
   </tr>
   <tr>
     <td>Boolean</td>
-    <td><code>isTrue();</code>, <code>isFalse();</code></td>
+    <td><code>assert.isTrue();</code>, <code>assert.isFalse();</code></td>
   </tr>
   <tr>
     <td>Type</td>
-    <td><code>is();</code>, <code>isNot();</code>, <code>isNullish();</code>, <code>isNotNullish();</code></td>
+    <td><code>assert.is();</code>, <code>assert.isNot();</code>, <code>assert.isNullish();</code>, <code>assert.isNotNullish();</code></td>
   </tr>
   <tr>
     <td>String</td>
-    <td><code>match();</code>, <code>doesNotMatch();</code>, <code>stringContains();</code>, <code>stringNotContains();</code></td>
+    <td><code>assert.match();</code>, <code>assert.doesNotMatch();</code>, <code>assert.stringContains();</code>, <code>assert.stringNotContains();</code></td>
   </tr>
   <tr>
     <td>Comparison</td>
-    <td><code>lt();</code>, <code>lte();</code>, <code>gt();</code>, <code>gte();</code></td>
+    <td><code>assert.lt();</code>, <code>assert.lte();</code>, <code>assert.gt();</code>, <code>assert.gte();</code></td>
+  </tr>
+  <tr>
+    <td>Testrunner</td>
+    <td><code>assert.testSync();</code>, <code>await assert.testAsync();</code>, <code>assert.testCheck();</code></td>
   </tr>
 </table>
 
@@ -368,6 +372,43 @@ assert.lte(2, 4); // passes
 <pre>assert.gte(3, 3); // passes
 assert.gte(5, 3); // passes
 // assert.gte(2, 3); // throws an error</pre>
+
+<hr>
+
+<h2>Testrunner</h2>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.testSync(block): { ok: true; value: any } | { ok: false; error: Error }</h3>
+
+<p>Synchronously runs a block of code and returns either its result or the caught error.</p>
+
+<pre>if (assert.testCheck(assert.testSync(() => 42))) {
+  console.log("passed");
+} else {
+  console.error("failed");
+}</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">await assert.testAsync(block): { ok: true; value: any } | { ok: false; error: Error }</h3>
+
+<p>Asynchronously runs a block of code and returns either its result or the caught error.</p>
+
+<pre>(async () => {
+  const result = await assert.testAsync(async function () { return 42; });
+  if (assert.testCheck(result)) {
+    console.log("passed"); */
+  } else {
+    console.error("failed");
+  }
+})();</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.testCheck(result: { ok: true; value: any } | { ok: false; error: Error }): result.ok is true</h3>
+
+<p>Checks if the result is successful.</p>
+
+<pre>if (assert.testCheck(assert.testSync(() => 42))) {
+  console.log("passed");
+} else {
+  console.error("failed");
+}</pre>
 
 <hr>
 

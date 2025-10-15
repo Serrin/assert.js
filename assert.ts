@@ -41,6 +41,9 @@ type AssertionErrorOptions = {
   cause: any;
 };
 
+/** @internal */
+type TestResult<T> = { ok: true; value: T } | { ok: false; error: Error };
+
 
 /** polyfills **/
 
@@ -99,7 +102,7 @@ function isDeepStrictEqual (value1: any, value2: any): boolean {
     value1 instanceof Class && value2 instanceof Class;
   const _classof = (value: any): string =>
     Object.prototype.toString.call(value).slice(8, -1).toLowerCase();
-  const _ownKeys = (value: object): any[] =>
+  const _ownKeys = (value: MapLike): any[] =>
     Object.getOwnPropertyNames(value)
       // @ts-ignore
       .concat(Object.getOwnPropertySymbols(value));
@@ -210,9 +213,9 @@ function isDeepStrictEqual (value1: any, value2: any): boolean {
     if (_isSameInstance(value1, value2, Error)) {
       return isDeepStrictEqual(
         Object.getOwnPropertyNames(value1)
-          .reduce((acc: any, k: any): object => { acc[k] = value1[k]; return acc; }, {}),
+          .reduce((acc: any, k: any): MapLike => { acc[k] = value1[k]; return acc; }, {}),
         Object.getOwnPropertyNames(value2)
-          .reduce((acc: any, k: any): object => { acc[k] = value2[k]; return acc; }, {})
+          .reduce((acc: any, k: any): MapLike => { acc[k] = value2[k]; return acc; }, {})
       );
     }
     /* objects / Date */
@@ -1156,6 +1159,56 @@ function stringNotContains(actual: string, substring: string, message: any) {
 }
 
 
+/* test functions */
+
+
+/**
+ * Synchronously runs a block of code and returns either its result or the caught error.
+ *
+ * @param {Function} block - The function to execute.
+ * @returns {TestResult<T>} The result of the block if successful, or the caught error if it throws.
+ */
+function testSync<T>(block: () => T): TestResult<T> {
+  try {
+    return { ok: true, value: block() };
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error : new Error(String(error)),
+    };
+  }
+}
+
+
+/**
+ * Asynchronously runs a block of code and returns either its resolved result or the caught error.
+ *
+ * @param {Function} block - The async function to execute.
+ * @returns {Promise<TestResult<T>>} A promise that resolves to either the result or an Error.
+ */
+async function testAsync<T>(block: () => Promise<T>): Promise<TestResult<T>> {
+  try {
+    return { ok: true, value: await block() };
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error : new Error(String(error)),
+    };
+  }
+}
+
+
+/**
+ * Checks if the result is successful and narrows the type accordingly.
+ *
+ * @param {TestResult<T>} result - The result to check.
+ * @returns {boolean} True if the result is successful, false otherwise.
+ */
+function testCheck<T>(result: TestResult<T>): result is { ok: true; value: T} {
+  return result.ok;
+}
+
+
 assert["VERSION"] = "assert.js v1.0.0";
 /** @see https://wiki.commonjs.org/wiki/Unit_Testing/1.0 */
 assert["AssertionError"] = AssertionError;
@@ -1186,7 +1239,10 @@ assert["gt"] = gt;
 assert["gte"] = gte;
 assert["stringContains"] = stringContains;
 assert["stringNotContains"] = stringNotContains;
-
+/* test functions */
+assert["testSync"] = testSync;
+assert["testAsync"] = testAsync;
+assert["testCheck"] = testCheck;
 
 export {assert};
 export default assert;

@@ -13,15 +13,16 @@ Implements and extends the [CommonJS Unit Testing 1.0 spec](https://wiki.commonj
 
 Category | Assertions
 ---------|-------------
-Constants | `VERSION;`
-Errors | `AssertionError`
-Basic | `assert();`, `ok();`, `notOk();`, `fail();`
-Equality | `equal();`, `notEqual();`, `strictEqual();`, `notStrictEqual();`, `deepEqual();`, `notDeepEqual();`
-Exceptions | `throws();`, `rejects();`, `doesNotReject();`
-Boolean | `isTrue();`, `isFalse();`
-Type | `is();`, `isNot();`, `isNullish();`, `isNotNullish();`
-String | `match();`, `doesNotMatch();`, `stringContains();`, `stringNotContains();`
-Comparison | `lt();`, `lte();`, `gt();`, `gte();`
+Constants | `assert.VERSION;`
+Errors | `assert.AssertionError`
+Basic | `assert();`, `assert.ok();`, `assert.notOk();`, `assert.fail();`
+Equality | `assert.equal();`, `assert.notEqual();`, `assert.strictEqual();`, `assert.notStrictEqual();`, `assert.deepEqual();`, `assert.notDeepEqual();`
+Exceptions | `assert.throws();`, `await assert.rejects();`, `await assert.doesNotReject();`
+Boolean | `assert.isTrue();`, `assert.isFalse();`
+Type | `assert.is();`, `assert.isNot();`, `assert.isNullish();`, `assert.isNotNullish();`
+String | `assert.match();`, `assert.doesNotMatch();`, `assert.stringContains();`, `assert.stringNotContains();`
+Comparison | `assert.lt();`, `assert.lte();`, `assert.gt();`, `assert.gte();`
+Testrunner | `assert.testSync();`, `await assert.testAsync();`, `assert.testCheck();`
 
 ---
 
@@ -358,6 +359,49 @@ Checks `a >= b`, but the value types have to be same type.
 assert.gte(3, 3); // passes
 assert.gte(5, 3); // passes
 // assert.gte(2, 3); // throws an error
+````
+
+---
+
+## Testrunner
+
+### `assert.testSync(block): { ok: true; value: any } | { ok: false; error: Error }`
+
+Synchronously runs a block of code and returns either its result or the caught error.
+
+````js
+if (assert.testCheck(assert.testSync(() => 42))) {
+  console.log("passed");
+} else {
+  console.error("failed");
+}
+````
+
+### `await assert.testASync(block): { ok: true; value: any } | { ok: false; error: Error }`
+
+Asynchronously runs a block of code and returns either its result or the caught error.
+
+````js
+(async () => {
+  const result = await assert.testAsync(async function () { return 42; });
+  if (assert.testCheck(result)) {
+    console.log("passed"); */
+  } else {
+    console.error("failed");
+  }
+})();
+````
+
+### `assert.testCheck(result: { ok: true; value: any } | { ok: false; error: Error }): result.ok is true`
+
+Checks if the result is successful.
+
+````js
+if (assert.testCheck(assert.testSync(() => 42))) {
+  console.log("passed");
+} else {
+  console.error("failed");
+}
 ````
 
 ---
