@@ -1,14 +1,3 @@
-// @ts-nocheck
-"uses strict";
-
-// Import the assert function
-import assert from "./assert.js";
-globalThis.assert = assert;
-
-// import the defaultExport object
-//import defaultExport from "./assert.js";
-//globalThis.assert = defaultExport;
-
 
 function testIsOK (message, callback) {
   try {
@@ -31,7 +20,7 @@ function test (message, error = false, callback) {
   } else {
     var res = testIsOK(message, callback);
   }
-  if (!res) { console.error(message); }
+  if (!res) { alert(message); }
 }
 
 function autoTestSync () {
@@ -102,6 +91,16 @@ function autoTestSync () {
   );
   test("assert.throws(); 03", true, () => assert.throws(() => 42));
   test("assert.throws(); 04", true, () => assert.throws(() => 42, "lorem"));
+
+/*
+await assert.rejects(async () => { throw new Error("fail"); }, /fail/);
+// await assert.rejects(async () => 42); // ❌ resolved, didn’t reject
+// await assert.rejects(async () => 42, "lorem"); // ❌ resolved, didn’t reject
+
+await assert.doesNotReject(async () => 42); // ✅
+// await assert.doesNotReject(async () => { throw new Error("oops"); }); // ❌
+// await assert.doesNotReject(async () => { throw new Error("oops"); }, "lorem"); // ❌
+*/
 
   test("assert.notOk(); 01", false, () => assert.notOk(0));
   test("assert.notOk(); 02", false, () => assert.notOk(""));
@@ -215,10 +214,8 @@ function autoTestSync () {
     );
   }
 
-  console.log("\nEnd of the sync test.\n");
+  alert("End of the sync test.");
 }
-
-autoTestSync();
 
 
 async function autoTestAsync () {
@@ -228,39 +225,37 @@ async function autoTestAsync () {
     async () => { throw new TypeError("lorem error"); },
     TypeError
   )
-  .then(() => { console.log("rejects(); 01 - passed - Caught expected TypeError"); })
-  .catch((e) => { console.error("rejects(); 02 - bug"); });
+  .then(() => { /* alert("rejects(); 01 - Caught expected TypeError"); */ })
+  .catch((e) => { alert("rejects(); 02 - bug"); });
 
   // Passes: resolves successfully
   await assert.rejects(Promise.reject(new Error("ipsum error")), /ipsum/i)
-  .then(() => { console.log("rejects(); 02 - passed - Caught expected Error"); })
-  .catch((e) => { console.error("rejects(); 02 - bug"); });
+  .then(() => { /* alert("rejects(); 02 - Caught expected Error"); */ })
+  .catch((e) => { alert("rejects(); 02 - bug"); });
 
   // Fails: does not reject
   await assert.rejects(async () => 42)
-  .then(() => { console.log("rejects(); 03 - passed"); })
-  .catch((e) => { console.error("rejects(); 03 - bug"); });
+  .then(() => { /* alert("rejects(); 03 - passed"); */ })
+  .catch((e) => { alert("rejects(); 03 - bug"); });
 
   // Passes: resolves successfully
   await assert.doesNotReject(async () => 42)
-  .then(() => { console.log("doesNotReject(); 01 - passed"); })
-  .catch((e) => { console.error("doesNotReject(); 01 - bug"); });
+  .then(() => { /*alert("doesNotReject(); 01 - passed"); */})
+  .catch((e) => { alert("doesNotReject(); 01 - bug"); });
 
   // Fails: rejects unexpectedly
   await assert.doesNotReject(async () => { throw new Error("boom"); })
-  .then(() => { console.error("doesNotReject(); 02 - bug"); })
-  .catch((e) => { console.log("doesNotReject(); 02 - passed"); });
+  .then(() => { alert("doesNotReject(); 02 - bug"); })
+  .catch((e) => { /* alert("doesNotReject(); 02 - passed"); */ });
 
   // Fails: rejects with disallowed error type/message
   await assert.doesNotReject(
-    async () => { throw new TypeError("lorem2 error"); },
+    async () => { throw new TypeError("Bad type"); },
     TypeError,
     "Unexpected TypeError"
   )
-  .then(() => { console.error("doesNotReject(); 03 - bug"); })
-  .catch((e) => { console.log("doesNotReject(); 03 - passed"); });
+  .then(() => { alert("doesNotReject(); 03 - bug"); })
+  .catch((e) => { /* alert("doesNotReject(); 03 - passed"); */ });
 
-  console.log("\nEnd of the async test.");
+  alert("End of the async test.");
 }
-
-autoTestAsync();

@@ -578,7 +578,7 @@ function notDeepEqual (actual: any, expected: any, message?: any): void {
  * @returns {Error | undefined}
  * @throws {AssertionError} If assertion is failed.
  */
-function throws(block: Function, Error_opt?: any, message?: any): Error | undefined {
+function throws (block: Function, Error_opt?: any, message?: any): Error | undefined {
   let thrownError;
   try {
     block();
@@ -663,23 +663,6 @@ async function rejects (block: Function, Error_opt?: any, message?: any): Promis
 }
 
 
-/*
-await assert.rejects(
-  async () => { throw new TypeError("Invalid data"); },
-  TypeError
-);
-await assert.rejects(
-  Promise.reject(new Error("network error")),
-  /network/i
-);
-await assert.rejects(
-  async () => 42,
-  undefined,
-  "should have rejected"
-);
-*/
-
-
 /**
  * @description Asserts that an async function or Promise resolves successfully (i.e., does NOT reject).
  *
@@ -728,21 +711,6 @@ async function doesNotReject (block: Function, Error_opt?: any, message?: any): 
     });
   }
 }
-
-/*
-// Passes: resolves successfully
-await assert.doesNotReject(async () => 42);
-
-// Fails: rejects unexpectedly
-await assert.doesNotReject(async () => { throw new Error("boom"); });
-
-// Fails: rejects with disallowed error type/message
-await assert.doesNotReject(
-  async () => { throw new TypeError("Bad type"); },
-  TypeError,
-  "Unexpected TypeError"
-);
-*/
 
 
 /**
@@ -1150,13 +1118,6 @@ function stringContains(actual: string, substring: string, message?: any): void 
 }
 
 
-/*
-assert.stringContains("hello world", "world");
-assert.stringContains("Error: file not found", "file");
-assert.stringContains("abc", "z", "Expected 'abc' to contain 'z'"); // error
-*/
-
-
 /**
  * @description Asserts that `actual` (a string) does NOT contain the specified `substring`.
  *
@@ -1195,17 +1156,10 @@ function stringNotContains(actual: string, substring: string, message: any) {
 }
 
 
-/*
-assert.stringNotContains("hello world", "z");
-assert.stringNotContains("error: file missing", "success");
-assert.stringNotContains("abc", "a", "Should not contain 'a'"); // error
-*/
-
-
 assert["VERSION"] = "assert.js v1.0.0";
 /** @see https://wiki.commonjs.org/wiki/Unit_Testing/1.0 */
-assert["ok"] = ok;
 assert["AssertionError"] = AssertionError;
+assert["ok"] = ok;
 assert["equal"] = equal;
 assert["notEqual"] = notEqual;
 assert["strictEqual"] = strictEqual;

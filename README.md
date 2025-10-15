@@ -14,13 +14,12 @@ Implements and extends the [CommonJS Unit Testing 1.0 spec](https://wiki.commonj
 Category | Assertions
 ---------|-------------
 Constants | `VERSION;`
-Errors | `AssertionError();`
-Basic | `assert();`, `ok();`, `fail();`
+Errors | `AssertionError`
+Basic | `assert();`, `ok();`, `notOk();`, `fail();`
 Equality | `equal();`, `notEqual();`, `strictEqual();`, `notStrictEqual();`, `deepEqual();`, `notDeepEqual();`
 Exceptions | `throws();`, `rejects();`, `doesNotReject();`
-Boolean | `isTrue();`, `isFalse();`, `notOk();`
-Type | `is();`, `isNot();`
-Nullish | `isNullish();`, `isNotNullish();`
+Boolean | `isTrue();`, `isFalse();`
+Type | `is();`, `isNot();`, `isNullish();`, `isNotNullish();`
 String | `match();`, `doesNotMatch();`, `stringContains();`, `stringNotContains();`
 Comparison | `lt();`, `lte();`, `gt();`, `gte();`
 
@@ -99,6 +98,16 @@ Alias for `assert(condition, [message: string | Error]);`.
 ````js
 assert.ok(1 === 1); // passes
 // assert.ok(0, "0 is falsy"); // throws an error
+````
+
+### `assert.notOk(value, [message: string | Error]);`
+
+Ensures a value is falsy.
+
+````js
+assert.notOk(0); // passes
+assert.notOk(""); // passes
+// assert.notOk(true); // throws an error
 ````
 
 ### `assert.fail([message: string | Error]);`
@@ -206,16 +215,6 @@ await assert.doesNotReject(async () => 42); // passes
 
 ## Boolean Assertions
 
-### `assert.notOk(value, [message: string | Error]);`
-
-Ensures a value is falsy.
-
-````js
-assert.notOk(0); // passes
-assert.notOk(""); // passes
-// assert.notOk(true); // throws an error
-````
-
 ### `assert.isTrue(value, [message: string | Error]);`
 
 Ensures value is exactly `true`.
@@ -259,10 +258,6 @@ assert.isNot([], Set); // passes
 // assert.isNot([], Array); // throws an error
 ````
 
----
-
-## Nullish Assertions
-
 ### `assert.isNullish(value, [message: string | Error]);`
 
 Ensures value is `null` or `undefined`.
@@ -294,7 +289,7 @@ Ensures a string matches a regular expression.
 ````js
 assert.match("hello world", /world/); // passes
 // assert.match("hello", /bye/); // throws an error
-```
+````
 
 ### `assert.doesNotMatch(string, regexp, [message: string | Error]);`
 
