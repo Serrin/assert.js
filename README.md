@@ -101,7 +101,7 @@ assert.ok(1 === 1); // passes
 // assert.ok(0, "0 is falsy"); // throws an error
 ````
 
-### `assert.notOk(value, [message: string | Error]);`
+### `assert.notOk(condition, [message: string | Error]);`
 
 Ensures a value is falsy.
 
