@@ -2,7 +2,7 @@
 
 Latest version: 1.0.0
 
-Date: 2025-10-09T16:54:49.646Z
+Date: 2025-10-17T18:20:04.454Z
 
 A modern, zero-dependency assertion library for Node.js, Deno and browser (ESM) environments.
 Implements and extends the [CommonJS Unit Testing 1.0 spec](https://wiki.commonjs.org/wiki/Unit_Testing/1.0).
@@ -26,6 +26,24 @@ Testrunner | `assert.testSync();`, `await assert.testAsync();`, `assert.testChec
 
 ---
 
+## Tested on these
+
+- Windows Firefox
+- Windows Chrome
+- Windows Edge
+- iOS Safari
+- iOS Firefox
+- iOS Chrome
+- iOS Edge
+- Android Firefox
+- Android Chrome
+- Android Samsung Internet
+- Android Edge
+- Node.js (latest current, not LTS)
+- Deno (latest current, not LTS)
+
+---
+
 ## Import
 
 ### Import the assert function
@@ -39,7 +57,7 @@ globalThis.assert = assert;
 
 ````js
 import defaultExport from "./assert.js";
-globalThis.assert = assert;
+globalThis.assert = defaultExport;
 ````
 
 ### Dynamic import

@@ -9,7 +9,10 @@
 <meta name="Copyright" content="(C) Copyright Czigler Ferenc" />
 <link rel="stylesheet" href="u87.css" type="text/css" />
 <script type="module">
-// import the defaultExport object
+// Import the assert function
+//import assert from "./assert.js";
+//globalThis.assert = assert;
+// Import the assert function as defaultExport
 import defaultExport from "./assert.js";
 globalThis.assert = defaultExport;
 </script>
@@ -20,6 +23,7 @@ body {
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
+  padding: 0.5rem;
 }
 </style>
 </head>
@@ -29,7 +33,7 @@ body {
 
 <p>Latest version: 1.0.0</p>
 
-<p>Date: 2025-10-09T16:54:49.646Z</p>
+<p>Date: 2025-10-17T18:20:04.454Z</p>
 
 <p>A modern, zero-dependency assertion library for Node.js, Deno and browser (ESM) environments.</p>
 
@@ -101,6 +105,26 @@ body {
 
 <hr>
 
+<h2>Tested on these</h2>
+
+ <ul>
+  <li>Windows Firefox</li>
+  <li>Windows Chrome</li>
+  <li>Windows Edge</li>
+  <li>iOS Safari</li>
+  <li>iOS Firefox</li>
+  <li>iOS Chrome</li>
+  <li>iOS Edge</li>
+  <li>Android Firefox</li>
+  <li>Android Chrome</li>
+  <li>Android Samsung Internet</li>
+  <li>Android Edge</li>
+  <li>Node.js (latest current, not LTS)</li>
+  <li>Deno (latest current, not LTS)</li>
+</ul>
+
+<hr>
+
 <h2>Import</h2>
 
 <h3>Import the assert function</h3>
@@ -111,7 +135,7 @@ globalThis.assert = assert;</pre>
 <h3>Import the assert function as defaultExport</h3>
 
 <pre>import defaultExport from "./assert.js";
-globalThis.assert = assert;</pre>
+globalThis.assert = defaultExport;</pre>
 
 <h3>Dynamic import</h3>
 

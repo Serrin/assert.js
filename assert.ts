@@ -719,7 +719,7 @@ function throws (block: Function, Error_opt?: any, message?: any): Error | undef
  * @throws {assert.AssertionError} If assertion is failed.
  */
 async function rejects (block: Function | Promise<any>, Error_opt?: any, message?: any): Promise<any> {
-  let rejectedError;
+  let rejectedError; /* dont add type for his variable! */
   try {
     const result = typeof block === "function" ? await block() : await block;
     // If we reach here, it resolved successfully
