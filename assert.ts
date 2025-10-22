@@ -10,14 +10,14 @@
 
 /**
  * @name assert.js
- * @version 1.0.0
+ * @version 1.0.1
  * @author Ferenc Czigler
  * @see https://github.com/Serrin/assert.js/
  * @license MIT https://opensource.org/licenses/MIT
  */
 
 
-const VERSION = "assert.js v1.0.0";
+const VERSION = "assert.js v1.0.1";
 
 
 /*
@@ -38,6 +38,13 @@ https://firefox-source-docs.mozilla.org/testing/assert.html
  * @internal
  * */
 type MapLike = { [key: string | symbol]: any };
+
+/**
+ * @description string or String object
+ *
+ * @internal
+ * */
+type StringLike = string | String;
 
 /**
  * Generic comparable types.
@@ -93,6 +100,42 @@ type ClassOfTag = TypeOfTag | string;
  */
 type ExpectedType = string | Function | Array<string | Function>;
 
+/**
+ * The expected options object for type includes functions
+ *
+ * @internal
+ */
+type IncludesOptions = {keyOrValue: any, value?: any};
+
+/**
+ * null or undefined
+ *
+ * @internal
+ */
+type Nullish = null | undefined;
+
+/**
+ * @description Not null or undefined or object or function.
+ *
+ * @internal
+ */
+// @ts-ignore
+type NonNullablePrimitive = number | boolean | string | symbol;
+
+/**
+ * @description Not object or function.
+ *
+ * @internal
+ */
+type Primitive = null | undefined | number | bigint | boolean | string | symbol;
+
+/**
+ * @description NObject or function.
+ *
+ * @internal
+ */
+type NonPrimitive = object | Function;
+
 
 /** polyfills **/
 
@@ -122,7 +165,7 @@ if (!("isError" in Error)) {
 }
 
 
-/* helper functions */
+/* internal functions */
 
 
 /**
@@ -244,9 +287,10 @@ function _isDeepStrictEqual (value1: any, value2: any): boolean {
       || _isSameInstance(value1, value2, Uint16Array)
       || _isSameInstance(value1, value2, Int32Array)
       || _isSameInstance(value1, value2, Uint32Array)
-      || ("Float16Array" in globalThis ?
-          _isSameInstance(value1, value2, Float16Array) : false
-         )
+      || ("Float16Array" in globalThis
+          ? _isSameInstance(value1, value2, Float16Array)
+          : false
+        )
       || _isSameInstance(value1, value2, Float32Array)
       || _isSameInstance(value1, value2, Float64Array)
       || _isSameInstance(value1, value2, BigInt64Array)
@@ -387,6 +431,105 @@ function _isType (
 
 
 /**
+ * @description Checks if the given value is null or undefined.
+ *
+ * @param {unknown} value - The value to check.
+ * @returns {boolean} True if the value is null or undefined, false otherwise.
+ */
+const _isNullish = (value: unknown): value is Nullish =>
+  typeof value === "undefined" || value === null;
+
+
+/**
+ * @description Checks if the given value is null.
+ *
+ * @param {unknown} value - The value to check.
+ * @returns {boolean} True if the value is null, false otherwise.
+ */
+const _isNull = (value: unknown): value is null => value === null;
+
+
+/**
+ * @description Checks if the given value is undefined.
+ *
+ * @param {unknown} value - The value to check.
+ * @returns {boolean} True if the value is undefined, false otherwise.
+ */
+const _isUndefined = (value: unknown): value is undefined =>
+  typeof value === "undefined";
+
+
+/**
+ * @description Checks if the given value is a string.
+ *
+ * @param {unknown} value - The value to check.
+ * @returns {boolean} True if the value is a string, false otherwise.
+ */
+const _isString = (value: unknown): value is string =>
+  typeof value === "string";
+
+
+/**
+ * @description Checks if the given value is a number.
+ *
+ * @param {unknown} value - The value to check.
+ * @returns {boolean} True if the value is a number, false otherwise.
+ */
+const _isNumber = (value: unknown): value is number =>
+  typeof value === "number";
+
+
+/**
+ * @description Checks if the given value is a bigint.
+ *
+ * @param {unknown} value - The value to check.
+ * @returns {boolean} True if the value is a bigint, false otherwise.
+ */
+const _isBigInt = (value: unknown): value is bigint =>
+  typeof value === "bigint";
+
+
+/**
+ * @description Checks if the given value is a boolean.
+ *
+ * @param {unknown} value - The value to check.
+ * @returns {boolean} True if the value is a boolean, false otherwise.
+ */
+const _isBoolean = (value: unknown): value is boolean =>
+  typeof value === "boolean";
+
+
+/**
+ * @description Checks if the given value is a symbol.
+ *
+ * @param {unknown} value - The value to check.
+ * @returns {boolean} True if the value is a symbol, false otherwise.
+ */
+const _isSymbol = (value: unknown): value is symbol =>
+  typeof value === "symbol";
+
+
+/**
+ * @description Checks if the given value is a function.
+ *
+ * @param {unknown} value - The value to check.
+ * @returns {boolean} True if the value is a function, false otherwise.
+ */
+const _isFunction = (value: unknown): value is Function =>
+  typeof value === "function";
+
+
+/**
+ * @description Checks if the given value is an object.
+ *
+ * @param {unknown} value - The value to check.
+ * @returns {boolean} True if the value is  an object, false otherwise.
+ */
+const _isObject = (value: unknown): value is object =>
+  value != null && typeof value === "object";
+
+
+/**
  * @description This function is a general purpose, type safe, predictable stringifier. Converts a value into a human-readable string for error messages Handles symbols, functions, nullish, circular references, etc.
  *
  * @param {unknown} value The value to check.
@@ -433,15 +576,173 @@ function _toSafeString (value: unknown): string {
 
 /* isLessThan (value1: any, value2: any): boolean */
 /**
- * @description isLessThan
+ * @description Check value1 is less than value2.
  *
  * @param {Comparable} value1 The value1 to check.
  * @param {Comparable} value2 The value2 to check.
- * @returns {boolean}
+ * @returns {boolean} value1 is less than value2
  * @internal
  */
 const _isLessThan = (value1: Comparable, value2: Comparable): boolean =>
   _typeOf(value1) === _typeOf(value2) && value1 < value2;
+
+
+/**
+ * Checks if a key or value exists in a container.
+ *
+ * @param container The container to check.
+ * @param keyOrValue The key or value to look for.
+ * @param valueIfKey The value to check if the key exists.
+ * @returns True if the key or value exists, false otherwise.
+ * @internal
+ */
+function _includes<T extends object, K extends keyof T>(
+  container: T,
+  key: K,
+  valueIfKey?: T[K]
+): boolean;
+function _includes<T>(container: T[], value: T): boolean;
+function _includes<T extends ArrayBufferView>(container: T, value: number): boolean;
+function _includes<K, V>(container: Map<K, V>, key: K, valueIfKey?: V): boolean;
+function _includes<K extends object, V>(container: WeakMap<K, V>, key: K): boolean;
+function _includes<T>(container: Set<T>, value: T): boolean;
+function _includes<T extends object>(container: WeakSet<T>, value: T): boolean;
+function _includes<T>(container: Iterable<T>, keyOrValue: T): boolean;
+function _includes<T>(container: Iterator<T>, keyOrValue: T): boolean;
+function _includes<T>(container: IterableIterator<T>, keyOrValue: T): boolean;
+function _includes<T>(container: string, keyOrValue: any): boolean;
+function _includes<T>(container: String, keyOrValue: any): boolean;
+function _includes(container: unknown, keyOrValue: any, value?: any): boolean {
+  /* String */
+  if (typeof container === "string" || container instanceof String) {
+    return String(container).includes(keyOrValue);
+  }
+  /* Check for primitives, null, undefined */
+  if (container == null || typeof container !== "object") { return false; }
+  /* Map + WeakMap */
+  if (container instanceof Map || container instanceof WeakMap) {
+    if (!container.has(keyOrValue)) { return false; }
+    return value === undefined || Object.is(container.get(keyOrValue), value);
+  }
+  /* WeakSet */
+  if (container instanceof WeakSet) { return container.has(keyOrValue); }
+  /* Iterator */
+  if (typeof (container as any).next === "function") {
+    let it = container as any;
+    let res = it.next();
+    while (!res.done) {
+      if (Object.is(res.value, keyOrValue)) { return true; }
+      res = it.next();
+    }
+    return false;
+  }
+  /* Array + TypedArray + Set + Iterables */
+  if (Array.isArray(container)
+    || ArrayBuffer.isView(container)
+    || container instanceof Set
+    || typeof (container as any)[Symbol.iterator] === "function") {
+    for (const item of container as any) {
+      if (Object.is(item, keyOrValue)) { return true; }
+    }
+    return false;
+  }
+  /* Plain object */
+  if (!Object.hasOwn(container, keyOrValue)) { return false; }
+  return value === undefined || Object.is((container as any)[keyOrValue], value);
+}
+
+
+/**
+ * Checks if a value is empty.
+ *
+ * - `null`, `undefined`, and `NaN` are empty.
+ * - Arrays, TypedArrays, and strings are empty if length === 0.
+ * - Maps and Sets are empty if size === 0.
+ * - ArrayBuffer and DataView are empty if byteLength === 0.
+ * - Iterable objects are empty if they have no elements.
+ * - Plain objects are empty if they have no own properties.
+ *
+ * @param {any} value The value to check.
+ * @returns boolean
+ */
+function _isEmpty (value: any): boolean {
+  const _isObject = (value: unknown): value is object =>
+    value != null && (typeof value === "object" || typeof value === "function");
+  /**
+   * Checks if a value is a TypedArray (Int8Array, etc.).
+   *
+   * @param {any} value The value to check.
+   * @returns boolean
+   */
+  function _isTypedArray (value: any): boolean {
+    const constructors = [
+      Int8Array, Uint8Array, Uint8ClampedArray,
+      Int16Array, Uint16Array,
+      Int32Array, Uint32Array,
+      Float32Array, Float64Array,
+      BigInt64Array, BigUint64Array];
+    if ("Float16Array" in globalThis) {
+      constructors.push((globalThis as any).Float16Array);
+    }
+    return constructors.some((item): boolean => value instanceof item);
+  }
+  /* Check undefined, null, NaN */
+  if (value == null || Number.isNaN(value)) { return true; }
+  /* Check Array, TypedArrays, string, String */
+  if (Array.isArray(value)
+    || _isTypedArray(value)
+    || typeof value === "string"
+    || value instanceof String) {
+    return value.length === 0;
+  }
+  /* Check Map and Set */
+  if (value instanceof Map || value instanceof Set) { return value.size === 0; }
+  /* Check ArrayBuffer and DataView */
+  if (value instanceof ArrayBuffer || value instanceof DataView) {
+    return value.byteLength === 0;
+  }
+  /* Check Iterable objects */
+  if (typeof value[Symbol.iterator] === "function") {
+    const it = value[Symbol.iterator]();
+    return it.next().done; // avoids consuming entire iterator
+  }
+  /* Check Iterator objects */
+  if ("Iterator" in globalThis ? (value instanceof Iterator)
+    : (value != null && typeof value === "object"
+      && typeof value.next === "function")) {
+    try {
+      /* Has at least one element */
+      for (const _ of value) { return false; }
+      return true;
+    } catch { /* Not iterable */ }
+  }
+  /* Other objects - check own properties (including symbols) */
+  if (_isObject(value)) {
+    const keys: any[] = [
+      ...Object.getOwnPropertyNames(value),
+      ...Object.getOwnPropertySymbols(value)
+    ];
+    if (keys.length === 0) return true;
+    /* Special case: object with single "length" property that is 0 */
+    if (keys.length === 1
+      && keys[0] === "length"
+      && (value as { length?: unknown }).length === 0) {
+      return true;
+    }
+  }
+  /* Return default false */
+  return false;
+}
+
+
+/**
+ * @description Checks if the given value is Primitive.
+ *
+ * @param {unknown} value - The value to check.
+ * @returns True if the value is Primitive, false otherwise.
+ */
+const _isPrimitive = (value: unknown): value is Primitive =>
+  value == null || (typeof value !== "object" && typeof value !== "function");
 
 
 /* exported functions */
@@ -951,11 +1252,11 @@ function isNot (value: any, expectedType: ExpectedType, message?: any): void {
  * @returns {void}
  * @throws {assert.AssertionError} If assertion is failed.
  */
-function isNullish (value: unknown, message?: any): asserts value is null | undefined {
-  if (value != null) {
+function isNullish (value: unknown, message?: any): asserts value is Nullish {
+  if (!_isNullish(value)) {
     if (message instanceof Error) { throw message; }
     let errorMessage =
-      `[isNullish] Assertion failed: ${_toSafeString(value)} should be nullish${message ? " - " + _toSafeString(message) : ""}`;
+      `[isNullish] Assertion failed: ${_toSafeString(value)} should be null or undefined${message ? " - " + _toSafeString(message) : ""}`;
     throw new assert.AssertionError(errorMessage, {
       message: errorMessage,
       cause: errorMessage,
@@ -976,16 +1277,557 @@ function isNullish (value: unknown, message?: any): asserts value is null | unde
  * @throws {assert.AssertionError} If assertion is failed.
  */
 function isNotNullish (value: unknown, message?: any): asserts value is NonNullable<unknown> {
-  if (value == null) {
+  if (_isNullish(value)) {
     if (message instanceof Error) { throw message; }
     let errorMessage =
-      `[isNotNullish] Assertion failed: ${_toSafeString(value)} should be not nullish${message ? " - " + _toSafeString(message) : ""}`;
+      `[isNotNullish] Assertion failed: ${_toSafeString(value)} should be not null or undefined${message ? " - " + _toSafeString(message) : ""}`;
     throw new assert.AssertionError(errorMessage, {
       message: errorMessage,
       cause: errorMessage,
       actual: value,
       expected: null,
       operator: "=="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is `null`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isNull (value: unknown, message?: any): asserts value is null {
+  if (!_isNull(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isNull] Assertion failed: ${_toSafeString(value)} should be null ${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: null,
+      operator: "!=="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is not `null`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isNotNull (value: unknown, message?: any): asserts value is NonNullable<unknown> {
+  if (_isNull(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isNotNull] Assertion failed: ${_toSafeString(value)} should be not null ${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: null,
+      operator: "==="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is `undefined`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isUndefined (value: unknown, message?: any): asserts value is undefined {
+  if (!_isUndefined(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isUndefined] Assertion failed: ${_toSafeString(value)} should be undefined${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: undefined,
+      operator: "!=="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is not `undefined`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isNotUndefined (value: unknown, message?: any): void {
+  if (_isUndefined(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isNotUndefined] Assertion failed: ${_toSafeString(value)} should be not undefined${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: undefined,
+      operator: "==="
+    });
+  }
+}
+
+/**
+ * @description Ensures value is `string`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isString (value: unknown, message?: any): asserts value is string {
+  if (!_isString(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isString] Assertion failed: ${_toSafeString(value)} should be string${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: "string",
+      operator: "typeof !=="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is not `string`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isNotString (value: unknown, message?: any): void {
+  if (_isString(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isNotString] Assertion failed: ${_toSafeString(value)} should be not string${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: "string",
+      operator: "typeof ==="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is `number`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isNumber (value: unknown, message?: any): asserts value is number {
+  if (!_isNumber(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isNumber] Assertion failed: ${_toSafeString(value)} should be number${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: "number",
+      operator: "typeof !=="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is not `number`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isNotNumber (value: unknown, message?: any): void {
+  if (_isNumber(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isNotNumber] Assertion failed: ${_toSafeString(value)} should be not number${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: "number",
+      operator: "typeof ==="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is `bigint`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isBigInt (value: unknown, message?: any): asserts value is bigint {
+  if (!_isBigInt(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isBigInt] Assertion failed: ${_toSafeString(value)} should be bigint${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: "bigint",
+      operator: "typeof !=="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is not `bigint`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isNotBigInt (value: unknown, message?: any): void {
+  if (_isBigInt(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isNotBigInt] Assertion failed: ${_toSafeString(value)} should be not bigint${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: "bigint",
+      operator: "typeof ==="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is `boolean`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isBoolean (value: unknown, message?: any): asserts value is boolean {
+  if (!_isBoolean(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isBoolean] Assertion failed: ${_toSafeString(value)} should be boolean${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: "boolean",
+      operator: "typeof !=="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is not `boolean`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isNotBoolean (value: unknown, message?: any): void {
+  if (_isBoolean(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isNotBoolean] Assertion failed: ${_toSafeString(value)} should be not boolean${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: "boolean",
+      operator: "typeof ==="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is `symbol`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isSymbol (value: unknown, message?: any): asserts value is symbol {
+  if (!_isSymbol(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isSymbol] Assertion failed: ${_toSafeString(value)} should be symbol${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: "symbol",
+      operator: "typeof !=="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is not `symbol`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isNotSymbol (value: unknown, message?: any): void {
+  if (_isSymbol(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isNotSymbol] Assertion failed: ${_toSafeString(value)} should be not symbol${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: "symbol",
+      operator: "typeof ==="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is `function`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isFunction (value: unknown, message?: any): asserts value is Function {
+  if (!_isFunction(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isFunction] Assertion failed: ${_toSafeString(value)} should be function${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: "function",
+      operator: "typeof !=="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is not `function`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isNotFunction (value: unknown, message?: any): void {
+  if (_isFunction(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isNotFunction] Assertion failed: ${_toSafeString(value)} should be not function${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: "function",
+      operator: "typeof ==="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is `object`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isObject (value: unknown, message?: any): asserts value is object {
+  if (!_isObject(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isObject] Assertion failed: ${_toSafeString(value)} should be object${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: "object",
+      operator: "typeof !=="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is not `object`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isNotObject (value: unknown, message?: any): void {
+  if (_isObject(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isNotObject] Assertion failed: ${_toSafeString(value)} should be not object${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: "object",
+      operator: "typeof ==="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is not `object` or `function`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isPrimitive (value: unknown, message?: any): asserts value is Primitive {
+  if (!_isPrimitive(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isPrimitive] Assertion failed: ${_toSafeString(value)} should be not object or function${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: "",
+      operator: "isPrimitive"
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is `object` or `function`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isNotPrimitive (value: unknown, message?: any): asserts value is NonPrimitive {
+  if (_isPrimitive(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isNotPrimitive] Assertion failed: ${_toSafeString(value)} should be object or function${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: "",
+      operator: "isNotPrimitive"
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is empty.
+ * 
+ * - `null`, `undefined`, and `NaN` are empty.
+ * - Arrays, TypedArrays, and strings are empty if length === 0.
+ * - Maps and Sets are empty if size === 0.
+ * - ArrayBuffer and DataView are empty if byteLength === 0.
+ * - Iterable objects are empty if they have no elements.
+ * - Plain objects are empty if they have no own properties.
+ *
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isEmpty (value: unknown, message?: any): void {
+  if (!_isEmpty(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isEmpty] Assertion failed: ${_toSafeString(value)} should be empty${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: "",
+      operator: "isEmpty"
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is not empty.
+ *
+ * - `null`, `undefined`, and `NaN` are empty.
+ * - Arrays, TypedArrays, and strings are empty if length === 0.
+ * - Maps and Sets are empty if size === 0.
+ * - ArrayBuffer and DataView are empty if byteLength === 0.
+ * - Iterable objects are empty if they have no elements.
+ * - Plain objects are empty if they have no own properties.
+ * 
+ * @param {any} value The value to check.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isNotEmpty (value: unknown, message?: any): void {
+  if (_isEmpty(value)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[isNotEmpty] Assertion failed: ${_toSafeString(value)} should be not empty${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: "",
+      operator: "isNotEmpty"
     });
   }
 }
@@ -1001,7 +1843,7 @@ function isNotNullish (value: unknown, message?: any): asserts value is NonNulla
  * @throws {TypeError} If parameter types are not matched.
  * @throws {assert.AssertionError} If assertion is failed.
  */
-function match (string: string, regexp: RegExp, message?: any): void {
+function match (string: StringLike, regexp: RegExp, message?: any): void {
   if (typeof string !== "string") {
     if (message instanceof Error) { throw message; }
     throw new TypeError(
@@ -1016,10 +1858,10 @@ function match (string: string, regexp: RegExp, message?: any): void {
         + (message ? " - " + _toSafeString(message) : "")
     );
   }
-  if (!(regexp.test(string))) {
+  if (!(regexp.test(String(string)))) {
     if (message instanceof Error) { throw message; }
     let errorMessage =
-      `[match] Assertion failed: ${string} is not matched with ${regexp}${message ? " - " + _toSafeString(message) : ""}`;
+      `[match] Assertion failed: ${_toSafeString(string)} is not matched with ${_toSafeString(regexp)}${message ? " - " + _toSafeString(message) : ""}`;
     throw new assert.AssertionError(errorMessage, {
       message: errorMessage,
       cause: errorMessage,
@@ -1041,7 +1883,7 @@ function match (string: string, regexp: RegExp, message?: any): void {
  * @throws {TypeError} If parameter types are not matched.
  * @throws {assert.AssertionError} If assertion is failed.
  */
-function doesNotMatch (string: string, regexp: RegExp, message?: any): void {
+function doesNotMatch (string: StringLike, regexp: RegExp, message?: any): void {
   if (typeof string !== "string") {
     if (message instanceof Error) { throw message; }
     throw new TypeError(
@@ -1056,10 +1898,10 @@ function doesNotMatch (string: string, regexp: RegExp, message?: any): void {
         + (message ? " - " + _toSafeString(message) : "")
     );
   }
-  if (regexp.test(string)) {
+  if (regexp.test(String(string))) {
     if (message instanceof Error) { throw message; }
     let errorMessage =
-      `[doesNotMatch] Assertion failed: ${string} is matched with ${regexp}${message ? " - " + _toSafeString(message) : ""}`;
+      `[doesNotMatch] Assertion failed: ${_toSafeString(string)} is matched with ${_toSafeString(regexp)}${message ? " - " + _toSafeString(message) : ""}`;
     throw new assert.AssertionError(errorMessage, {
       message: errorMessage,
       cause: errorMessage,
@@ -1179,7 +2021,7 @@ function gte (value1: any, value2: any, message?: any): void {
  * @param {any} [message] - Optional message or Error to throw.
  * @throws {assert.AssertionError} If `actual` does not contain `substring`.
  */
-function stringContains(actual: string, substring: string, message?: any): void {
+function stringContains(actual: StringLike, substring: StringLike, message?: any): void {
   /* Type validation */
   if (typeof actual !== "string") {
     if (message instanceof Error) { throw message; }
@@ -1194,7 +2036,7 @@ function stringContains(actual: string, substring: string, message?: any): void 
     );
   }
   /* Assertion */
-  if (!actual.includes(substring)) {
+  if (!actual.includes(String(substring))) {
     if (message instanceof Error) { throw message; }
     let errorMessage =
       `[stringContains] Assertion failed: ${_toSafeString(actual)} does not contain substring ${_toSafeString(substring)}${message ? " - " + _toSafeString(message) : ""}`;
@@ -1217,7 +2059,7 @@ function stringContains(actual: string, substring: string, message?: any): void 
  * @param {any} [message] - Optional message or Error to throw.
  * @throws {assert.AssertionError} If `actual` contains `substring`.
  */
-function stringNotContains(actual: string, substring: string, message?: any): void {
+function stringNotContains(actual: StringLike, substring: StringLike, message?: any): void {
   /* Type validation */
   if (typeof actual !== "string") {
     if (message instanceof Error) { throw message; }
@@ -1232,7 +2074,7 @@ function stringNotContains(actual: string, substring: string, message?: any): vo
     );
   }
   /* Assertion */
-  if (actual.includes(substring)) {
+  if (actual.includes(String(substring))) {
     if (message instanceof Error) { throw message; }
     let errorMessage =
       `[stringNotContains] Assertion failed: ${_toSafeString(actual)} should not contain substring ${_toSafeString(substring)}${message ? " - " + _toSafeString(message) : ""}`;
@@ -1242,6 +2084,81 @@ function stringNotContains(actual: string, substring: string, message?: any): vo
       actual,
       expected: substring,
       operator: "stringNotContains"
+    });
+  }
+}
+
+
+/* objects */
+
+
+/**
+ * @description Ensures a container includes a key and value.
+ *
+ * @param {unknown} container The container to check.
+ * @param {IncludesOptions} options Options object with the checking key and value.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {TypeError} If parameter types are not matched.
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function includes (
+  container: unknown,
+  options: IncludesOptions,
+  message?: any): void {
+  if (typeof options !== "object") {
+    if (message instanceof Error) { throw message; }
+    throw new TypeError(
+      "[includes] TypeError: " + _toSafeString(options) + " is not an object"
+        + (message ? " - " + _toSafeString(message) : "")
+    );
+  }
+  if (!_includes(container as any, options.keyOrValue, options?.value ?? undefined)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[includes] Assertion failed: ${_toSafeString(container)} does not include ${_toSafeString(options)}${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: container,
+      expected: options,
+      operator: "includes"
+    });
+  }
+}
+
+
+/**
+ * @description Ensures a container does not include a key and value.
+ *
+ * @param {unknown} container The container to check.
+ * @param {IncludesOptions} options Options object with the checking key and value.
+ * @param {any} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {TypeError} If parameter types are not matched.
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function doesNotInclude (
+  container: unknown,
+  options: IncludesOptions,
+  message?: any): void {
+  if (typeof options !== "object") {
+    if (message instanceof Error) { throw message; }
+    throw new TypeError(
+      "[doesNotInclude] TypeError: " + _toSafeString(options) + " is not an object"
+        + (message ? " - " + _toSafeString(message) : "")
+    );
+  }
+  if (_includes(container as any, options.keyOrValue, options?.value ?? undefined)) {
+    if (message instanceof Error) { throw message; }
+    let errorMessage =
+      `[doesNotInclude] Assertion failed: ${_toSafeString(container)} does not include ${_toSafeString(options)}${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: container,
+      expected: options,
+      operator: "doesNotInclude"
     });
   }
 }
@@ -1319,6 +2236,28 @@ assert["is"] = is;
 assert["isNot"] = isNot;
 assert["isNullish"] = isNullish;
 assert["isNotNullish"] = isNotNullish;
+assert["isNull"] = isNull;
+assert["isNotNull"] = isNotNull;
+assert["isUndefined"] = isUndefined;
+assert["isNotUndefined"] = isNotUndefined;
+assert["isString"] = isString;
+assert["isNotString"] = isNotString;
+assert["isNumber"] = isNumber;
+assert["isNotNumber"] = isNotNumber;
+assert["isBigInt"] = isBigInt;
+assert["isNotBigInt"] = isNotBigInt;
+assert["isBoolean"] = isBoolean;
+assert["isNotBoolean"] = isNotBoolean;
+assert["isSymbol"] = isSymbol;
+assert["isNotSymbol"] = isNotSymbol;
+assert["isFunction"] = isFunction;
+assert["isNotFunction"] = isNotFunction;
+assert["isObject"] = isObject;
+assert["isNotObject"] = isNotObject;
+assert["isPrimitive"] = isPrimitive;
+assert["isNotPrimitive"] = isNotPrimitive;
+assert["isEmpty"] = isEmpty;
+assert["isNotEmpty"] = isNotEmpty;
 assert["match"] = match;
 assert["doesNotMatch"] = doesNotMatch;
 assert["lt"] = lt;
@@ -1327,6 +2266,8 @@ assert["gt"] = gt;
 assert["gte"] = gte;
 assert["stringContains"] = stringContains;
 assert["stringNotContains"] = stringNotContains;
+assert["includes"] = includes;
+assert["doesNotInclude"] = doesNotInclude;
 /* test functions */
 assert["testSync"] = testSync;
 assert["testAsync"] = testAsync;
