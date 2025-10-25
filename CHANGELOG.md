@@ -1,9 +1,10 @@
 
 # assert.js version history
 
-## assert.js v1.0.0
+## assert.js v1.0.2
 
-First stable version.
+1. Documentation, pdf and code fixes.
+2. Add these functions: `assert.isNaN();`, `assert.isNotNaN();`
 
 ## assert.js v1.0.1
 
@@ -36,3 +37,7 @@ First stable version.
 - `assert.isNotFunction();`
 - `assert.isObject();`
 - `assert.isNotObject();`
+
+## assert.js v1.0.0
+
+First stable version.

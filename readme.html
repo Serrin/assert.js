@@ -31,9 +31,9 @@ body {
 
 <h1 class="center">assert.js</h1>
 
-<p>Latest version: 1.0.1</p>
+<p>Latest version: 1.0.2</p>
 
-<p>Date: 2025-10-22T17:36:34.617Z</p>
+<p>Date: 2025-09-03T08:30:47.486Z</p>
 
 <p>A modern, zero-dependency assertion library for Node.js, Deno and browser (ESM) environments.</p>
 
@@ -100,7 +100,7 @@ body {
   </tr>
   <tr>
     <td>Type</td>
-    <td><code>assert.is();</code>, <code>assert.isNot();</code>, <code>assert.isPrimitive();</code>, <code>assert.isNotPrimitive();</code>, <code>assert.isNullish();</code>, <code>assert.isNotNullish();</code>, <code>assert.isNull();</code>, <code>assert.isNotNull();</code>, <code>assert.isUndefined();</code>, <code>assert.isNotUndefined();</code>, <code>assert.isString();</code>, <code>assert.isNotString();</code>, <code>assert.isNumber();</code>, <code>assert.isNotNumber();</code>, <code>assert.isBigInt();</code>, <code>assert.isNotBigInt();</code>, <code>assert.isBoolean();</code>, <code>assert.isNotBoolean();</code>, <code>assert.isSymbol();</code>, <code>assert.isNotSymbol();</code>, <code>assert.isFunction();</code>, <code>assert.isNotFunction();</code>, <code>assert.isObject();</code>, <code>assert.isNotObject();</code></td>
+    <td><code>assert.is();</code>, <code>assert.isNot();</code>, <code>assert.isPrimitive();</code>, <code>assert.isNotPrimitive();</code>, <code>assert.isNullish();</code>, <code>assert.isNotNullish();</code>, <code>assert.isNull();</code>, <code>assert.isNotNull();</code>, <code>assert.isUndefined();</code>, <code>assert.isNotUndefined();</code>, <code>assert.isString();</code>, <code>assert.isNotString();</code>, <code>assert.isNumber();</code>, <code>assert.isNotNumber();</code>, <code>assert.isBigInt();</code>, <code>assert.isNotBigInt();</code>, <code>assert.isBoolean();</code>, <code>assert.isNotBoolean();</code>, <code>assert.isSymbol();</code>, <code>assert.isNotSymbol();</code>, <code>assert.isFunction();</code>, <code>assert.isNotFunction();</code>, <code>assert.isObject();</code>, <code>assert.isNotObject();</code>, <code>assert.isNaN();</code>, <code>assert.isNotNaN();</code></td>
   </tr>
   <tr>
     <td>Testrunner</td>
@@ -157,7 +157,7 @@ globalThis.assert = assert;</pre>
 
 <p>Returns the library version string.</p>
 
-<pre>console.log(assert.VERSION); // "assert.js v1.0.1"</pre>
+<pre>console.log(assert.VERSION); // "assert.js v1.0.2"</pre>
 
 <hr>
 
@@ -719,6 +719,26 @@ assert.isNotNullish("ok"); // passes
 
 <pre>assert.isNotObject(null); // passes
 // assert.isNotObject({a: 1}); // throws an error</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNaN(value, [message: string | Error]);</h3>
+
+<p>Added in v1.0.2</p>
+
+Ensures value is <code>number</code> and <code>NaN</code>.
+
+<pre>assert.isNaN(0 / 0); // passes
+// assert.isNaN(42); // throws an error
+// assert.isNaN("foo"); // throws an error</pre>
+
+<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNotNaN(value, [message: string | Error]);</h3>
+
+<p>Added in v1.0.2</p>
+
+Ensures value is <em>not</em> <code>number</code> and <em>not</em> <code>NaN</code>.
+
+<pre>assert.isNotObject(42); // passes
+assert.isNotObject("foo"); // passes
+// assert.isNotObject(0 /0); // throws an error</pre>
 
 <hr>
 

@@ -2,7 +2,7 @@
 "use strict";
 
 
-/* assert.js v1.0.1 testcases for ESM environment */
+/* assert.js v1.0.2 testcases for ESM environment */
 
 
 /**
@@ -472,6 +472,14 @@ function autoTestSync () {
   unitTest("assert.isNotEmpty(); 21", false, () => assert.isNotEmpty(new DataView(new ArrayBuffer(2))));
   unitTest("assert.isNotEmpty(); 22", false, () => assert.isNotEmpty([1,2].values()));
   unitTest("assert.isNotEmpty(); 23", false, () => assert.isNotEmpty({"a": 1}));
+
+  unitTest("assert.isNaN(); 01", false, () => assert.isNaN(NaN));
+  unitTest("assert.isNaN(); 02", true, () => assert.isNaN(42));
+  unitTest("assert.isNaN(); 02", true, () => assert.isNaN(true));
+
+  unitTest("assert.isNotNaN(); 01", true, () => assert.isNotNaN(NaN));
+  unitTest("assert.isNotNaN(); 02", false, () => assert.isNotNaN(42));
+  unitTest("assert.isNotNaN(); 02", false, () => assert.isNotNaN(true));
 
   alert("End of the sync test.");
 }
