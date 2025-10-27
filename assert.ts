@@ -10,14 +10,14 @@
 
 /**
  * @name assert.js
- * @version 1.0.2
+ * @version 1.0.3
  * @author Ferenc Czigler
  * @see https://github.com/Serrin/assert.js/
  * @license MIT https://opensource.org/licenses/MIT
  */
 
 
-const VERSION = "assert.js v1.0.2";
+const VERSION = "assert.js v1.0.3";
 
 
 /*
@@ -30,6 +30,16 @@ https://firefox-source-docs.mozilla.org/testing/assert.html
 
 
 /* TypeScript types */
+
+
+/**
+ * @description False like values.
+ * @see https://developer.mozilla.org/en-US/docs/Glossary/Falsy
+ * Missing values: NaN and document.all
+ *
+ * @internal
+ * */
+type Falsy = null | undefined | false | 0 | -0 | 0n | "";
 
 
 /**
@@ -73,7 +83,9 @@ type AssertionErrorOptions = {
  *
  * @internal
  * */
-type TestResult<T> = { ok: true; value: T } | { ok: false; error: Error };
+type TestResult<T> =
+  | {ok: true, value: T, block: Function, name: string}
+  | {ok: false, error: Error, block: Function, name: string};
 
 /**
  * @description Return the typeof operator result of the given value,
@@ -126,7 +138,7 @@ type NonNullablePrimitive = number | bigint | boolean | string | symbol;
  *
  * @internal
  */
-type Primitive = NonNullablePrimitive | null | undefined;
+type Primitive = Nullish | NonNullablePrimitive;
 
 /**
  * @description Object or function.
@@ -134,6 +146,77 @@ type Primitive = NonNullablePrimitive | null | undefined;
  * @internal
  */
 type NonPrimitive = object | Function;
+
+/**
+ * @description All basic types.
+ *
+ * @internal
+ */
+type AllType = Primitive | NonPrimitive;
+
+/**
+ * @description Every types except the `undefined`.
+ *
+ * @internal
+ */
+type NonUndefined = Exclude<AllType, undefined>;
+
+/**
+ * @description Every types except the `null`.
+ *
+ * @internal
+ */
+type NonNull = Exclude<AllType, null>;
+
+/**
+ * @description Every types except the `number`.
+ *
+ * @internal
+ */
+type NonNumber = Exclude<AllType, number>;
+
+/**
+ * @description Every types except the `bigint`.
+ *
+ * @internal
+ */
+type NonBigInt = Exclude<AllType, bigint>;
+
+/**
+ * @description Every types except the `boolean`.
+ *
+ * @internal
+ */
+type NonBoolean = Exclude<AllType, boolean>;
+
+/**
+ * @description Every types except the `string`.
+ *
+ * @internal
+ */
+type NonString = Exclude<AllType, string>;
+
+/**
+ * @description Every types except the `symbol`.
+ *
+ * @internal
+ */
+type NonSymbol = Exclude<AllType, symbol>;
+
+/**
+ * @description Every types except the `object`.
+ * Function is a subtype of object, excluding object would also remove Function.
+ *
+ * @internal
+ */
+type NonObject = (Exclude<AllType, object>) | Function;
+
+/**
+ * @description Every types except the `function`.
+ *
+ * @internal
+ */
+type NonFunction = Exclude<AllType, Function>;
 
 
 /** polyfills **/
@@ -373,7 +456,7 @@ function _isDeepStrictEqual (value1: any, value2: any): boolean {
  * @param {ExpectedType | undefined} [expectedType] - The type(s) for checking.
  * @param {boolean} Throw Default false.
  * @returns {boolean} True if the value is the given type(s), false otherwise.
- * @throws If Throw is true and type check is failed.
+ * @throws If Throw is true and type checking is failed.
  * @internal
  */
 function _isType (
@@ -404,7 +487,7 @@ function _isType (
   /* Normalize expected to an array */
   let expectedArray: Array<string | Function> =
     Array.isArray(expectedType) ? expectedType : [expectedType];
-  /* Check against expected types or constructors */
+  /* Checks against expected types or constructors */
   let matched: boolean = expectedArray.some(
     function (item: string | Function) {
       if (_isString(item)) { return vType === item; }
@@ -596,15 +679,34 @@ function _toSafeString (value: unknown): string {
 
 
 /**
- * @description Check value1 is less than value2.
+ * @description Checks value1 is less than value2.
  *
  * @param {Comparable} value1 The value1 to check.
  * @param {Comparable} value2 The value2 to check.
- * @returns {boolean} value1 is less than value2
+ * @returns {boolean} value1 is less than value2.
  * @internal
  */
 const _isLessThan = (value1: Comparable, value2: Comparable): boolean =>
   _typeOf(value1) === _typeOf(value2) && value1 < value2;
+
+
+/**
+ * @description Checks value is greater than or equal min and value is less than or equal max.
+ *
+ * @param {Comparable} value The value1 to check.
+ * @param {Comparable} min The value2 to check.
+ * @param {Comparable} max The value2 to check.
+ * @returns {boolean} value is greater than or equal min and value is less than or equal max.
+ * @internal
+ */
+const _inRange = (value: Comparable, min: Comparable, max: Comparable): boolean =>
+  _typeOf(value) === _typeOf(min)
+    && _typeOf(min) === _typeOf(max)
+    && (
+      (min < value && value < max)
+      || Object.is(value, min)
+      || Object.is(value, max)
+    );
 
 
 /**
@@ -714,7 +816,7 @@ function _isEmpty (value: any): boolean {
     || value instanceof String) {
     return value.length === 0;
   }
-  /* Check Map and Set */
+  /* Checks Map and Set */
   if (value instanceof Map || value instanceof Set) { return value.size === 0; }
   /* Check ArrayBuffer and DataView */
   if (value instanceof ArrayBuffer || value instanceof DataView) {
@@ -768,11 +870,16 @@ const _isPrimitive = (value: unknown): value is Primitive =>
  * @description If value is an error, then it will be thrown.
  *
  * @param {unknown} value - The value to check.
- * @returns void
+ * @returns {void}
  * @internal
  */
 function _errorCheck (value: unknown): void {
-  if (_isError(value)) { throw value; }
+  if (_isError(value)) {
+    if (typeof (Error as any).captureStackTrace === "function") {
+      (Error as any).captureStackTrace(assert, value);
+    }
+    throw value;
+  }
 }
 
 
@@ -809,7 +916,7 @@ class AssertionError extends Error {
 }
 
 /**
- * @description Checks that `condition` is truthy. Throws an `AssertionError` if falsy.
+ * @description Ensures that `condition` is truthy. Throws an `AssertionError` if falsy.
  *
  * @param {unknown} condition The value to check.
  * @param {unknown} [message] - Optional message or Error to throw.
@@ -996,7 +1103,7 @@ function notDeepEqual (actual: unknown, expected: unknown, message?: unknown): v
 
 
 /**
- * @description Checks that a function throws.
+ * @description Ensures that a function throws.
  *
  * @param {Function} block
  * @param {unknown} Error_opt
@@ -1144,7 +1251,7 @@ async function doesNotReject (block: Function, Error_opt?: unknown, message?: un
  *
  * @param {unknown} [message] - Optional message or Error to throw.
  * @returns {void}
- * @throws {assert.AssertionError} If assertion is failed.
+ * @throws {assert.AssertionError}
  */
 function fail (message?: unknown): void {
   _errorCheck(message);
@@ -1162,7 +1269,7 @@ function fail (message?: unknown): void {
  * @returns {void}
  * @throws {assert.AssertionError} If assertion is failed.
  */
-function notOk (condition: unknown, message?: unknown): void {
+function notOk (condition: unknown, message?: unknown): asserts condition is Falsy {
   if (condition) {
     _errorCheck(message);
     let errorMessage =
@@ -1235,7 +1342,10 @@ function isFalse (condition: unknown, message?: unknown): asserts condition is f
  * @returns {void}
  * @throws {assert.AssertionError} If assertion is failed.
  */
-function is (value: unknown, expectedType: ExpectedType, message?: unknown): void {
+function is (
+  value: unknown,
+  expectedType: ExpectedType,
+  message?: unknown): void {
   if (!_isType(value, expectedType, false)) {
     _errorCheck(message);
     let errorMessage =
@@ -1356,7 +1466,7 @@ function isNull (value: unknown, message?: unknown): asserts value is null {
  * @returns {void}
  * @throws {assert.AssertionError} If assertion is failed.
  */
-function isNotNull (value: unknown, message?: unknown): asserts value is NonNullable<unknown> {
+function isNotNull (value: unknown, message?: unknown): asserts value is NonNull {
   if (_isNull(value)) {
     _errorCheck(message);
     let errorMessage =
@@ -1404,7 +1514,7 @@ function isUndefined (value: unknown, message?: unknown): asserts value is undef
  * @returns {void}
  * @throws {assert.AssertionError} If assertion is failed.
  */
-function isNotUndefined (value: unknown, message?: unknown): void {
+function isNotUndefined (value: unknown, message?: unknown): asserts value is NonUndefined {
   if (_isUndefined(value)) {
     _errorCheck(message);
     let errorMessage =
@@ -1418,6 +1528,7 @@ function isNotUndefined (value: unknown, message?: unknown): void {
     });
   }
 }
+
 
 /**
  * @description Ensures value is `string`.
@@ -1451,7 +1562,7 @@ function isString (value: unknown, message?: unknown): asserts value is string {
  * @returns {void}
  * @throws {assert.AssertionError} If assertion is failed.
  */
-function isNotString (value: unknown, message?: unknown): void {
+function isNotString (value: unknown, message?: unknown): asserts value is NonString {
   if (_isString(value)) {
     _errorCheck(message);
     let errorMessage =
@@ -1499,7 +1610,7 @@ function isNumber (value: unknown, message?: unknown): asserts value is number {
  * @returns {void}
  * @throws {assert.AssertionError} If assertion is failed.
  */
-function isNotNumber (value: unknown, message?: unknown): void {
+function isNotNumber (value: unknown, message?: unknown): asserts value is NonNumber {
   if (_isNumber(value)) {
     _errorCheck(message);
     let errorMessage =
@@ -1547,7 +1658,7 @@ function isBigInt (value: unknown, message?: unknown): asserts value is bigint {
  * @returns {void}
  * @throws {assert.AssertionError} If assertion is failed.
  */
-function isNotBigInt (value: unknown, message?: unknown): void {
+function isNotBigInt (value: unknown, message?: unknown): asserts value is NonBigInt {
   if (_isBigInt(value)) {
     _errorCheck(message);
     let errorMessage =
@@ -1595,7 +1706,7 @@ function isBoolean (value: unknown, message?: unknown): asserts value is boolean
  * @returns {void}
  * @throws {assert.AssertionError} If assertion is failed.
  */
-function isNotBoolean (value: unknown, message?: unknown): void {
+function isNotBoolean (value: unknown, message?: unknown): asserts value is NonBoolean {
   if (_isBoolean(value)) {
     _errorCheck(message);
     let errorMessage =
@@ -1643,7 +1754,7 @@ function isSymbol (value: unknown, message?: unknown): asserts value is symbol {
  * @returns {void}
  * @throws {assert.AssertionError} If assertion is failed.
  */
-function isNotSymbol (value: unknown, message?: unknown): void {
+function isNotSymbol (value: unknown, message?: unknown): asserts value is NonSymbol {
   if (_isSymbol(value)) {
     _errorCheck(message);
     let errorMessage =
@@ -1691,7 +1802,7 @@ function isFunction (value: unknown, message?: unknown): asserts value is Functi
  * @returns {void}
  * @throws {assert.AssertionError} If assertion is failed.
  */
-function isNotFunction (value: unknown, message?: unknown): void {
+function isNotFunction (value: unknown, message?: unknown): asserts value is NonFunction {
   if (_isFunction(value)) {
     _errorCheck(message);
     let errorMessage =
@@ -1739,7 +1850,7 @@ function isObject (value: unknown, message?: unknown): asserts value is object {
  * @returns {void}
  * @throws {assert.AssertionError} If assertion is failed.
  */
-function isNotObject (value: unknown, message?: unknown): void {
+function isNotObject (value: unknown, message?: unknown): asserts value is NonObject {
   if (_isObject(value)) {
     _errorCheck(message);
     let errorMessage =
@@ -1994,7 +2105,7 @@ function doesNotMatch (string: StringLike, regexp: RegExp, message?: unknown): v
 
 
 /**
- * @description Checks `a < b`, but the value types have to be same type.
+ * @description Ensures `a < b` and value types have to be same type.
  *
  * @param {any} value1 The value1 to check.
  * @param {any} value2 The value2 to check.
@@ -2019,7 +2130,7 @@ function lt (value1: any, value2: any, message?: unknown): void {
 
 
 /**
- * @description Checks `a >= b`, but the value types have to be same type.
+ * @description Ensures `a >= b` and value types have to be same type.
  *
  * @param {any} value1 The value1 to check.
  * @param {any} value2 The value2 to check.
@@ -2044,7 +2155,7 @@ function lte (value1: any, value2: any, message?: any): void {
 
 
 /**
- * @description Checks `a > b`, but the value types have to be same type.
+ * @description Ensures `a > b` and value types have to be same type.
  *
  * @param {any} value1 The value1 to check.
  * @param {any} value2 The value2 to check.
@@ -2069,7 +2180,7 @@ function gt (value1: any, value2: any, message?: any): void {
 
 
 /**
- * @description Checks `a <= b`, but the value types have to be same type.
+ * @description Ensures `a <= b` and value types have to be same type.
  *
  * @param {any} value1 The value1 to check.
  * @param {any} value2 The value2 to check.
@@ -2094,11 +2205,64 @@ function gte (value1: any, value2: any, message?: unknown): void {
 
 
 /**
+ * @description Ensures `min <= value <= max` and the value types have to be same type.
+ *
+ * @param {any} value The value to check.
+ * @param {any} min The min value to check.
+ * @param {any} max The max value to check.
+ * @param {unknown} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function inRange (value: any, min: any, max: any, message?: unknown): void {
+  if (!_inRange(value, min, max)) {
+    _errorCheck(message);
+    let errorMessage =
+      `[inRange] Assertion failed: ${_toSafeString(value)} should be in range ${_toSafeString(min)} and ${max} or the type of the values are not the same${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: `${_toSafeString(min)} and ${_toSafeString(max)}`,
+      operator: "inRange"
+    });
+  }
+}
+
+
+/**
+ * @description Inverse of `inRange(value, min, max, [message: string | Error]);`.
+ *
+ * @param {any} value The value to check.
+ * @param {any} min The min value to check.
+ * @param {any} max The max value to check.
+ * @param {unknown} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function notInRange (value: any, min: any, max: any, message?: unknown): void {
+  if (_inRange(value, min, max)) {
+    _errorCheck(message);
+    let errorMessage =
+      `[notInRange] Assertion failed: ${_toSafeString(value)} should be not in range ${_toSafeString(min)} and ${max}${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: value,
+      expected: `${_toSafeString(min)} and ${_toSafeString(max)}`,
+      operator: "notInRange"
+    });
+  }
+}
+
+
+/**
  * @description Asserts that `actual` (a string) contains the specified `substring`.
  *
  * @param {string} actual - The string to check.
  * @param {string} substring - The substring expected to appear within `actual`.
  * @param {unknown} [message] - Optional message or Error to throw.
+ * @returns {void}
  * @throws {assert.AssertionError} If `actual` does not contain `substring`.
  */
 function stringContains(actual: StringLike, substring: StringLike, message?: unknown): void {
@@ -2137,6 +2301,7 @@ function stringContains(actual: StringLike, substring: StringLike, message?: unk
  * @param {string} actual - The string to check.
  * @param {string} substring - The substring that must not appear in `actual`.
  * @param {unknown} [message] - Optional message or Error to throw.
+ * @returns {void}
  * @throws {assert.AssertionError} If `actual` contains `substring`.
  */
 function stringNotContains(actual: StringLike, substring: StringLike, message?: unknown): void {
@@ -2253,13 +2418,15 @@ function doesNotInclude (
  * @param {Function} block - The function to execute.
  * @returns {TestResult<T>} The result of the block if successful, or the caught error if it throws.
  */
-function testSync<T>(block: () => T): TestResult<T> {
+function testSync<T>(block: () => T, name = "assert.testSync"): TestResult<T> {
   try {
-    return { ok: true, value: block() };
+    return {ok: true, value: block(), block: block, name: _toSafeString(name)};
   } catch (error) {
     return {
       ok: false,
       error: _isError(error) ? error : new Error(String(error)),
+      block: block,
+      name: _toSafeString(name)
     };
   }
 }
@@ -2271,13 +2438,17 @@ function testSync<T>(block: () => T): TestResult<T> {
  * @param {Function} block - The async function to execute.
  * @returns {Promise<TestResult<T>>} A promise that resolves to either the result or an Error.
  */
-async function testAsync<T>(block: () => Promise<T>): Promise<TestResult<T>> {
+async function testAsync<T>(
+  block: () => Promise<T>,
+  name = "assert.testAsync"): Promise<TestResult<T>> {
   try {
-    return { ok: true, value: await block() };
+    return { ok: true, value: await block(), block: block, name: _toSafeString(name) };
   } catch (error) {
     return {
       ok: false,
       error: _isError(error) ? error : new Error(String(error)),
+      block: block,
+      name: _toSafeString(name)
     };
   }
 }
@@ -2289,7 +2460,7 @@ async function testAsync<T>(block: () => Promise<T>): Promise<TestResult<T>> {
  * @param {TestResult<T>} result - The result to check.
  * @returns {boolean} True if the result is successful, false otherwise.
  */
-function testCheck<T>(result: TestResult<T>): result is { ok: true; value: T} {
+function testCheck<T>(result: TestResult<T>): result is { ok: true; value: T, block: Function, name: string} {
   return result.ok;
 }
 
@@ -2346,6 +2517,8 @@ assert["lt"] = lt;
 assert["lte"] = lte;
 assert["gt"] = gt;
 assert["gte"] = gte;
+assert["inRange"] = inRange;
+assert["notInRange"] = notInRange;
 assert["stringContains"] = stringContains;
 assert["stringNotContains"] = stringNotContains;
 assert["includes"] = includes;

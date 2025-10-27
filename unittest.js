@@ -2,7 +2,7 @@
 "use strict";
 
 
-/* assert.js v1.0.2 testcases for ESM environment */
+/* assert.js v1.0.3 testcases for ESM environment */
 
 
 /**
@@ -211,16 +211,26 @@ function autoTestSync () {
     );
   }
 
-  if (assert.testCheck(assert.testSync(() => 42))) {
-    /* alert("testSync(); 01 - passed"); */
+  let testSyncResult01 = assert.testSync(() => 42);
+  if (assert.testCheck(testSyncResult01)) {
+    assert.isFunction(testSyncResult01.block, "testSync(); 01 - passed - block");
+    assert.isString(testSyncResult01.name, "testSync(); 01 - passed - name");
+    /* console.log("testSync(); 01 - passed"); */
   } else {
-    alert("testSync(); 01 - failed");
+    assert.isFunction(testSyncResult01.block, "testSync(); 01 - failed - block");
+    assert.isString(testSyncResult01.name, "testSync(); 01 - failed - name");
+    console.error("testSync(); 01 - failed");
   }
 
-  if (assert.testCheck(assert.testSync(function () { throw new Error("lorem"); }))) {
-    alert("testSync(); 02 - failed");
+  let testSyncResult02 = assert.testSync(function () { throw new Error("lorem"); })
+  if (assert.testCheck(testSyncResult02)) {
+    assert.isFunction(testSyncResult02.block, "testSync(); 02 - failed - block");
+    assert.isString(testSyncResult02.name, "testSync(); 02 - failed - name");
+    console.error("testSync(); 02 - failed");
   } else {
-    /* alert("testSync(); 02 - passed"); */
+    /* console.log("testSync(); 02 - passed"); */
+    assert.isFunction(testSyncResult02.block, "testSync(); 02 - passed - block");
+    assert.isString(testSyncResult02.name, "testSync(); 02 - passed - name");
   }
 
   unitTest("assert.includes(); 01a", true, () => assert.includes("lorem", 42));
@@ -481,6 +491,30 @@ function autoTestSync () {
   unitTest("assert.isNotNaN(); 02", false, () => assert.isNotNaN(42));
   unitTest("assert.isNotNaN(); 02", false, () => assert.isNotNaN(true));
 
+  unitTest("assert.inRange(); 01", false, () => assert.inRange(0, -1, 1));
+  unitTest("assert.inRange(); 02", false, () => assert.inRange(-1, -1, 1));
+  unitTest("assert.inRange(); 03", false, () => assert.inRange(1, -1, 1));
+  unitTest("assert.inRange(); 04", false, () => assert.inRange(1n, -1n, 1n));
+  unitTest("assert.inRange(); 05", false, () => assert.inRange(0n, -1n, 1n));
+  unitTest("assert.inRange(); 06", false, () => assert.inRange(-1n, -1n, 1n));
+  unitTest("assert.inRange(); 07", true, () => assert.inRange(-2, -1, 1));
+  unitTest("assert.inRange(); 08", true, () => assert.inRange(2, -1, 1));
+  unitTest("assert.inRange(); 09", true, () => assert.inRange(1, -1n, 1));
+  unitTest("assert.inRange(); 10a", true, () => assert.inRange(1, -1n, 1n));
+  unitTest("assert.inRange(); 10b", true, () => assert.inRange(1, -1n, 1n, "lorem"));
+
+  unitTest("assert.notInRange(); 01", true, () => assert.notInRange(0, -1, 1));
+  unitTest("assert.notInRange(); 02", true, () => assert.notInRange(-1, -1, 1));
+  unitTest("assert.notInRange(); 03", true, () => assert.notInRange(1, -1, 1));
+  unitTest("assert.notInRange(); 04", true, () => assert.notInRange(1n, -1n, 1n));
+  unitTest("assert.notInRange(); 05", true, () => assert.notInRange(0n, -1n, 1n));
+  unitTest("assert.notInRange(); 06a", true, () => assert.notInRange(-1n, -1n, 1n));
+  unitTest("assert.notInRange(); 06b", true, () => assert.notInRange(-1n, -1n, 1n, "lorem"));
+  unitTest("assert.notInRange(); 07", false, () => assert.notInRange(-2, -1, 1));
+  unitTest("assert.notInRange(); 08", false, () => assert.notInRange(2, -1, 1));
+  unitTest("assert.notInRange(); 09", false, () => assert.notInRange(1, -1n, 1));
+  unitTest("assert.notInRange(); 10", false, () => assert.notInRange(1, -1n, 1n));
+
   alert("End of the sync test.");
 }
 
@@ -527,18 +561,26 @@ async function autoTestAsync () {
   (async () => {
     const result = await assert.testAsync(async function () { return 42; });
     if (assert.testCheck(result)) {
-      /* alert("testAsync(); 01 - passed"); */
+      assert.isFunction(result.block, "testAsync(); 01 - passed - block");
+      assert.isString(result.name, "testAsync(); 01 - passed - name");
+      /* console.log("testAsync(); 01 - passed"); */
     } else {
-      alert("testAsync(); 01 - failed");
+      assert.isFunction(result.block, "testAsync(); 01 - failed - block");
+      assert.isString(result.name, "testAsync(); 01 - failed - name");
+      console.error("testAsync(); 01 - failed");
     }
   })();
 
   (async () => {
     const result = await assert.testAsync(async function () { throw new Error("lorem"); });
     if (assert.testCheck(result)) {
-      alert("testAsync(); 02 - failed");
+      assert.isFunction(result.block, "testAsync(); 02 - failed - block");
+      assert.isString(result.name, "testAsync(); 02 - failed - name");
+      console.log("testAsync(); 02 - failed");
     } else {
-      /* alert("testAsync(); 02 - passed"); */
+      assert.isFunction(result.block, "testAsync(); 02 - passed - block");
+      assert.isString(result.name, "testAsync(); 02 - passed - name");
+      /* console.error("testAsync(); 02 - passed"); */
     }
   })();
 

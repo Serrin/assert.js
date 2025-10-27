@@ -9,12 +9,10 @@
 <meta name="Copyright" content="(C) Copyright Czigler Ferenc" />
 <link rel="stylesheet" href="u87.css" type="text/css" />
 <script type="module">
-// Import the assert function
-//import assert from "./assert.js";
-//globalThis.assert = assert;
-// Import the assert function as defaultExport
-import defaultExport from "./assert.js";
-globalThis.assert = defaultExport;
+import assert from "./assert.js";
+globalThis.assert = assert;
+//import defaultExport from "./assert.js";
+//globalThis.assert = defaultExport;
 </script>
 <script src="unittest.js"></script>
 <style>
@@ -29,11 +27,11 @@ body {
 </head>
 <body>
 
-<h1 class="center">assert.js</h1>
+<h1 id="top" class="center">assert.js</h1>
 
-<p>Latest version: 1.0.2</p>
+<p>Latest version: 1.0.3</p>
 
-<p>Date: 2025-10-25T15:59:06.551Z</p>
+<p>Date: 2025-10-27T19:53:27.654Z</p>
 
 <p>A modern, zero-dependency assertion library for Node.js, Deno and browser (ESM) environments.</p>
 
@@ -41,7 +39,7 @@ body {
 
 <hr>
 
-<h2>Autotest</h2>
+<h2 id="category-Autotest">Autotest</h2>
 
 <p>
   &nbsp;
@@ -55,56 +53,56 @@ body {
 
 <hr>
 
-<h2>Summary</h2>
+<h2 id="Summary">Summary</h2>
 <table class="table-responsive-sm table-striped">
   <tr>
     <th><strong>Category</strong></th>
     <th><strong>Assertions</strong></th>
   </tr>
   <tr>
-    <td>Constants</td>
-    <td><code>assert.VERSION;</code></td>
+    <td><a href="#category-Constants">Constants</a></td>
+    <td><a href ="#fn-VERSION"><code>assert.VERSION;</code></a></td>
   </tr>
   <tr>
-    <td>Errors</td>
-    <td><code>assert.AssertionError</code></td>
+    <td><a href="#category-Errors">Errors</a></td>
+    <td><a href ="#fn-AssertionError"><code>assert.AssertionError</code></a></td>
   </tr>
   <tr>
-    <td>Basic</td>
-    <td><code>assert();</code>, <code>assert.ok();</code>, <code>assert.notOk();</code>, <code>assert.fail();</code></td>
+    <td><a href="#category-Basic">Basic</a></td>
+    <td><a href ="#fn-assert"><code>assert();</code></a>, <a href ="#fn-ok"><code>assert.ok();</code></a>, <a href ="#fn-notOk"><code>assert.notOk();</code></a>, <a href ="#fn-fail"><code>assert.fail();</code></a></td>
   </tr>
   <tr>
-    <td>Equality</td>
-    <td><code>assert.equal();</code>, <code>assert.notEqual();</code>, <code>assert.strictEqual();</code>, <code>assert.notStrictEqual();</code>, <code>assert.deepEqual();</code>, <code>assert.notDeepEqual();</code></td>
+    <td><a href="#category-Equality">Equality</a></td>
+    <td><a href ="#fn-equal"><code>assert.equal();</code></a>, <a href ="#fn-notEqual"><code>assert.notEqual();</code></a>, <a href ="#fn-strictEqual"><code>assert.strictEqual();</code></a>, <a href ="#fn-notStrictEqual"><code>assert.notStrictEqual();</code></a>, <a href ="#fn-deepEqual"><code>assert.deepEqual();</code></a>, <a href ="#fn-notDeepEqual"><code>assert.notDeepEqual();</code></a></td>
   </tr>
   <tr>
-    <td>Exceptions</td>
-    <td><code>assert.throws();</code>, <code>await assert.rejects();</code>, <code>await assert.doesNotReject();</code></td>
+    <td><a href="#category-Exception">Exception</a></td>
+    <td><a href ="#fn-throws"><code>assert.throws();</code></a>, <a href ="#fn-rejects"><code>await assert.rejects();</code></a>, <a href ="#fn-doesNotReject"><code>await assert.doesNotReject();</code></a></td>
   </tr>
   <tr>
-    <td>Boolean</td>
-    <td><code>assert.isTrue();</code>, <code>assert.isFalse();</code></td>
+    <td><a href="#category-Boolean">Boolean</a></td>
+    <td><a href ="#fn-isTrue"><code>assert.isTrue();</code></a>, <a href ="#fn-isFalse"><code>assert.isFalse();</code></a></td>
   </tr>
   <tr>
-    <td>String</td>
-    <td><code>assert.match();</code>, <code>assert.doesNotMatch();</code>, <code>assert.stringContains();</code>, <code>assert.stringNotContains();</code></td>
+    <td><a href="#category-String">String</a></td>
+    <td><a href ="#fn-match"><code>assert.match();</code></a>, <a href ="#fn-doesNotMatch"><code>assert.doesNotMatch();</code></a>, <a href ="#fn-stringContains"><code>assert.stringContains();</code></a>, <a href ="#fn-stringNotContains"><code>assert.stringNotContains();</code></a></td>
   </tr>
   <tr>
-    <td>Comparison</td>
-    <td><code>assert.lt();</code>, <code>assert.lte();</code>, <code>assert.gt();</code>, <code>assert.gte();</code></td>
+    <td><a href="#category-Comparison">Comparison</a></td>
+    <td><a href ="#fn-lt"><code>assert.lt();</code></a>, <a href ="#fn-lte"><code>assert.lte();</code></a>, <a href ="#fn-gt"><code>assert.gt();</code></a>, <a href ="#fn-gte"><code>assert.gte();</code></a>, <a href ="#fn-inRange"><code>assert.inRange();</code></a>, <a href ="#fn-notInRange"><code>assert.notInRange();</code></a></td>
   </tr>
   <tr>
   <tr>
-    <td>Objects</td>
-    <td><code>assert.includes();</code>, <code>assert.doesNotInclude();</code>, <code>assert.isEmpty();</code>, <code>assert.isNotEmpty();</code></td>
+    <td><a href="#category-Object">Object</a></td>
+    <td><a href ="#fn-includes"><code>assert.includes();</code></a>, <a href ="#fn-doesNotInclude"><code>assert.doesNotInclude();</code></a>, <a href ="#fn-isEmpty"><code>assert.isEmpty();</code></a>, <a href ="#fn-isNotEmpty"><code>assert.isNotEmpty();</code></a></td>
   </tr>
   <tr>
-    <td>Type</td>
-    <td><code>assert.is();</code>, <code>assert.isNot();</code>, <code>assert.isPrimitive();</code>, <code>assert.isNotPrimitive();</code>, <code>assert.isNullish();</code>, <code>assert.isNotNullish();</code>, <code>assert.isNull();</code>, <code>assert.isNotNull();</code>, <code>assert.isUndefined();</code>, <code>assert.isNotUndefined();</code>, <code>assert.isString();</code>, <code>assert.isNotString();</code>, <code>assert.isNumber();</code>, <code>assert.isNotNumber();</code>, <code>assert.isBigInt();</code>, <code>assert.isNotBigInt();</code>, <code>assert.isBoolean();</code>, <code>assert.isNotBoolean();</code>, <code>assert.isSymbol();</code>, <code>assert.isNotSymbol();</code>, <code>assert.isFunction();</code>, <code>assert.isNotFunction();</code>, <code>assert.isObject();</code>, <code>assert.isNotObject();</code>, <code>assert.isNaN();</code>, <code>assert.isNotNaN();</code></td>
+    <td><a href="#category-Type">Type</a></td>
+    <td><a href ="#fn-is"><code>assert.is();</code></a>, <a href ="#fn-isNot"><code>assert.isNot();</code></a>, <a href ="#fn-isPrimitive"><code>assert.isPrimitive();</code></a>, <a href ="#fn-isNotPrimitive"><code>assert.isNotPrimitive();</code></a>, <a href ="#fn-isNullish"><code>assert.isNullish();</code></a>, <a href ="#fn-isNotNullish"><code>assert.isNotNullish();</code></a>, <a href ="#fn-isNull"><code>assert.isNull();</code></a>, <a href ="#fn-isNotNull"><code>assert.isNotNull();</code></a>, <a href ="#fn-isUndefined"><code>assert.isUndefined();</code></a>, <a href ="#fn-isNotUndefined"><code>assert.isNotUndefined();</code></a>, <a href ="#fn-isString"><code>assert.isString();</code></a>, <a href ="#fn-isNotString"><code>assert.isNotString();</code></a>, <a href ="#fn-isNumber"><code>assert.isNumber();</code></a>, <a href ="#fn-isNotNumber"><code>assert.isNotNumber();</code></a>, <a href ="#fn-isBigInt"><code>assert.isBigInt();</code></a>, <a href ="#fn-isNotBigInt"><code>assert.isNotBigInt();</code></a>, <a href ="#fn-isBoolean"><code>assert.isBoolean();</code></a>, <a href ="#fn-isNotBoolean"><code>assert.isNotBoolean();</code></a>, <a href ="#fn-isSymbol"><code>assert.isSymbol();</code></a>, <a href ="#fn-isNotSymbol"><code>assert.isNotSymbol();</code></a>, <a href ="#fn-isFunction"><code>assert.isFunction();</code></a>, <a href ="#fn-isNotFunction"><code>assert.isNotFunction();</code></a>, <a href ="#fn-isObject"><code>assert.isObject();</code></a>, <a href ="#fn-isNotObject"><code>assert.isNotObject();</code></a>, <a href ="#fn-isNaN"><code>assert.isNaN();</code></a>, <a href ="#fn-isNotNaN"><code>assert.isNotNaN();</code></a></td>
   </tr>
   <tr>
-    <td>Testrunner</td>
-    <td><code>assert.testSync();</code>, <code>await assert.testAsync();</code>, <code>assert.testCheck();</code></td>
+    <td><a href="#category-Testrunner">Testrunner</a></td>
+    <td><a href ="#fn-testSync"><code>assert.testSync();</code></a>, <a href ="#fn-testAsync"><code>await assert.testAsync();</code></a>, <a href ="#fn-testCheck"><code>assert.testCheck();</code></a></td>
   </tr>
 </table>
 
@@ -112,7 +110,7 @@ body {
 
 <h2>Tested on these enviroments</h2>
 
- <ul>
+<ul>
   <li>Windows Firefox</li>
   <li>Windows Chrome</li>
   <li>Windows Edge</li>
@@ -149,21 +147,23 @@ globalThis.assert = assert;</pre>
 
 <hr>
 
-<h2>Constants</h2>
+<h2 id="category-Constants">Constants</h2>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.VERSION</h3>
+<h3 id="fn-VERSION" class="round-25 padding font-monospace bg-lightblue">assert.VERSION</h3>
 
 <p>Added in v1.0.0</p>
 
 <p>Returns the library version string.</p>
 
-<pre>console.log(assert.VERSION); // "assert.js v1.0.2"</pre>
+<pre>console.log(assert.VERSION); // "assert.js v1.0.3"</pre>
+
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
 
 <hr>
 
-<h2>Errors</h2>
+<h2 id="category-Errors">Errors</h2>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.AssertionError</h3>
+<h3 id="fn-AssertionError" class="round-25 padding font-monospace bg-lightblue">assert.AssertionError</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -177,20 +177,24 @@ globalThis.assert = assert;</pre>
   }
 }</pre>
 
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
 <hr>
 
-<h2>Basic Assertions</h2>
+<h2 id="category-Basic">Basic Assertions</h2>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert(condition, [message: string | Error]);</h3>
+<h3 id="fn-assert" class="round-25 padding font-monospace bg-lightblue">assert(condition, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
-<p>Checks that <code>condition</code> is truthy. Throws an <code>AssertionError</code> if falsy.</p>
+<p>Ensures that <code>condition</code> is truthy. Throws an <code>AssertionError</code> if falsy.</p>
 
 <pre>assert(true); // passes
 // assert(false, "should be true"); // throws an error fails</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.ok(condition, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-ok" class="round-25 padding font-monospace bg-lightblue">assert.ok(condition, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -199,7 +203,9 @@ globalThis.assert = assert;</pre>
 <pre>assert.ok(1 === 1); // passes
 // assert.ok(0, "0 is falsy"); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.notOk(condition, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-notOk" class="round-25 padding font-monospace bg-lightblue">assert.notOk(condition, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -209,7 +215,9 @@ globalThis.assert = assert;</pre>
 assert.notOk(""); // passes
 // assert.notOk(true); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.fail([message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-fail" class="round-25 padding font-monospace bg-lightblue">assert.fail([message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -217,11 +225,13 @@ assert.notOk(""); // passes
 
 <pre>// assert.fail("This should fail"); // throws an error</pre>
 
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
 <hr>
 
-<h2>Equality Assertions</h2>
+<h2 id="category-Equality">Equality Assertions</h2>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.equal(actual, expected, [message: string | Error]);</h3>
+<h3 id="fn-equal" class="round-25 padding font-monospace bg-lightblue">assert.equal(actual, expected, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -231,7 +241,9 @@ assert.notOk(""); // passes
 assert.equal(true, 1); // passes
 // assert.equal(1, 2); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.notEqual(actual, expected, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-notEqual" class="round-25 padding font-monospace bg-lightblue">assert.notEqual(actual, expected, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -240,7 +252,9 @@ assert.equal(true, 1); // passes
 <pre>assert.notEqual(1, 2); // passes
 // assert.notEqual(1, "1"); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.strictEqual(actual, expected, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-strictEqual" class="round-25 padding font-monospace bg-lightblue">assert.strictEqual(actual, expected, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -250,7 +264,9 @@ assert.equal(true, 1); // passes
 assert.strictEqual(NaN, NaN); // passes
 // assert.strictEqual(1, "1"); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.notStrictEqual(actual, expected, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-notStrictEqual" class="round-25 padding font-monospace bg-lightblue">assert.notStrictEqual(actual, expected, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -259,7 +275,9 @@ assert.strictEqual(NaN, NaN); // passes
 <pre>assert.notStrictEqual(1, "1"); // passes
 // assert.notStrictEqual(NaN, NaN); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.deepEqual(actual, expected, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-deepEqual" class="round-25 padding font-monospace bg-lightblue">assert.deepEqual(actual, expected, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -269,7 +287,9 @@ assert.strictEqual(NaN, NaN); // passes
 assert.deepEqual([1, 2], [1, 2]); // passes
 // assert.deepEqual({ a: 1 }, { a: 2 }); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.notDeepEqual(actual, expected, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-notDeepEqual" class="round-25 padding font-monospace bg-lightblue">assert.notDeepEqual(actual, expected, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -278,30 +298,36 @@ assert.deepEqual([1, 2], [1, 2]); // passes
 <pre>assert.notDeepEqual({ a: 1 }, { a: 2 }); // passes
 // assert.notDeepEqual({ a: 1 }, { a: 1 }); // throws an error</pre>
 
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
 <hr>
 
-<h2>Exception Assertions</h2>
+<h2 id="category-Exception">Exception Assertions</h2>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.throws(fn, [ErrorType|string|RegExp], [message: string | Error]);</h3>
+<h3 id="fn-throws" class="round-25 padding font-monospace bg-lightblue">assert.throws(fn, [ErrorType|string|RegExp], [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
-<p>Checks that a function <strong>throws</strong>.</p>
+<p>Ensures that a function <strong>throws</strong>.</p>
 
 <pre>assert.throws(() =&gt; { throw new TypeError("oops"); }, TypeError); // passes
 assert.throws(() =&gt; { throw new Error("boom"); }, /boom/); // passes
 // assert.throws(() =&gt; 42); // did not throw</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">await assert.rejects(asyncFnOrPromise, [ErrorType|string|RegExp], [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-rejects" class="round-25 padding font-monospace bg-lightblue">await assert.rejects(asyncFnOrPromise, [ErrorType|string|RegExp], [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
-<p>Checks that an async function or promise <strong>rejects</strong>.</p>
+<p>Ensures that an async function or promise <strong>rejects</strong>.</p>
 
 <pre>await assert.rejects(async () =&gt; { throw new Error("fail"); }, /fail/);  // passes
 // await assert.rejects(async () =&gt; 42); // resolved, didn’t reject</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">await assert.doesNotReject(asyncFnOrPromise, [ErrorType|string|RegExp], [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-doesNotReject" class="round-25 padding font-monospace bg-lightblue">await assert.doesNotReject(asyncFnOrPromise, [ErrorType|string|RegExp], [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -310,11 +336,13 @@ assert.throws(() =&gt; { throw new Error("boom"); }, /boom/); // passes
 <pre>await assert.doesNotReject(async () =&gt; 42); // passes
 // await assert.doesNotReject(async () =&gt; { throw new Error("oops"); }); // throws an error</pre>
 
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
 <hr>
 
-<h2>Boolean Assertions</h2>
+<h2 id="category-Boolean">Boolean Assertions</h2>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isTrue(value, [message: string | Error]);</h3>
+<h3 id="fn-isTrue" class="round-25 padding font-monospace bg-lightblue">assert.isTrue(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -323,7 +351,9 @@ assert.throws(() =&gt; { throw new Error("boom"); }, /boom/); // passes
 <pre>assert.isTrue(true); // passes
 // assert.isTrue(1); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isFalse(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isFalse" class="round-25 padding font-monospace bg-lightblue">assert.isFalse(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -332,11 +362,13 @@ assert.throws(() =&gt; { throw new Error("boom"); }, /boom/); // passes
 <pre>assert.isFalse(false); // passes
 // assert.isFalse(0); // throws an error</pre>
 
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
 <hr>
 
-<h2>String Assertions</h2>
+<h2 id="category-String"></h2>String Assertions</h2>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.match(string, regexp, [message: string | Error]);</h3>
+<h3 id="fn-match" class="round-25 padding font-monospace bg-lightblue">assert.match(string, regexp, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -345,7 +377,9 @@ assert.throws(() =&gt; { throw new Error("boom"); }, /boom/); // passes
 <pre>assert.match("hello world", /world/); // passes
 // assert.match("hello", /bye/); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.doesNotMatch(string, regexp, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-doesNotMatch" class="round-25 padding font-monospace bg-lightblue">assert.doesNotMatch(string, regexp, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -354,7 +388,9 @@ assert.throws(() =&gt; { throw new Error("boom"); }, /boom/); // passes
 <pre>assert.doesNotMatch("hello", /bye/); // passes
 // assert.doesNotMatch("hello world", /world/); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.stringContains(actual, substring, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-stringContains" class="round-25 padding font-monospace bg-lightblue">assert.stringContains(actual, substring, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -363,7 +399,9 @@ assert.throws(() =&gt; { throw new Error("boom"); }, /boom/); // passes
 <pre>assert.stringContains("hello world", "world"); // passes
 // assert.stringContains("hello", "z"); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.stringNotContains(actual, substring, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-stringNotContains" class="round-25 padding font-monospace bg-lightblue">assert.stringNotContains(actual, substring, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -372,53 +410,89 @@ assert.throws(() =&gt; { throw new Error("boom"); }, /boom/); // passes
 <pre>assert.stringNotContains("hello", "z"); // passes
 // assert.stringNotContains("hello", "he"); // throws an error</pre>
 
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
 <hr>
 
-<h2>Comparison Assertions</h2>
+<h2 id="category-Comparison"></h2>Comparison Assertions</h2>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.lt(value1, value2, [message: string | Error]);</h3>
+<h3 id="fn-lt" class="round-25 padding font-monospace bg-lightblue">assert.lt(value1, value2, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
-<p>Checks <code>a &lt; b</code>, but the value types have to be same type.</p>
+<p>Ensures <code>a &lt; b</code> and the value types have to be same type.</p>
 
 <pre>assert.lt(3, 5); // passes
 // assert.lt(5, 3); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.lte(value1, value2, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-lte" class="round-25 padding font-monospace bg-lightblue">assert.lte(value1, value2, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
-<p>Checks <code>a &lt;= b</code>, but the value types have to be same type.</p>
+<p>Ensures <code>a &lt;= b</code> and the value types have to be same type.</p>
 
 <pre>assert.lte(3, 3); // passes
 assert.lte(2, 4); // passes
 // assert.lte(5, 3); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.gt(value1, value2, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-gt" class="round-25 padding font-monospace bg-lightblue">assert.gt(value1, value2, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
-<p>Checks <code>a &gt; b</code>, but the value types have to be same type.</p>
+<p>Ensures <code>a &gt; b</code> and the value types have to be same type.</p>
 
 <pre>assert.gt(5, 3); // passes
 // assert.gt(3, 5); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.gte(value1, value2, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-gte" class="round-25 padding font-monospace bg-lightblue">assert.gte(value1, value2, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
-<p>Checks <code>a &gt;= b</code>, but the value types have to be same type.</p>
+<p>Ensures <code>a &gt;= b</code> and the value types have to be same type.</p>
 
 <pre>assert.gte(3, 3); // passes
 assert.gte(5, 3); // passes
 // assert.gte(2, 3); // throws an error</pre>
 
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-inRange" class="round-25 padding font-monospace bg-lightblue">assert.inRange(value, min, max, [message: string | Error]);</h3>
+
+<p>Added in v1.0.3</p>
+
+Ensures <code>min &#60;= value &#60;= max</code> and the value types have to be same type.</p>
+
+<pre>assert.inRange(1, -5, 3); // passes
+// assert.inRange(0, 1, 3); // throws an error
+// assert.inRange(4, 1, 3); // throws an error
+// assert.inRange(2, 1n, 3); // throws an error</pre>
+
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-notInRange" class="round-25 padding font-monospace bg-lightblue">assert.notInRange(value, min, max, [message: string | Error]);</h3>
+
+<p>Added in v1.0.3</p>
+
+<p>Inverse of <code>inRange(value, min, max, [message: string | Error]);</code>.</p>
+
+<pre>assert.notInRange(0, 1, 3); // passes
+assert.notInRange(4, 1, 3); // passes
+assert.notInRange(2, 1n, 3); // passes
+// assert.notInRange(1, -5, 3); // throws an error</pre>
+
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
 <hr/>
 
-<h2>Objects Assertions</h2>
+<h2 id="category-Object">Object Assertions</h2>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.includes(container, options: {keyOrValue, [value] }, [message: string | Error]);</h3>
+<h3 id="fn-includes" class="round-25 padding font-monospace bg-lightblue">assert.includes(container, options: {keyOrValue, [value] }, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -451,7 +525,9 @@ assert.includes(new Map([["x", 42]]), {keyOrValue: "x", value: 42}); // passes
 // assert.includes(new Map([["x", 42]]), {keyOrValue: "y"}); // throws an error
 // assert.includes(new Map([["x", 42]]), {keyOrValue: "x", value: 43}); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.doesNotInclude(container, options: {keyOrValue, [value] }, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-doesNotInclude" class="round-25 padding font-monospace bg-lightblue">assert.doesNotInclude(container, options: {keyOrValue, [value] }, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -468,7 +544,9 @@ assert.doesNotInclude(new Map([["x", 42]]), {keyOrValue: "x", value: 43}); // pa
 // assert.doesNotInclude(new Map([["x", 42]]), {keyOrValue: "x"}); // throws an error
 // assert.doesNotInclude(new Map([["x", 42]]), {keyOrValue: "x", value: 42}); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isEmpty(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isEmpty" class="round-25 padding font-monospace bg-lightblue">assert.isEmpty(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -486,7 +564,9 @@ assert.doesNotInclude(new Map([["x", 42]]), {keyOrValue: "x", value: 43}); // pa
 <pre>assert.isEmpty(new Map()); // passes
 // assert.isEmpty([1, 2, 3]); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNotEmpty(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNotEmpty" class="round-25 padding font-monospace bg-lightblue">assert.isNotEmpty(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -495,11 +575,13 @@ assert.doesNotInclude(new Map([["x", 42]]), {keyOrValue: "x", value: 43}); // pa
 <pre>assert.isNotEmpty([1, 2, 3]); // passes
 // assert.isNotEmpty(new Map()); // throws an error</pre>
 
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
 <hr>
 
-<h2>Type Assertions</h2>
+<h2 id="category-Type">Type Assertions</h2>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.is(value, expectedType: string | function | Array&#60;string | function&#62;, [message: string | Error]);</h3>
+<h3 id="fn-is" class="round-25 padding font-monospace bg-lightblue">assert.is(value, expectedType: string | function | Array&#60;string | function&#62;, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -510,7 +592,9 @@ assert.is([], Array); // passes
 assert.is(new Map(), [Map, Object]); // passes
 // assert.is("hi", Number); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNot(value, expectedType: string | function | Array&#60;string | function&#62;, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNot" class="round-25 padding font-monospace bg-lightblue">assert.isNot(value, expectedType: string | function | Array&#60;string | function&#62;, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -520,7 +604,9 @@ assert.is(new Map(), [Map, Object]); // passes
 assert.isNot([], Set); // passes
 // assert.isNot([], Array); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isPrimitive(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isPrimitive" class="round-25 padding font-monospace bg-lightblue">assert.isPrimitive(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -529,7 +615,9 @@ assert.isNot([], Set); // passes
 <pre>assert.isPrimitive(42); // passes
 // assert.isPrimitive([]]); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNotPrimitive(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNotPrimitive" class="round-25 padding font-monospace bg-lightblue">assert.isNotPrimitive(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -538,7 +626,9 @@ assert.isNot([], Set); // passes
 <pre>assert.isNotPrimitive([]); // passes
 // assert.isNotPrimitive(42); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNullish(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNullish" class="round-25 padding font-monospace bg-lightblue">assert.isNullish(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -548,7 +638,9 @@ assert.isNot([], Set); // passes
 assert.isNullish(null); // passes
 // assert.isNullish(0); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNotNullish(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNotNullish" class="round-25 padding font-monospace bg-lightblue">assert.isNotNullish(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -558,7 +650,9 @@ assert.isNullish(null); // passes
 assert.isNotNullish("ok"); // passes
 // assert.isNotNullish(null); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNull(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNull" class="round-25 padding font-monospace bg-lightblue">assert.isNull(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -567,7 +661,9 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.isNull(null); // passes
 // assert.isNull(0); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNotNull(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNotNull" class="round-25 padding font-monospace bg-lightblue">assert.isNotNull(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -576,7 +672,9 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.isNotNull("ok"); // passes
 // assert.isNotNull(null); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isUndefined(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isUndefined" class="round-25 padding font-monospace bg-lightblue">assert.isUndefined(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -585,7 +683,9 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.isUndefined(undefined); // passes
 // assert.isUndefined(0); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNotUndefined(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNotUndefined" class="round-25 padding font-monospace bg-lightblue">assert.isNotUndefined(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -594,7 +694,9 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.isNotUndefined("ok"); // passes
 // assert.isNotUndefined(undefined); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isString(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isString" class="round-25 padding font-monospace bg-lightblue">assert.isString(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -603,7 +705,9 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.isString("ok"); // passes
 // assert.isString(null); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNotString(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNotString" class="round-25 padding font-monospace bg-lightblue">assert.isNotString(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -612,7 +716,9 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.isNotString(null); // passes
 // assert.isNotString("ok"); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNumber(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNumber" class="round-25 padding font-monospace bg-lightblue">assert.isNumber(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -621,7 +727,9 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.isNumber(42); // passes
 // assert.isNumber(null); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNotNumber(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNotNumber" class="round-25 padding font-monospace bg-lightblue">assert.isNotNumber(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -630,7 +738,9 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.isNotNumber(null); // passes
 // assert.isNotNumber(42); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isBigInt(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isBigInt" class="round-25 padding font-monospace bg-lightblue">assert.isBigInt(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -639,7 +749,9 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.isBigInt(42n); // passes
 // assert.isBigInt(null); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNotBigInt(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNotBigInt" class="round-25 padding font-monospace bg-lightblue">assert.isNotBigInt(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -648,7 +760,9 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.isNotBigInt(null); // passes
 // assert.isNotBigInt(42n); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isBoolean(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isBoolean" class="round-25 padding font-monospace bg-lightblue">assert.isBoolean(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -657,7 +771,9 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.isBoolean(true); // passes
 // assert.isBoolean(null); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNotBoolean(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNotBoolean" class="round-25 padding font-monospace bg-lightblue">assert.isNotBoolean(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -666,7 +782,9 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.isNotBoolean(null); // passes
 // assert.isNotBoolean(true); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isSymbol(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isSymbol" class="round-25 padding font-monospace bg-lightblue">assert.isSymbol(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -675,7 +793,9 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.isSymbol(Symbol("foo")); // passes
 // assert.isSymbol(null); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNotSymbol(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNotSymbol" class="round-25 padding font-monospace bg-lightblue">assert.isNotSymbol(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -684,7 +804,9 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.isNotSymbol(null); // passes
 // assert.isNotSymbol(Symbol("foo")); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isFunction(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isFunction" class="round-25 padding font-monospace bg-lightblue">assert.isFunction(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -693,7 +815,9 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.isFunction(assert); // passes
 // assert.isFunction(null); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNotFunction(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNotFunction" class="round-25 padding font-monospace bg-lightblue">assert.isNotFunction(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -702,7 +826,9 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.isNotFunction(null); // passes
 // assert.isNotFunction(assert); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isObject(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isObject" class="round-25 padding font-monospace bg-lightblue">assert.isObject(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -711,7 +837,9 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.isObject({a: 1}); // passes
 // assert.isObject(null); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNotObject(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNotObject" class="round-25 padding font-monospace bg-lightblue">assert.isNotObject(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
@@ -720,7 +848,9 @@ assert.isNotNullish("ok"); // passes
 <pre>assert.isNotObject(null); // passes
 // assert.isNotObject({a: 1}); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNaN(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNaN" class="round-25 padding font-monospace bg-lightblue">assert.isNaN(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.2</p>
 
@@ -730,21 +860,25 @@ Ensures value is <code>number</code> and <code>NaN</code>.
 // assert.isNaN(42); // throws an error
 // assert.isNaN("foo"); // throws an error</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.isNotNaN(value, [message: string | Error]);</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNotNaN" class="round-25 padding font-monospace bg-lightblue">assert.isNotNaN(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.2</p>
 
-Ensures value is <em>not</em> <code>number</code> and <em>not</em> <code>NaN</code>.
+<p>Inverse of <code>assert.isNaN(value, [message: string | Error]);</code>.</p>
 
 <pre>assert.isNotObject(42); // passes
 assert.isNotObject("foo"); // passes
 // assert.isNotObject(0 /0); // throws an error</pre>
 
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
 <hr>
 
-<h2>Testrunner</h2>
+<h2 id="category-Testrunner">Testrunner</h2>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.testSync(block): { ok: true; value: any } | { ok: false; error: Error }</h3>
+<h3 id="fn-testSync" class="round-25 padding font-monospace bg-lightblue">assert.testSync(block, name = "assert.testSync"): {ok: true, value: T, block: Function, name: string} | {ok: false, error: Error, block: Function, name: string}</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -756,7 +890,9 @@ assert.isNotObject("foo"); // passes
   console.error("failed");
 }</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">await assert.testAsync(block): { ok: true; value: any } | { ok: false; error: Error }</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-testAsync" class="round-25 padding font-monospace bg-lightblue">await assert.testAsync(block, name = "assert.testAsync"): {ok: true, value: T, block: Function, name: string} | {ok: false, error: Error, block: Function, name: string}</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -771,17 +907,21 @@ assert.isNotObject("foo"); // passes
   }
 })();</pre>
 
-<h3 class="round-25 padding font-monospace bg-lightblue">assert.testCheck(result: { ok: true; value: any } | { ok: false; error: Error }): result.ok is true</h3>
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-testCheck" class="round-25 padding font-monospace bg-lightblue">assert.testCheck(result: {ok: true, value: T, block: Function, name: string} | {ok: false, error: Error, block: Function, name: string}): result.ok is true</h3>
 
 <p>Added in v1.0.0</p>
 
-<p>Checks if the result is successful.</p>
+<p>Ensures if the result is successful.</p>
 
 <pre>if (assert.testCheck(assert.testSync(() => 42))) {
   console.log("passed");
 } else {
   console.error("failed");
 }</pre>
+
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
 
 <hr>
 
