@@ -1,17 +1,33 @@
 
 # assert.js version history
 
+## assert.js v1.1.0
+
+1. Documentation, pdf and code fixes.
+2. Rename these functions:
+
+Old name|New name
+--------|---------
+`isNotNullish();`|`isNonNullable();`
+`isNotUndefined();`|`isDefined();`
+
 ## assert.js v1.0.3
 
 1. Documentation, pdf and code fixes.
 2. Add inner links in the __readme.html__.
 3. Add 2 new properties of the TestResult object (`block`, `name`) in the testrunner functions.
-4. Add these functions: `inRange();`, `notInRange();`
+4. Add these functions: 
+
+- `inRange();`
+- `notInRange();`
 
 ## assert.js v1.0.2
 
 1. Documentation, pdf and code fixes.
-2. Add these functions: `assert.isNaN();`, `assert.isNotNaN();`
+2. Add these functions:
+
+- `assert.isNaN();`
+- `assert.isNotNaN();`
 
 ## assert.js v1.0.1
 

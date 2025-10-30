@@ -29,9 +29,9 @@ body {
 
 <h1 id="top" class="center">assert.js</h1>
 
-<p>Latest version: 1.0.3</p>
+<p>Latest version: 1.1.0</p>
 
-<p>Date: 2025-10-27T19:53:27.654Z</p>
+<p>Date: 2025-10-29T19:32:23.980Z</p>
 
 <p>A modern, zero-dependency assertion library for Node.js, Deno and browser (ESM) environments.</p>
 
@@ -65,7 +65,7 @@ body {
   </tr>
   <tr>
     <td><a href="#category-Errors">Errors</a></td>
-    <td><a href ="#fn-AssertionError"><code>assert.AssertionError</code></a></td>
+    <td><a href ="#fn-AssertionError"><code>assert.AssertionError();</code></a></td>
   </tr>
   <tr>
     <td><a href="#category-Basic">Basic</a></td>
@@ -98,7 +98,7 @@ body {
   </tr>
   <tr>
     <td><a href="#category-Type">Type</a></td>
-    <td><a href ="#fn-is"><code>assert.is();</code></a>, <a href ="#fn-isNot"><code>assert.isNot();</code></a>, <a href ="#fn-isPrimitive"><code>assert.isPrimitive();</code></a>, <a href ="#fn-isNotPrimitive"><code>assert.isNotPrimitive();</code></a>, <a href ="#fn-isNullish"><code>assert.isNullish();</code></a>, <a href ="#fn-isNotNullish"><code>assert.isNotNullish();</code></a>, <a href ="#fn-isNull"><code>assert.isNull();</code></a>, <a href ="#fn-isNotNull"><code>assert.isNotNull();</code></a>, <a href ="#fn-isUndefined"><code>assert.isUndefined();</code></a>, <a href ="#fn-isNotUndefined"><code>assert.isNotUndefined();</code></a>, <a href ="#fn-isString"><code>assert.isString();</code></a>, <a href ="#fn-isNotString"><code>assert.isNotString();</code></a>, <a href ="#fn-isNumber"><code>assert.isNumber();</code></a>, <a href ="#fn-isNotNumber"><code>assert.isNotNumber();</code></a>, <a href ="#fn-isBigInt"><code>assert.isBigInt();</code></a>, <a href ="#fn-isNotBigInt"><code>assert.isNotBigInt();</code></a>, <a href ="#fn-isBoolean"><code>assert.isBoolean();</code></a>, <a href ="#fn-isNotBoolean"><code>assert.isNotBoolean();</code></a>, <a href ="#fn-isSymbol"><code>assert.isSymbol();</code></a>, <a href ="#fn-isNotSymbol"><code>assert.isNotSymbol();</code></a>, <a href ="#fn-isFunction"><code>assert.isFunction();</code></a>, <a href ="#fn-isNotFunction"><code>assert.isNotFunction();</code></a>, <a href ="#fn-isObject"><code>assert.isObject();</code></a>, <a href ="#fn-isNotObject"><code>assert.isNotObject();</code></a>, <a href ="#fn-isNaN"><code>assert.isNaN();</code></a>, <a href ="#fn-isNotNaN"><code>assert.isNotNaN();</code></a></td>
+    <td><a href ="#fn-is"><code>assert.is();</code></a>, <a href ="#fn-isNot"><code>assert.isNot();</code></a>, <a href ="#fn-isPrimitive"><code>assert.isPrimitive();</code></a>, <a href ="#fn-isNotPrimitive"><code>assert.isNotPrimitive();</code></a>, <a href ="#fn-isNullish"><code>assert.isNullish();</code></a>, <a href ="#fn-isNonNullable"><code>assert.isNonNullable();</code></a>, <a href ="#fn-isNull"><code>assert.isNull();</code></a>, <a href ="#fn-isNotNull"><code>assert.isNotNull();</code></a>, <a href ="#fn-isUndefined"><code>assert.isUndefined();</code></a>, <a href ="#fn-isDefined"><code>assert.isDefined();</code></a>, <a href ="#fn-isString"><code>assert.isString();</code></a>, <a href ="#fn-isNotString"><code>assert.isNotString();</code></a>, <a href ="#fn-isNumber"><code>assert.isNumber();</code></a>, <a href ="#fn-isNotNumber"><code>assert.isNotNumber();</code></a>, <a href ="#fn-isBigInt"><code>assert.isBigInt();</code></a>, <a href ="#fn-isNotBigInt"><code>assert.isNotBigInt();</code></a>, <a href ="#fn-isBoolean"><code>assert.isBoolean();</code></a>, <a href ="#fn-isNotBoolean"><code>assert.isNotBoolean();</code></a>, <a href ="#fn-isSymbol"><code>assert.isSymbol();</code></a>, <a href ="#fn-isNotSymbol"><code>assert.isNotSymbol();</code></a>, <a href ="#fn-isFunction"><code>assert.isFunction();</code></a>, <a href ="#fn-isNotFunction"><code>assert.isNotFunction();</code></a>, <a href ="#fn-isObject"><code>assert.isObject();</code></a>, <a href ="#fn-isNotObject"><code>assert.isNotObject();</code></a>, <a href ="#fn-isNaN"><code>assert.isNaN();</code></a>, <a href ="#fn-isNotNaN"><code>assert.isNotNaN();</code></a></td>
   </tr>
   <tr>
     <td><a href="#category-Testrunner">Testrunner</a></td>
@@ -155,7 +155,7 @@ globalThis.assert = assert;</pre>
 
 <p>Returns the library version string.</p>
 
-<pre>console.log(assert.VERSION); // "assert.js v1.0.3"</pre>
+<pre>console.log(assert.VERSION); // "assert.js v1.1.0"</pre>
 
 <p><a href="#Summary">&#9650; Back to Summary</a></p>
 
@@ -163,7 +163,7 @@ globalThis.assert = assert;</pre>
 
 <h2 id="category-Errors">Errors</h2>
 
-<h3 id="fn-AssertionError" class="round-25 padding font-monospace bg-lightblue">assert.AssertionError</h3>
+<h3 id="fn-AssertionError" class="round-25 padding font-monospace bg-lightblue">assert.AssertionError([message], [options]);</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -640,15 +640,17 @@ assert.isNullish(null); // passes
 
 <p><a href="#Summary">&#9650; Back to Summary</a></p>
 
-<h3 id="fn-isNotNullish" class="round-25 padding font-monospace bg-lightblue">assert.isNotNullish(value, [message: string | Error]);</h3>
+<h3 id="fn-isNonNullable" class="round-25 padding font-monospace bg-lightblue">assert.isNonNullable(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.0</p>
 
+<p>Old name before v1.1.0: <code>assert.isNotNullish();</code>.</p>
+
 <p>Ensures value is <em>not</em> <code>null</code> or <code>undefined</code>.</p>
 
-<pre>assert.isNotNullish(42); // passes
-assert.isNotNullish("ok"); // passes
-// assert.isNotNullish(null); // throws an error</pre>
+<pre>assert.isNonNullable(42); // passes
+assert.isNonNullable("ok"); // passes
+// assert.isNonNullable(null); // throws an error</pre>
 
 <p><a href="#Summary">&#9650; Back to Summary</a></p>
 
@@ -685,14 +687,16 @@ assert.isNotNullish("ok"); // passes
 
 <p><a href="#Summary">&#9650; Back to Summary</a></p>
 
-<h3 id="fn-isNotUndefined" class="round-25 padding font-monospace bg-lightblue">assert.isNotUndefined(value, [message: string | Error]);</h3>
+<h3 id="fn-isDefined" class="round-25 padding font-monospace bg-lightblue">assert.isDefined(value, [message: string | Error]);</h3>
 
 <p>Added in v1.0.1</p>
 
+<p>Old name before v1.1.0: <code>assert.isNotUndefined();</code>.</p>
+
 <p>Ensures value is <em>not</em> <code>undefined</code>.</p>
 
-<pre>assert.isNotUndefined("ok"); // passes
-// assert.isNotUndefined(undefined); // throws an error</pre>
+<pre>assert.isDefined("ok"); // passes
+// assert.isDefined(undefined); // throws an error</pre>
 
 <p><a href="#Summary">&#9650; Back to Summary</a></p>
 

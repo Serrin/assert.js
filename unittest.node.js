@@ -2,7 +2,7 @@
 "use strict";
 
 
-/* assert.js v1.0.3 testcases for Node.js environment */
+/* assert.js v1.1.0 testcases for Node.js environment */
 
 
 /* Import the assert function */
@@ -140,11 +140,11 @@ function autoTestSync () {
   unitTest("assert.isNullish(); 03", true, () => assert.isNullish(0));
   unitTest("assert.isNullish(); 04", true, () => assert.isNullish(0, "lorem"));
 
-  unitTest("assert.isNotNullish(); 01", false, () => assert.isNotNullish(42));
-  unitTest("assert.isNotNullish(); 02", false, () => assert.isNotNullish("ok"));
-  unitTest("assert.isNotNullish(); 03", true, () => assert.isNotNullish(undefined));
-  unitTest("assert.isNotNullish(); 04", true, () => assert.isNotNullish(null));
-  unitTest("assert.isNotNullish(); 05", true, () => assert.isNotNullish(null, "lorem"));
+  unitTest("assert.isNonNullable(); 01", false, () => assert.isNonNullable(42));
+  unitTest("assert.isNonNullable(); 02", false, () => assert.isNonNullable("ok"));
+  unitTest("assert.isNonNullable(); 03", true, () => assert.isNonNullable(undefined));
+  unitTest("assert.isNonNullable(); 04", true, () => assert.isNonNullable(null));
+  unitTest("assert.isNonNullable(); 05", true, () => assert.isNonNullable(null, "lorem"));
 
   unitTest("assert.match(); 01", false, () => assert.match("hello world", /world/));
   unitTest("assert.match(); 02", true, () => assert.match("hello", /bye/));
@@ -310,9 +310,9 @@ function autoTestSync () {
   unitTest("assert.isUndefined(); 02", true, () => assert.isUndefined(42));
   unitTest("assert.isUndefined(); 03", true, () => assert.isUndefined(42, "foo"));
 
-  unitTest("assert.isNotUndefined(); 01", false, () => assert.isNotUndefined(42));
-  unitTest("assert.isNotUndefined(); 02", true, () => assert.isNotUndefined(undefined));
-  unitTest("assert.isNotUndefined(); 03", true, () => assert.isNotUndefined(undefined, "foo"));
+  unitTest("assert.isDefined(); 01", false, () => assert.isDefined(42));
+  unitTest("assert.isDefined(); 02", true, () => assert.isDefined(undefined));
+  unitTest("assert.isDefined(); 03", true, () => assert.isDefined(undefined, "foo"));
 
   unitTest("assert.isString(); 01", false, () => assert.isString("bar"));
   unitTest("assert.isString(); 02", true, () => assert.isString(42));

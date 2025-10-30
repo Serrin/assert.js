@@ -1,8 +1,8 @@
 # assert.js
 
-Latest version: 1.0.3
+Latest version: 1.1.0
 
-Date: 2025-10-27T19:53:27.654Z
+Date: 2025-10-29T19:32:23.980Z
 
 A modern, zero-dependency assertion library for Node.js, Deno and browser (ESM) environments.
 
@@ -15,7 +15,7 @@ Implements and extends the [CommonJS Unit Testing 1.0 spec](https://wiki.commonj
 Category | Assertions
 ---------|-------------
 Constants | `assert.VERSION;`
-Errors | `assert.AssertionError`
+Errors | `assert.AssertionError();`
 Basic | `assert();`, `assert.ok();`, `assert.notOk();`, `assert.fail();`
 Equality | `assert.equal();`, `assert.notEqual();`, `assert.strictEqual();`, `assert.notStrictEqual();`, `assert.deepEqual();`, `assert.notDeepEqual();`
 Exception | `assert.throws();`, `await assert.rejects();`, `await assert.doesNotReject();`
@@ -23,7 +23,7 @@ Boolean | `assert.isTrue();`, `assert.isFalse();`
 String | `assert.match();`, `assert.doesNotMatch();`, `assert.stringContains();`, `assert.stringNotContains();`
 Comparison | `assert.lt();`, `assert.lte();`, `assert.gt();`, `assert.gte();`, `assert.inRange();`, `assert.notInRange();`
 Objects | `assert.includes();`, `assert.doesNotInclude();`, `assert.isEmpty();`, `assert.isNotEmpty();`
-Type | `assert.is();`, `assert.isNot();`, `assert.isPrimitive();`, `assert.isNotPrimitive();`, `assert.isNullish();`, `assert.isNotNullish();`, `assert.isNull();`, `assert.isNotNull();`, `assert.isUndefined();`, `assert.isNotUndefined();`, `assert.isString();`, `assert.isNotString();`, `assert.isNumber();`, `assert.isNotNumber();`, `assert.isBigInt();`, `assert.isNotBigInt();`, `assert.isBoolean();`, `assert.isNotBoolean();`, `assert.isSymbol();`, `assert.isNotSymbol();`, `assert.isFunction();`, `assert.isNotFunction();`, `assert.isObject();`, `assert.isNotObject();`, `assert.isNaN();`, `assert.isNotNaN();`
+Type | `assert.is();`, `assert.isNot();`, `assert.isPrimitive();`, `assert.isNotPrimitive();`, `assert.isNullish();`, `assert.isNonNullable();`, `assert.isNull();`, `assert.isNotNull();`, `assert.isUndefined();`, `assert.isDefined();`, `assert.isString();`, `assert.isNotString();`, `assert.isNumber();`, `assert.isNotNumber();`, `assert.isBigInt();`, `assert.isNotBigInt();`, `assert.isBoolean();`, `assert.isNotBoolean();`, `assert.isSymbol();`, `assert.isNotSymbol();`, `assert.isFunction();`, `assert.isNotFunction();`, `assert.isObject();`, `assert.isNotObject();`, `assert.isNaN();`, `assert.isNotNaN();`
 Testrunner | `assert.testSync();`, `await assert.testAsync();`, `assert.testCheck();`
 
 ---
@@ -80,14 +80,14 @@ Added in v1.0.0
 Returns the library version string.
 
 ````js
-console.log(assert.VERSION); // "assert.js v1.0.3"
+console.log(assert.VERSION); // "assert.js v1.1.0"
 ````
 
 ---
 
 ## Errors
 
-### `assert.AssertionError`
+### `assert.AssertionError([message], [options]);`
 
 Added in v1.0.0
 
@@ -560,16 +560,18 @@ assert.isNullish(null); // passes
 // assert.isNullish(0); // throws an error
 ````
 
-### `assert.isNotNullish(value, [message: string | Error]);`
+### `assert.isNonNullable(value, [message: string | Error]);`
 
 Added in v1.0.0
+
+Old name before v1.1.0: `assert.isNotNullish();`.
 
 Ensures value is _not_ `null` or `undefined`.
 
 ````js
-assert.isNotNullish(42); // passes
-assert.isNotNullish("ok"); // passes
-// assert.isNotNullish(null); // throws an error
+assert.isNonNullable(42); // passes
+assert.isNonNullable("ok"); // passes
+// assert.isNonNullable(null); // throws an error
 ````
 
 ### `assert.isNull(value, [message: string | Error]);`
@@ -605,15 +607,17 @@ assert.isUndefined(undefined); // passes
 // assert.isUndefined(0); // throws an error
 ````
 
-### `assert.isNotUndefined(value, [message: string | Error]);`
+### `assert.isDefined(value, [message: string | Error]);`
 
 Added in v1.0.1
+
+Old name before v1.1.0: `assert.isNotUndefined();`.
 
 Ensures value is _not_ `undefined`.
 
 ````js
-assert.isNotUndefined("ok"); // passes
-// assert.isNotUndefined(undefined); // throws an error
+assert.isDefined("ok"); // passes
+// assert.isDefined(undefined); // throws an error
 ````
 
 ### `assert.isString(value, [message: string | Error]);`
