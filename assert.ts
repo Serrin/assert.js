@@ -10,14 +10,14 @@
 
 /**
  * @name assert.js
- * @version 1.1.0
+ * @version 1.1.1
  * @author Ferenc Czigler
  * @see https://github.com/Serrin/assert.js/
  * @license MIT https://opensource.org/licenses/MIT
  */
 
 
-const VERSION = "assert.js v1.1.0";
+const VERSION = "assert.js v1.1.1";
 
 
 /*
@@ -586,8 +586,11 @@ function _includes(container: any, keyOrValue: any, valueIfKey?: unknown): boole
     || ArrayBuffer.isView(container)
     || container instanceof Set
     || typeof (container)[Symbol.iterator] === "function") {
-    for (const item of container) {
-      if (Object.is(item, keyOrValue)) { return true; }
+    let it = container[Symbol.iterator]();
+    let res = it.next();
+    while (!res.done) {
+      if (Object.is(res.value, keyOrValue)) { return true; }
+      res = it.next();
     }
     return false;
   }
@@ -745,7 +748,7 @@ class AssertionError extends Error {
  *
  * @param {unknown} condition The value to check.
  * @param {unknown} [message] - Optional message or Error to throw.
- * @returns {asserts condition}
+ * @returns {void}
  * @throws {assert.AssertionError} If assertion is failed.
  */
 function assert (condition: unknown, message?: unknown): asserts condition {
@@ -769,7 +772,7 @@ function assert (condition: unknown, message?: unknown): asserts condition {
  *
  * @param {unknown} condition The value to check.
  * @param {unknown} [message] - Optional message or Error to throw.
- * @returns {asserts condition}
+ * @returns {void}
  * @throws {assert.AssertionError} If assertion is failed.
  */
 function ok (condition: unknown, message?: unknown): asserts condition {

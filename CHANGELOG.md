@@ -1,6 +1,10 @@
 
 # assert.js version history
 
+## assert.js v1.1.1
+
+Only small fixes.
+
 ## assert.js v1.1.0
 
 1. Documentation, pdf and code fixes.

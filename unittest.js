@@ -2,7 +2,7 @@
 "use strict";
 
 
-/* assert.js v1.1.0 testcases for ESM environment */
+/* assert.js v1.1.1 testcases for ESM environment */
 
 
 /**
