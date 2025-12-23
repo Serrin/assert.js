@@ -10,14 +10,14 @@
 
 /**
  * @name assert.js
- * @version 1.1.1
+ * @version 1.1.2
  * @author Ferenc Czigler
  * @see https://github.com/Serrin/assert.js/
  * @license MIT https://opensource.org/licenses/MIT
  */
 
 
-const VERSION = "assert.js v1.1.1";
+const VERSION = "assert.js v1.1.2";
 
 
 /*
@@ -50,7 +50,7 @@ type Falsy = null | undefined | false | 0 | -0 | 0n | "";
  *
  * @internal
  */
-type MapLike = { [key: string | symbol]: any };
+type MapLike = Record<PropertyKey, any>;
 
 /**
  * @description string or String object
@@ -58,6 +58,13 @@ type MapLike = { [key: string | symbol]: any };
  * @internal
  */
 type StringLike = string | String;
+
+/**
+ * @description TypedArray types.
+ *
+ * @internal
+ */
+type TypedArray = Exclude<ArrayBufferView, DataView>;
 
 /**
  * Generic comparable types.
@@ -120,7 +127,7 @@ type ExpectedType = string | Function | Array<string | Function>;
  *
  * @internal
  */
-type IncludesOptions = {keyOrValue: any, value?: any};
+type IncludesOptions = { keyOrValue: any, value?: any };
 
 /**
  * null or undefined
@@ -621,18 +628,8 @@ function _isEmpty (value: any): boolean {
    * @param {unknown} value The value to check.
    * @returns boolean
    */
-  function _isTypedArray (value: unknown): boolean {
-    const constructors = [
-      Int8Array, Uint8Array, Uint8ClampedArray,
-      Int16Array, Uint16Array,
-      Int32Array, Uint32Array,
-      Float32Array, Float64Array,
-      BigInt64Array, BigUint64Array];
-    if ("Float16Array" in globalThis) {
-      constructors.push((globalThis as any).Float16Array);
-    }
-    return constructors.some((item): boolean => value instanceof item);
-  }
+  const _isTypedArray = (value: unknown): value is TypedArray =>
+    ArrayBuffer.isView(value) && !(value instanceof DataView);
   /* Check undefined, null, NaN */
   if (value == null || Number.isNaN(value)) { return true; }
   /* Check Array, TypedArrays, string, String */
@@ -640,7 +637,7 @@ function _isEmpty (value: any): boolean {
     || _isTypedArray(value)
     || typeof value === "string"
     || value instanceof String) {
-    return value.length === 0;
+    return (value as any).length === 0;
   }
   /* Checks Map and Set */
   if (value instanceof Map || value instanceof Set) { return value.size === 0; }
