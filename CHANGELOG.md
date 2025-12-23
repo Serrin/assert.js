@@ -1,6 +1,11 @@
 
 # assert.js version history
 
+## assert.js v1.1.2
+
+1. Documentation, pdf and code fixes.
+2. Fix the arguments list of the __Testrunner__ functions in the __assert-cheatsheet.odt__ and __assert-cheatsheet.pdf__
+
 ## assert.js v1.1.1
 
 Only small fixes.
