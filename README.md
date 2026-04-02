@@ -1,8 +1,8 @@
 # assert.js
 
-Latest version: 1.1.2
+Latest version: 1.1.4
 
-Date: 2025-11-13T19:48:59.826Z
+Date: 2026-04-02T16:32:34.119Z
 
 A modern, zero-dependency assertion library for Node.js, Deno and browser (ESM) environments.
 
@@ -15,6 +15,7 @@ Implements and extends the [CommonJS Unit Testing 1.0 spec](https://wiki.commonj
 Category | Assertions
 ---------|-------------
 Constants | `assert.VERSION;`
+Config | `assert.config.alwaysStrict;` (Default value is `false`.)
 Errors | `assert.AssertionError();`
 Basic | `assert();`, `assert.ok();`, `assert.notOk();`, `assert.fail();`
 Equality | `assert.equal();`, `assert.notEqual();`, `assert.strictEqual();`, `assert.notStrictEqual();`, `assert.deepEqual();`, `assert.notDeepEqual();`
@@ -23,7 +24,7 @@ Boolean | `assert.isTrue();`, `assert.isFalse();`
 String | `assert.match();`, `assert.doesNotMatch();`, `assert.stringContains();`, `assert.stringNotContains();`
 Comparison | `assert.lt();`, `assert.lte();`, `assert.gt();`, `assert.gte();`, `assert.inRange();`, `assert.notInRange();`
 Objects | `assert.includes();`, `assert.doesNotInclude();`, `assert.isEmpty();`, `assert.isNotEmpty();`
-Type | `assert.is();`, `assert.isNot();`, `assert.isPrimitive();`, `assert.isNotPrimitive();`, `assert.isNullish();`, `assert.isNonNullable();`, `assert.isNull();`, `assert.isNotNull();`, `assert.isUndefined();`, `assert.isDefined();`, `assert.isString();`, `assert.isNotString();`, `assert.isNumber();`, `assert.isNotNumber();`, `assert.isBigInt();`, `assert.isNotBigInt();`, `assert.isBoolean();`, `assert.isNotBoolean();`, `assert.isSymbol();`, `assert.isNotSymbol();`, `assert.isFunction();`, `assert.isNotFunction();`, `assert.isObject();`, `assert.isNotObject();`, `assert.isNaN();`, `assert.isNotNaN();`
+Type | `assert.is();`, `assert.isNot();`, `assert.isPrimitive();`, `assert.isNotPrimitive();`, `assert.isNullish();`, `assert.isNonNullable();`, `assert.isNull();`, `assert.isNotNull();`, `assert.isUndefined();`, `assert.isDefined();`, `assert.isString();`, `assert.isNotString();`, `assert.isNumber();`, `assert.isNotNumber();`, `assert.isInt();`, `assert.isNotInt();`, `assert.isFloat();`, `assert.isNotFloat();`, `assert.isBigInt();`, `assert.isNotBigInt();`, `assert.isBoolean();`, `assert.isNotBoolean();`, `assert.isSymbol();`, `assert.isNotSymbol();`, `assert.isFunction();`, `assert.isNotFunction();`, `assert.isObject();`, `assert.isNotObject();`, `assert.isNaN();`, `assert.isNotNaN();`
 Testrunner | `assert.testSync();`, `await assert.testAsync();`, `assert.testCheck();`
 
 ---
@@ -33,14 +34,15 @@ Testrunner | `assert.testSync();`, `await assert.testAsync();`, `assert.testChec
 - Windows Firefox
 - Windows Chrome
 - Windows Edge
+- Windows Samsung Browser
 - iOS Safari
 - iOS Firefox
 - iOS Chrome
 - iOS Edge
 - Android Firefox
 - Android Chrome
-- Android Samsung Internet
 - Android Edge
+- Android Samsung Browser
 - Node.js (latest current, not LTS)
 - Deno (latest current, not LTS)
 
@@ -52,6 +54,13 @@ Testrunner | `assert.testSync();`, `await assert.testAsync();`, `assert.testChec
 
 ````js
 import assert from "./assert.js";
+globalThis.assert = assert;
+````
+
+### Import the assert function as default
+
+````js
+import { default as assert } from "./assert.js";
 globalThis.assert = assert;
 ````
 
@@ -80,8 +89,20 @@ Added in v1.0.0
 Returns the library version string.
 
 ````js
-console.log(assert.VERSION); // "assert.js v1.1.2"
+console.log(assert.VERSION); // "assert.js v1.1.4"
 ````
+
+---
+
+## Config
+
+### `assert.config.alwaysStrict;`
+
+Added in v1.1.3
+
+Default value is `false`.
+
+If value is `true`, then the `assert.equal();` will be replaced with the `assert.strictEqual();` and the `assert.notEqual();` will be replaced with the `assert.notStrictEqual();`.
 
 ---
 
@@ -796,6 +817,54 @@ Inverse of `assert.isNaN(value, [message: string | Error]);`.
 assert.isNotObject(42); // passes
 assert.isNotObject("foo"); // passes
 // assert.isNotObject(0 /0); // throws an error
+````
+
+### `assert.isInt(value, [message: string | Error]);`
+
+Added in v1.1.4
+
+Ensures value is `number` and `integer`.
+
+````js
+assert.isInt(42); // passes
+// assert.isInt(42.5); // throws an error
+// assert.isInt("foo"); // throws an error
+````
+
+### `assert.isNotInt(value, [message: string | Error]);`
+
+Added in v1.1.4
+
+Inverse of `assert.isInt(value, [message: string | Error]);`.
+
+````js
+// assert.isNotInt(42); // throws an error
+assert.isNotInt(42.5); // passes
+assert.isNotInt("foo"); // passes
+````
+
+### `assert.isFloat(value, [message: string | Error]);`
+
+Added in v1.1.4
+
+Ensures value is `number` and `float`.
+
+````js
+// assert.isFloat(42); // throws an error
+assert.isFloat(42.5); // passes
+// assert.isFloat("foo"); // throws an error
+````
+
+### `assert.isNotFloat(value, [message: string | Error]);`
+
+Added in v1.1.4
+
+Inverse of `assert.isFloat(value, [message: string | Error]);`.
+
+````js
+assert.isNotFloat(42); // passes
+// assert.isNotFloat(42.5); // passes
+assert.isNotFloat("foo"); // passes
 ````
 
 ---

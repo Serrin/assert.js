@@ -2,7 +2,7 @@
 "use strict";
 
 
-/* assert.js v1.1.2 testcases for ESM environment */
+/* assert.js v1.1.4 testcases for ESM environment */
 
 
 /**
@@ -488,11 +488,27 @@ function autoTestSync () {
 
   unitTest("assert.isNaN(); 01", false, () => assert.isNaN(NaN));
   unitTest("assert.isNaN(); 02", true, () => assert.isNaN(42));
-  unitTest("assert.isNaN(); 02", true, () => assert.isNaN(true));
+  unitTest("assert.isNaN(); 03", true, () => assert.isNaN(true));
 
   unitTest("assert.isNotNaN(); 01", true, () => assert.isNotNaN(NaN));
   unitTest("assert.isNotNaN(); 02", false, () => assert.isNotNaN(42));
-  unitTest("assert.isNotNaN(); 02", false, () => assert.isNotNaN(true));
+  unitTest("assert.isNotNaN(); 03", false, () => assert.isNotNaN(true));
+
+  unitTest("assert.isInt(); 01", false, () => assert.isInt(42, "foo"));
+  unitTest("assert.isInt(); 02", true, () => assert.isInt(42.5, "foo"));
+  unitTest("assert.isInt(); 03", true, () => assert.isInt("x", "foo"));
+
+  unitTest("assert.isNotInt(); 01", true, () => assert.isNotInt(42, "foo"));
+  unitTest("assert.isNotInt(); 02", false, () => assert.isNotInt(42.5, "foo"));
+  unitTest("assert.isNotInt(); 03", false, () => assert.isNotInt("x", "foo"));
+
+  unitTest("assert.isFloat(); 01", true, () => assert.isFloat(42, "foo"));
+  unitTest("assert.isFloat(); 02", false, () => assert.isFloat(42.5, "foo"));
+  unitTest("assert.isFloat(); 03", true, () => assert.isFloat("x", "foo"));
+
+  unitTest("assert.isNotFloat(); 01", false, () => assert.isNotFloat(42, "foo"));
+  unitTest("assert.isNotFloat(); 02", true, () => assert.isNotFloat(42.5, "foo"));
+  unitTest("assert.isNotFloat(); 03", false, () => assert.isNotFloat("x", "foo"));
 
   unitTest("assert.inRange(); 01", false, () => assert.inRange(0, -1, 1));
   unitTest("assert.inRange(); 02", false, () => assert.inRange(-1, -1, 1));
@@ -517,6 +533,68 @@ function autoTestSync () {
   unitTest("assert.notInRange(); 08", false, () => assert.notInRange(2, -1, 1));
   unitTest("assert.notInRange(); 09", false, () => assert.notInRange(1, -1n, 1));
   unitTest("assert.notInRange(); 10", false, () => assert.notInRange(1, -1n, 1n));
+
+  assert.config.alwaysStrict = true;
+
+  unitTest("assert.equal(); 01 after alwaysStrict = true",
+    false,
+    () => assert.equal(1, 1)
+  );
+  unitTest("assert.equal(); 02 after alwaysStrict = true",
+    false,
+    () => assert.equal(NaN, NaN)
+  );
+  unitTest("assert.equal(); 03 after alwaysStrict = true",
+    true,
+    () => assert.equal(1, "1")
+  );
+  unitTest("assert.equal(); 04 after alwaysStrict = true",
+    true,
+    () => assert.equal(1, "1", "lorem")
+  );
+
+  unitTest("assert.notStrictEqual(); 01",
+    false,
+    () => assert.notStrictEqual(1, "1")
+  );
+  unitTest("assert.notStrictEqual(); 02", true,
+    () => assert.notStrictEqual(NaN, NaN)
+  );
+  unitTest("assert.notStrictEqual(); 03", true,
+    () => assert.notStrictEqual(NaN, NaN, "lorem")
+  );
+
+  assert.config.alwaysStrict = false;
+
+  unitTest("assert.equal(); 01 after alwaysStrict = false",
+    false,
+    () => assert.equal(1, "1")
+  );
+  unitTest("assert.equal(); 02 after alwaysStrict = false",
+    false,
+    () => assert.equal(true, 1)
+  );
+  unitTest("assert.equal(); 03 after alwaysStrict = false",
+    true,
+    () => assert.equal(1, 2)
+  );
+  unitTest("assert.equal(); 04 after alwaysStrict = false",
+    true,
+    () => assert.equal(1, 2, "lorem")
+  );
+
+  unitTest("assert.notEqual(); 01 after alwaysStrict = false",
+    false,
+    () => assert.notEqual(1, 2)
+  );
+  unitTest("assert.notEqual(); 01",
+    true,
+    () => assert.notEqual(1, "1")
+  );
+  unitTest("assert.notEqual(); 01",
+    true,
+    () => assert.notEqual(1, "1", "lorem")
+  );
 
   alert("End of the sync test.");
 }

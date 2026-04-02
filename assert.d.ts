@@ -40,6 +40,9 @@ declare class AssertionError extends Error {
 declare function assert(condition: unknown, message?: unknown): asserts condition;
 declare namespace assert {
     var VERSION: string;
+    var config: {
+        alwaysStrict: boolean;
+    };
     var AssertionError: {
         new (message?: string, options?: AssertionErrorOptions): AssertionError;
         isError(error: unknown): error is Error;
@@ -79,11 +82,15 @@ declare namespace assert {
     var isFunction: (value: unknown, message?: unknown) => asserts value is Function;
     var isNotFunction: (value: unknown, message?: unknown) => asserts value is Exclude<unknown, Function>;
     var isObject: (value: unknown, message?: unknown) => asserts value is object;
-    var isNotObject: (value: unknown, message?: unknown) => asserts value is Exclude<unknown, object> | Function;
+    var isNotObject: (value: unknown, message?: unknown) => asserts value is Exclude<unknown, object>;
     var isPrimitive: (value: unknown, message?: unknown) => asserts value is Primitive;
     var isNotPrimitive: (value: unknown, message?: unknown) => asserts value is NonPrimitive;
     var isNaN: (value: unknown, message?: unknown) => void;
     var isNotNaN: (value: unknown, message?: unknown) => void;
+    var isInt: (value: unknown, message?: unknown) => void;
+    var isNotInt: (value: unknown, message?: unknown) => void;
+    var isFloat: (value: unknown, message?: unknown) => void;
+    var isNotFloat: (value: unknown, message?: unknown) => void;
     var isEmpty: (value: unknown, message?: unknown) => void;
     var isNotEmpty: (value: unknown, message?: unknown) => void;
     var match: (string: StringLike, regexp: RegExp, message?: unknown) => void;

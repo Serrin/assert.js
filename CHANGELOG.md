@@ -1,6 +1,19 @@
 
 # assert.js version history
 
+## assert.js v1.1.4
+
+1. Documentation, pdf and code fixes.
+2. Basic type assertion functions (`isNumber();`, `isNotNumber();`, etc.) use the `assert.is();` and `assert.isNot();` instead of be a standalone function.
+3. Add these functions: `isInt();`, `isNotInt();`, `isFloat();`, `isNotFloat();`
+
+## assert.js v1.1.3
+
+1. Documentation, pdf and code fixes.
+2. Add Windows Samsung Browser to the testing enviroments.
+3. Many TS6 small changes in the code files.
+4. Add the `assert.config.alwaysStrict;`
+
 ## assert.js v1.1.2
 
 1. Documentation, pdf and code fixes.
@@ -25,7 +38,7 @@ Old name|New name
 1. Documentation, pdf and code fixes.
 2. Add inner links in the __readme.html__.
 3. Add 2 new properties of the TestResult object (`block`, `name`) in the testrunner functions.
-4. Add these functions: 
+4. Add these functions:
 
 - `inRange();`
 - `notInRange();`
