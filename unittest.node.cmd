@@ -10,18 +10,18 @@ echo.
 echo ========================================================================
 echo.
 echo Node.js Version:
-node --version
+call node --version
 echo.
-node unittest.node.js
+call node unittest.node.js
 echo.
 echo ========================================================================
 echo.
 pause
 echo.
 echo Deno Version:
-deno --version
+call deno --version
 echo.
-deno unittest.node.js
+call deno unittest.node.js
 echo.
 echo ========================================================================
 echo.

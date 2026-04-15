@@ -2,7 +2,7 @@
 "use strict";
 
 
-/* assert.js v1.1.4 testcases for ESM environment */
+/* assert.js v1.1.5 testcases for ESM environment */
 
 
 /**
@@ -104,12 +104,24 @@ function autoTestSync () {
   unitTest("assert.notOk(); 04", true, () => assert.notOk(true, "lorem"));
 
   unitTest("assert.isTrue(); 01", false, () => assert.isTrue(true));
-  unitTest("assert.isTrue(); 02", true, () => assert.isTrue(1));
-  unitTest("assert.isTrue(); 03", true, () => assert.isTrue(1, "lorem"));
+  unitTest("assert.isTrue(); 02", true, () => assert.isTrue(false));
+  unitTest("assert.isTrue(); 03", true, () => assert.isTrue(1));
+  unitTest("assert.isTrue(); 04", true, () => assert.isTrue(0));
 
-  unitTest("assert.isFalse(); 01", false, () => assert.isFalse(false));
-  unitTest("assert.isFalse(); 02", true, () => assert.isFalse(0));
-  unitTest("assert.isFalse(); 03", true, () => assert.isFalse(0, "lorem"));
+  unitTest("assert.isNotTrue(); 01", true, () => assert.isNotTrue(true, "lorem"));
+  unitTest("assert.isNotTrue(); 02", false, () => assert.isNotTrue(false));
+  unitTest("assert.isNotTrue(); 03", false, () => assert.isNotTrue(1));
+  unitTest("assert.isNotTrue(); 04", false, () => assert.isNotTrue(0));
+
+  unitTest("assert.isFalse(); 01", true, () => assert.isFalse(true));
+  unitTest("assert.isFalse(); 02", false, () => assert.isFalse(false));
+  unitTest("assert.isFalse(); 03", true, () => assert.isFalse(1));
+  unitTest("assert.isFalse(); 04", true, () => assert.isFalse(0, "lorem"));
+
+  unitTest("assert.isNotFalse(); 01", false, () => assert.isNotFalse(true));
+  unitTest("assert.isNotFalse(); 02", true, () => assert.isNotFalse(false, "lorem"));
+  unitTest("assert.isNotFalse(); 03", false, () => assert.isNotFalse(1));
+  unitTest("assert.isNotFalse(); 04", false, () => assert.isNotFalse(0));
 
   unitTest("assert.is(); 01", false, () => assert.is(123, "number"));
   unitTest("assert.is(); 02", false, () => assert.is([], Array));
@@ -533,6 +545,14 @@ function autoTestSync () {
   unitTest("assert.notInRange(); 08", false, () => assert.notInRange(2, -1, 1));
   unitTest("assert.notInRange(); 09", false, () => assert.notInRange(1, -1n, 1));
   unitTest("assert.notInRange(); 10", false, () => assert.notInRange(1, -1n, 1n));
+
+  unitTest("assert.oneOf(); 01", false, () => assert.oneOf(42, [42, 56]) );
+  unitTest("assert.oneOf(); 02", true, () => assert.oneOf(42, [43, 56]) );
+  unitTest("assert.oneOf(); 03", true, () => assert.oneOf(42, [43, 56], "lorem") );
+
+  unitTest("assert.notOneOf(); 01", true, () => assert.notOneOf(42, [42, 56]) );
+  unitTest("assert.notOneOf(); 02", true, () => assert.notOneOf(42, [42, 56], "lorem") );
+  unitTest("assert.notOneOf(); 03", false, () => assert.notOneOf(42, [43, 56]) );
 
   assert.config.alwaysStrict = true;
 

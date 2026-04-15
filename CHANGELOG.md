@@ -1,11 +1,26 @@
 
 # assert.js version history
 
+## assert.js v1.1.5
+
+1. Documentation, pdf and code fixes.
+2. Add these functions:
+
+- `isNotTrue();`
+- `isNotFalse();`
+- `oneOf();`
+- `notOneOf();`
+
 ## assert.js v1.1.4
 
 1. Documentation, pdf and code fixes.
 2. Basic type assertion functions (`isNumber();`, `isNotNumber();`, etc.) use the `assert.is();` and `assert.isNot();` instead of be a standalone function.
-3. Add these functions: `isInt();`, `isNotInt();`, `isFloat();`, `isNotFloat();`
+3. Add these functions:
+
+- `isInt();`
+- `isNotInt();`
+- `isFloat();`
+- `isNotFloat();`
 
 ## assert.js v1.1.3
 

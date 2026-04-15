@@ -29,9 +29,9 @@ body {
 
 <h1 id="top" class="center">assert.js</h1>
 
-<p>Latest version: 1.1.4</p>
+<p>Latest version: 1.1.5</p>
 
-<p>Date: 2026-04-02T16:32:34.119Z</p>
+<p>Date: 2026-04-15T19:24:39.090Z</p>
 
 <p>A modern, zero-dependency assertion library for Node.js, Deno and browser (ESM) environments.</p>
 
@@ -77,7 +77,7 @@ body {
   </tr>
   <tr>
     <td><a href="#category-Equality">Equality</a></td>
-    <td><a href ="#fn-equal"><code>assert.equal();</code></a>, <a href ="#fn-notEqual"><code>assert.notEqual();</code></a>, <a href ="#fn-strictEqual"><code>assert.strictEqual();</code></a>, <a href ="#fn-notStrictEqual"><code>assert.notStrictEqual();</code></a>, <a href ="#fn-deepEqual"><code>assert.deepEqual();</code></a>, <a href ="#fn-notDeepEqual"><code>assert.notDeepEqual();</code></a></td>
+    <td><a href ="#fn-equal"><code>assert.equal();</code></a>, <a href ="#fn-notEqual"><code>assert.notEqual();</code></a>, <a href ="#fn-strictEqual"><code>assert.strictEqual();</code></a>, <a href ="#fn-notStrictEqual"><code>assert.notStrictEqual();</code></a>, <a href ="#fn-deepEqual"><code>assert.deepEqual();</code></a>, <a href ="#fn-notDeepEqual"><code>assert.notDeepEqual();</code></a>, <a href ="#fn-oneOf"><code>assert.oneOf();</code></a>, <a href ="#fn-notOneOf"><code>assert.notOneOf();</code></a></td>
   </tr>
   <tr>
     <td><a href="#category-Exception">Exception</a></td>
@@ -85,7 +85,7 @@ body {
   </tr>
   <tr>
     <td><a href="#category-Boolean">Boolean</a></td>
-    <td><a href ="#fn-isTrue"><code>assert.isTrue();</code></a>, <a href ="#fn-isFalse"><code>assert.isFalse();</code></a></td>
+    <td><a href ="#fn-isTrue"><code>assert.isTrue();</code></a>, <a href ="#fn-isNotTrue"><code>assert.isNotTrue();</code></a>, <a href ="#fn-isFalse"><code>assert.isFalse();</code></a>, <a href ="#fn-isNotFalse"><code>assert.isNotFalse();</code></a></td>
   </tr>
   <tr>
     <td><a href="#category-String">String</a></td>
@@ -165,7 +165,7 @@ globalThis.assert = assert;</pre>
 
 <p>Returns the library version string.</p>
 
-<pre>console.log(assert.VERSION); // "assert.js v1.1.4"</pre>
+<pre>console.log(assert.VERSION); // "assert.js v1.1.5"</pre>
 
 <p><a href="#Summary">&#9650; Back to Summary</a></p>
 
@@ -324,6 +324,28 @@ assert.deepEqual([1, 2], [1, 2]); // passes
 
 <p><a href="#Summary">&#9650; Back to Summary</a></p>
 
+<h3 id="fn-oneOf" class="round-25 padding font-monospace bg-lightblue">assert.oneOf(value, collection, [message: string | Error]);</h3>
+
+<p>Added in v1.1.5</p>
+
+<p>Ensures a value is in a flat collection (<code>Array</code>, iterables, etc.).</p>
+
+<pre>assert.oneOf(1, [1, 2, 3]); // passes
+//assert.OneOf(4, [1, 2, 3]); // throws an error</pre>
+
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-notOneOf" class="round-25 padding font-monospace bg-lightblue">assert.notOneOf(value, collection, [message: string | Error]);</h3>
+
+<p>Added in v1.1.5</p>
+
+<p>Ensures a value is not in a flat collection (<code>Array</code>, iterables, etc.).</p>
+
+<pre>//assert.notOneOf(1, [1, 2, 3]); // throws an error
+assert.notOneOf(4, [1, 2, 3]); // passes</pre>
+
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
 <hr>
 
 <h2 id="category-Exception">Exception Assertions</h2>
@@ -373,7 +395,22 @@ assert.throws(() =&gt; { throw new Error("boom"); }, /boom/); // passes
 <p>Ensures value is exactly <code>true</code>.</p>
 
 <pre>assert.isTrue(true); // passes
+// assert.isTrue(false); // throws an error
 // assert.isTrue(1); // throws an error</pre>
+
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h2 id="category-Boolean">Boolean Assertions</h2>
+
+<h3 id="fn-isNotTrue" class="round-25 padding font-monospace bg-lightblue">assert.isNotTrue(value, [message: string | Error]);</h3>
+
+<p>Added in v1.1.5</p>
+
+<p>Ensures value is exactly not <code>true</code>.</p>
+
+<pre>//assert.isNotTrue(true); // throws an error
+assert.isNotTrue(false); // passes
+assert.isNotTrue(1); // passes</pre>
 
 <p><a href="#Summary">&#9650; Back to Summary</a></p>
 
@@ -383,8 +420,21 @@ assert.throws(() =&gt; { throw new Error("boom"); }, /boom/); // passes
 
 <p>Ensures value is exactly <code>false</code>.</p>
 
-<pre>assert.isFalse(false); // passes
-// assert.isFalse(0); // throws an error</pre>
+<pre>//assert.isFalse(true); // throws an error
+assert.isFalse(false); // passes
+//assert.isFalse(1); // throws an error</pre>
+
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-isNotFalse" class="round-25 padding font-monospace bg-lightblue">assert.isNotFalse(value, [message: string | Error]);</h3>
+
+<p>Added in v1.1.5</p>
+
+<p>Ensures value is exactly not <code>false</code>.</p>
+
+<pre>assert.isNotFalse(true); // passes
+//assert.isNotFalse(false); // throws an error
+assert.isNotFalse(1); // passes</pre>
 
 <p><a href="#Summary">&#9650; Back to Summary</a></p>
 

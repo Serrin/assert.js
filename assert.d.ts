@@ -1,6 +1,6 @@
 type Falsy = null | undefined | false | 0 | -0 | 0n | "";
 type StringLike = string | String;
-type Comparable = number | bigint | string | boolean;
+type Comparable = number | bigint | string | boolean | Date;
 type AssertionErrorOptions = {
     message?: unknown;
     cause?: unknown;
@@ -35,6 +35,7 @@ declare class AssertionError extends Error {
     expected?: unknown;
     operator?: string;
     code?: string;
+    generatedMessage?: boolean;
     constructor(message?: string, options?: AssertionErrorOptions);
 }
 declare function assert(condition: unknown, message?: unknown): asserts condition;
@@ -60,7 +61,9 @@ declare namespace assert {
     var fail: (message?: unknown) => void;
     var notOk: (condition: unknown, message?: unknown) => asserts condition is Falsy;
     var isTrue: (condition: unknown, message?: unknown) => asserts condition is true;
+    var isNotTrue: <T>(condition: T, message?: unknown) => asserts condition is Exclude<T, true>;
     var isFalse: (condition: unknown, message?: unknown) => asserts condition is false;
+    var isNotFalse: <T>(condition: T, message?: unknown) => asserts condition is Exclude<T, false>;
     var is: (value: unknown, expectedType: ExpectedType, message?: unknown) => void;
     var isNot: (value: unknown, expectedType: ExpectedType, message?: unknown) => void;
     var isNullish: (value: unknown, message?: unknown) => asserts value is Nullish;
@@ -105,6 +108,8 @@ declare namespace assert {
     var stringNotContains: (actual: StringLike, substring: StringLike, message?: unknown) => void;
     var includes: (container: any, options: IncludesOptions, message?: unknown) => void;
     var doesNotInclude: (container: any, options: IncludesOptions, message?: unknown) => void;
+    var oneOf: (value: unknown, collection: unknown, message?: unknown) => void;
+    var notOneOf: (value: unknown, collection: unknown, message?: unknown) => void;
     var testSync: <T>(block: () => T, name?: string) => TestResult<T>;
     var testAsync: <T>(block: () => Promise<T>, name?: string) => Promise<TestResult<T>>;
     var testCheck: <T>(result: TestResult<T>) => result is {

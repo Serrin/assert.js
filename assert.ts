@@ -10,14 +10,14 @@
 
 /**
  * @name assert.js
- * @version 1.1.4
+ * @version 1.1.5
  * @author Ferenc Czigler
  * @see https://github.com/Serrin/assert.js/
  * @license MIT https://opensource.org/licenses/MIT
  */
 
 
-const VERSION = "assert.js v1.1.4";
+const VERSION = "assert.js v1.1.5";
 
 
 /*
@@ -40,7 +40,7 @@ https://google.github.io/closure-library/api/goog.asserts.html
  * @see https://developer.mozilla.org/en-US/docs/Glossary/Falsy
  * Missing values: NaN and document.all
  *
- * @internal
+ * @private
  */
 type Falsy = null | undefined | false | 0 | -0 | 0n | "";
 /* type Truthy<T> = Exclude<T, Falsy>; */
@@ -48,35 +48,35 @@ type Falsy = null | undefined | false | 0 | -0 | 0n | "";
 /**
  * @description Map-like object with string or symbol keys.
  *
- * @internal
+ * @private
  */
 type MapLike = Record<PropertyKey, any>;
 
 /**
  * @description string or String object
  *
- * @internal
+ * @private
  */
 type StringLike = string | String;
 
 /**
  * @description TypedArray types.
  *
- * @internal
+ * @private
  */
 type TypedArray = Exclude<ArrayBufferView, DataView>;
 
 /**
  * Generic comparable types.
  *
- * @internal
+ * @private
  */
-type Comparable = number | bigint | string | boolean;
+type Comparable = number | bigint | string | boolean | Date;
 
 /**
  * @description Options for AssertionError.
  *
- * @internal
+ * @private
  */
 type AssertionErrorOptions = {
   message?: unknown,
@@ -91,7 +91,7 @@ type AssertionErrorOptions = {
 /**
  * @description The result of a test operation, indicating success or failure.
  *
- * @internal
+ * @private
  */
 type TestResult<T> =
   | {ok: true, value: T, block: Function, name: string}
@@ -101,7 +101,7 @@ type TestResult<T> =
  * @description Return the typeof operator result of the given value,
  * except return "null" instead of "object" for null.
  *
- * @internal
+ * @private
  */
 type TypeOfTag =
   | "null" | "undefined"
@@ -111,49 +111,49 @@ type TypeOfTag =
 /**
  * @description Return a more detailed class name of the given value. Similar to typeof but with better handling of built-ins (Array, Date, Map, etc.) and correct "null" classification.
  *
- * @internal
+ * @private
  */
 type ClassOfTag = TypeOfTag | string;
 
 /**
  * The expected type(s) for type checking.
  *
- * @internal
+ * @private
  */
 type ExpectedType = string | Function | Array<string | Function>;
 
 /**
  * The expected options object for type includes functions
  *
- * @internal
+ * @private
  */
 type IncludesOptions = { keyOrValue: any, value?: any };
 
 /**
  * null or undefined
  *
- * @internal
+ * @private
  */
 type Nullish = null | undefined;
 
 /**
  * @description Not null or undefined or object or function.
  *
- * @internal
+ * @private
  */
 type NonNullablePrimitive = number | bigint | boolean | string | symbol;
 
 /**
  * @description Not object or function.
  *
- * @internal
+ * @private
  */
 type Primitive = Nullish | NonNullablePrimitive;
 
 /**
  * @description Object or function.
  *
- * @internal
+ * @private
  */
 type NonPrimitive = object | Function;
 
@@ -205,7 +205,7 @@ const _typeOf = (value: unknown): TypeOfTag =>
  *
  * @param {unknown} value - The value to check.
  * @returns {ClassOfTag}
- * @internal
+ * @private
  */
 // @ts-ignore
 function _classOf (value: unknown): ClassOfTag {
@@ -236,12 +236,23 @@ console.log(_classOf(new (class Foo {})()))   //"Foo"
 
 
 /**
+ * Checks if a value is a TypedArray (Int8Array, etc.).
+ *
+ * @param {unknown} value The value to check.
+ * @returns boolean
+ * @private
+ */
+const _isTypedArray = (value: unknown): value is TypedArray =>
+  ArrayBuffer.isView(value) && !(value instanceof DataView);
+
+
+/**
  * @description Checks if the values are deep equal.
  *
  * @param {unknown} value1 - The value to check.
  * @param {unknown} value2 - The value to check.
  * @returns {boolean} True if the value are deep equal, false otherwise.
- * @internal
+ * @private
  */
 function _isDeepStrictEqual (value1: any, value2: any): boolean {
   /* helper functions */
@@ -250,8 +261,8 @@ function _isDeepStrictEqual (value1: any, value2: any): boolean {
     value1 instanceof Class && value2 instanceof Class;
   const _classof = (value: unknown): string =>
     Object.prototype.toString.call(value).slice(8, -1).toLowerCase();
-  const _ownKeys = (value: MapLike): Array<string | symbol> =>
-    [...Object.getOwnPropertyNames(value), ...Object.getOwnPropertySymbols(value)];
+  const _ownKeys = Reflect?.ownKeys ?? ((value: MapLike): Array<string | symbol> =>
+    [...Object.getOwnPropertyNames(value), ...Object.getOwnPropertySymbols(value)]);
   /* strict equality helper function */
   const _isEqual = (value1: unknown, value2: unknown): boolean =>
     Object.is(value1, value2);
@@ -392,7 +403,7 @@ function _isDeepStrictEqual (value1: any, value2: any): boolean {
  * @param {boolean} Throw Default false.
  * @returns {boolean} True if the value is the given type(s), false otherwise.
  * @throws If Throw is true and type checking is failed.
- * @internal
+ * @private
  */
 function _isType (
   value: any,
@@ -451,7 +462,7 @@ function _isType (
  *
  * @param {unknown} value - The value to check.
  * @returns {boolean} True if the value is an object, false otherwise.
- * @internal
+ * @private
  */
 const _isObject = (value: unknown): value is object =>
   value != null && typeof value === "object";
@@ -462,7 +473,7 @@ const _isObject = (value: unknown): value is object =>
  *
  * @param {unknown} value - The value to check.
  * @returns {boolean} True if the value is an error, false otherwise.
- * @internal
+ * @private
  */
 const _isError = (value: unknown): value is Error =>
   Error.isError ? Error.isError(value) : value instanceof Error;
@@ -473,7 +484,7 @@ const _isError = (value: unknown): value is Error =>
  *
  * @param {unknown} value The value to check.
  * @returns {string}
- * @internal
+ * @private
  */
 function _toSafeString (value: unknown): string {
   const seen = new WeakSet<object>();
@@ -519,7 +530,7 @@ function _toSafeString (value: unknown): string {
  * @param {Comparable} value1 The value1 to check.
  * @param {Comparable} value2 The value2 to check.
  * @returns {boolean} value1 is less than value2.
- * @internal
+ * @private
  */
 const _isLessThan = (value1: Comparable, value2: Comparable): boolean =>
   _typeOf(value1) === _typeOf(value2) && value1 < value2;
@@ -532,7 +543,7 @@ const _isLessThan = (value1: Comparable, value2: Comparable): boolean =>
  * @param {Comparable} min The value2 to check.
  * @param {Comparable} max The value2 to check.
  * @returns {boolean} value is greater than or equal min and value is less than or equal max.
- * @internal
+ * @private
  */
 const _inRange = (value: Comparable, min: Comparable, max: Comparable): boolean =>
   _typeOf(value) === _typeOf(min)
@@ -551,7 +562,7 @@ const _inRange = (value: Comparable, min: Comparable, max: Comparable): boolean 
  * @param {any} keyOrValue The key or value to look for.
  * @param {unknown} valueIfKey The value to check if the key exists.
  * @returns True if the key or value exists, false otherwise.
- * @internal
+ * @private
  */
 function _includes<T extends object, K extends keyof T>(container: T, keyOrValue: K, valueIfKey?: T[K]): boolean;
 function _includes<T>(container: T[], value: T): boolean;
@@ -590,7 +601,7 @@ function _includes(container: any, keyOrValue: any, valueIfKey?: unknown): boole
   }
   /* Array + TypedArray + Set + Iterables */
   if (Array.isArray(container)
-    || ArrayBuffer.isView(container)
+    || _isTypedArray(container)
     || container instanceof Set
     || typeof (container)[Symbol.iterator] === "function") {
     let it = container[Symbol.iterator]();
@@ -619,17 +630,9 @@ function _includes(container: any, keyOrValue: any, valueIfKey?: unknown): boole
  *
  * @param {any} value The value to check.
  * @returns boolean
- * @internal
+ * @private
  */
 function _isEmpty (value: any): boolean {
-  /**
-   * Checks if a value is a TypedArray (Int8Array, etc.).
-   *
-   * @param {unknown} value The value to check.
-   * @returns boolean
-   */
-  const _isTypedArray = (value: unknown): value is TypedArray =>
-    ArrayBuffer.isView(value) && !(value instanceof DataView);
   /* Check undefined, null, NaN */
   if (value == null || Number.isNaN(value)) { return true; }
   /* Check Array, TypedArrays, string, String */
@@ -683,7 +686,7 @@ function _isEmpty (value: any): boolean {
  *
  * @param {unknown} value - The value to check.
  * @returns True if the value is Primitive, false otherwise.
- * @internal
+ * @private
  */
 const _isPrimitive = (value: unknown): value is Primitive =>
   _typeOf(value) !== "object" && _typeOf(value) !== "function";
@@ -694,7 +697,7 @@ const _isPrimitive = (value: unknown): value is Primitive =>
  *
  * @param {unknown} value - The value to check.
  * @returns True if the value is an integer, false otherwise.
- * @internal
+ * @private
  */
 const _isInteger = (value: unknown): value is number =>
   typeof value === "number"
@@ -707,7 +710,7 @@ const _isInteger = (value: unknown): value is number =>
  *
  * @param {unknown} value - The value to check.
  * @returns {boolean} True if the value is a float, false otherwise.
- * @internal
+ * @private
  */
 const _isFloat = (value: unknown): boolean =>
   typeof value === "number"
@@ -721,7 +724,7 @@ const _isFloat = (value: unknown): boolean =>
  * @param {unknown} value - The value to check.
  * @param {Function} caller
  * @returns {void}
- * @internal
+ * @private
  */
 function _errorCheck (value: unknown, caller: Function): void {
   if (_isError(value)) {
@@ -747,10 +750,12 @@ class AssertionError extends Error {
   expected?: unknown;
   operator?: string;
   code?: string;
+  generatedMessage?: boolean;
   constructor(message?: string, options?: AssertionErrorOptions) {
     super(message);
     this.code = "ERR_ASSERTION";
     this.name = "AssertionError";
+    this.generatedMessage = true;
     this.message = message ?? "AssertionError";
     this.cause = message ?? "AssertionError";
     if (options != null && typeof options === "object") {
@@ -784,7 +789,7 @@ function assert (condition: unknown, message?: unknown): asserts condition {
       cause: errorMessage,
       actual: condition,
       expected: true,
-      operator: "=="
+      operator: "==",
     });
   }
 }
@@ -1168,6 +1173,30 @@ function isTrue (condition: unknown, message?: unknown): asserts condition is tr
 
 
 /**
+ * @description Ensures value is exactly not `true`, but can be `false` or truthy or falsy.
+ *
+ * @param {T} condition The value to check.
+ * @param {unknown} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isNotTrue<T>(condition: T, message?: unknown): asserts condition is Exclude<T, true> {
+  if (condition === true) {
+    _errorCheck(message, isNotTrue);
+    let errorMessage =
+      `[isNotTrue] Assertion failed: ${_toSafeString(condition)} should be not true${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: condition,
+      expected: true,
+      operator: "==="
+    });
+  }
+}
+
+
+/**
  * @description Ensures value is exactly `false`.
  *
  * @param {unknown} condition The value to check.
@@ -1186,6 +1215,30 @@ function isFalse (condition: unknown, message?: unknown): asserts condition is f
       actual: condition,
       expected: false,
       operator: "!=="
+    });
+  }
+}
+
+
+/**
+ * @description Ensures value is exactly not `false`, but can be `true` or truthy or falsy.
+ *
+ * @param {T} condition The value to check.
+ * @param {unknown} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function isNotFalse<T>(condition: T, message?: unknown): asserts condition is Exclude<T, false> {
+  if (condition === false) {
+    _errorCheck(message, isNotFalse);
+    let errorMessage =
+      `[isNotFalse] Assertion failed: ${_toSafeString(condition)} should be not false${message ? " - " + _toSafeString(message) : ""}`;
+    throw new assert.AssertionError(errorMessage, {
+      message: errorMessage,
+      cause: errorMessage,
+      actual: condition,
+      expected: false,
+      operator: "==="
     });
   }
 }
@@ -2141,6 +2194,32 @@ function doesNotInclude (
 }
 
 
+/**
+ * @description Ensures a value is in a flat collection (`Array`, iterables, etc.).
+ *
+ * @param {unknown} value - The value to check.
+ * @param {unknown} collection - List of the possibly values.
+ * @param {unknown} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+const oneOf = (value: unknown, collection: unknown, message?: unknown): void =>
+  assert.includes(collection, {keyOrValue: value}, message);
+
+
+/**
+ * @description Ensures a value is not in a flat collection (`Array`, iterables, etc.).
+ *
+ * @param {unknown} value - The value to check.
+ * @param {unknown} collection - List of the possibly values.
+ * @param {unknown} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+const notOneOf = (value: unknown, collection: unknown, message?: unknown): void =>
+  assert.doesNotInclude(collection, {keyOrValue: value}, message);
+
+
 /* testrunner functions */
 
 
@@ -2221,7 +2300,9 @@ assert["doesNotReject"] = doesNotReject;
 assert["fail"] = fail;
 assert["notOk"] = notOk;
 assert["isTrue"] = isTrue;
+assert["isNotTrue"] = isNotTrue;
 assert["isFalse"] = isFalse;
+assert["isNotFalse"] = isNotFalse;
 assert["is"] = is;
 assert["isNot"] = isNot;
 assert["isNullish"] = isNullish;
@@ -2266,6 +2347,8 @@ assert["stringContains"] = stringContains;
 assert["stringNotContains"] = stringNotContains;
 assert["includes"] = includes;
 assert["doesNotInclude"] = doesNotInclude;
+assert["oneOf"] = oneOf;
+assert["notOneOf"] = notOneOf;
 /* testrunner functions */
 assert["testSync"] = testSync;
 assert["testAsync"] = testAsync;
