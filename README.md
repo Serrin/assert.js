@@ -1,8 +1,8 @@
 # assert.js
 
-Latest version: 1.1.5
+Latest version: 1.1.6
 
-Date: 2026-04-15T19:24:39.090Z
+Date: 2026-04-17T16:50:24.702Z
 
 A modern, zero-dependency assertion library for Node.js, Deno and browser (ESM) environments.
 
@@ -17,15 +17,14 @@ Category   | Assertions
 Constants  | `assert.VERSION;`
 Config     | `assert.config.alwaysStrict;` (Default value is `false`.)
 Errors     | `assert.AssertionError();`
-Basic      | `assert();`, `assert.ok();`, `assert.notOk();`, `assert.fail();`
-Equality   | `assert.equal();`, `assert.notEqual();`, `assert.strictEqual();`, `assert.notStrictEqual();`, `assert.deepEqual();`, `assert.notDeepEqual();`, `assert.oneOf();`, `assert.notOneOf();`
-Exception  | `assert.throws();`, `await assert.rejects();`, `await assert.doesNotReject();`
-Boolean    | `assert.isTrue();`, `assert.isNotTrue();`, `assert.isFalse();`, `assert.isNotFalse();`
-String     | `assert.match();`, `assert.doesNotMatch();`, `assert.stringContains();`, `assert.stringNotContains();`
-Comparison | `assert.lt();`, `assert.lte();`, `assert.gt();`, `assert.gte();`, `assert.inRange();`, `assert.notInRange();`
-Objects    | `assert.includes();`, `assert.doesNotInclude();`, `assert.isEmpty();`, `assert.isNotEmpty();`
-Type       | `assert.is();`, `assert.isNot();`, `assert.isPrimitive();`, `assert.isNotPrimitive();`, `assert.isNullish();`, `assert.isNonNullable();`, `assert.isNull();`, `assert.isNotNull();`, `assert.isUndefined();`, `assert.isDefined();`, `assert.isString();`, `assert.isNotString();`, `assert.isNumber();`, `assert.isNotNumber();`, `assert.isInt();`, `assert.isNotInt();`, `assert.isFloat();`, `assert.isNotFloat();`, `assert.isBigInt();`, `assert.isNotBigInt();`, `assert.isBoolean();`, `assert.isNotBoolean();`, `assert.isSymbol();`, `assert.isNotSymbol();`, `assert.isFunction();`, `assert.isNotFunction();`, `assert.isObject();`, `assert.isNotObject();`, `assert.isNaN();`, `assert.isNotNaN();`
-Testrunner | `assert.testSync();`, `await assert.testAsync();`, `assert.testCheck();`
+Basic      | `assert();`,<BR>`assert.ok();`, `assert.notOk();`,<BR>`assert.fail();`
+Equality   | `assert.equal();`, `assert.notEqual();`,<BR>`assert.strictEqual();`, `assert.notStrictEqual();`,<BR>`assert.deepEqual();`, `assert.notDeepEqual();`,<BR>`assert.oneOf();`, `assert.notOneOf();`
+Exception  | `assert.throws();`,<BR>`await assert.rejects();`,<BR>`await assert.doesNotReject();`
+String     | `assert.match();`, `assert.doesNotMatch();`,<BR>`assert.stringContains();`, `assert.stringNotContains();`
+Comparison | `assert.lt();`, `assert.lte();`,<BR>`assert.gt();`, `assert.gte();`,<BR>`assert.inRange();`, `assert.notInRange();`
+Object     | `assert.includes();`, `assert.doesNotInclude();`,<BR>`assert.isEmpty();`, `assert.isNotEmpty();`
+Type       | `assert.is();`, `assert.isNot();`,<BR>`assert.isPrimitive();`, `assert.isNotPrimitive();`,<BR>`assert.isNullish();`, `assert.isNonNullable();`,<BR>`assert.isNull();`, `assert.isNotNull();`,<BR>`assert.isUndefined();`, `assert.isDefined();`,<BR> `assert.isString();`, `assert.isNotString();`,<BR>`assert.isNumber();`, `assert.isNotNumber();`,<BR>`assert.isInt();`, `assert.isNotInt();`,<BR>`assert.isFloat();`, `assert.isNotFloat();`,<BR>`assert.isBigInt();`, `assert.isNotBigInt();`,<BR> `assert.isBoolean();`, `assert.isNotBoolean();`,<BR>`assert.isTrue();`, `assert.isNotTrue();`,<BR>`assert.isFalse();`, `assert.isNotFalse();`,<BR>`assert.isSymbol();`, `assert.isNotSymbol();`,<BR>`assert.isFunction();`, `assert.isNotFunction();`,<BR>`<BR>assert.isObject();`, `assert.isNotObject();`,<BR>`assert.isNaN();`, `assert.isNotNaN();`
+Testrunner | `assert.testSync();`,<BR>`await assert.testAsync();`,<BR>`assert.testCheck();`
 
 ---
 
@@ -89,7 +88,7 @@ Added in v1.0.0
 Returns the library version string.
 
 ````javascript
-console.log(assert.VERSION); // "assert.js v1.1.5"
+console.log(assert.VERSION); // "assert.js v1.1.6"
 ````
 
 ---
@@ -108,7 +107,7 @@ If value is `true`, then the `assert.equal();` will be replaced with the `assert
 
 ## Errors
 
-### `assert.AssertionError([message], [options]);`
+### `assert.AssertionError([message], [options: { [message], [cause], [actual], [expected], [operator] } ]);`
 
 Added in v1.0.0
 
@@ -128,29 +127,29 @@ try {
 
 ## Basic Assertions
 
-### `assert(condition, [message: string | Error]);`
+### `assert(condition [, message: string | Error]);`
 
 Added in v1.0.0
 
 Ensures that `condition` is truthy. Throws an `AssertionError` if falsy.
 
 ````javascript
-assert(true); // passes
-// assert(false, "should be true"); // throws an error fails
+assert(1 === 1); // passes
+// assert(0, "0 is falsy"); // throws an error
 ````
 
-### `assert.ok(condition, [message: string | Error]);`
+### `assert.ok(condition [, message: string | Error]);`
 
 Added in v1.0.0
 
-Alias for `assert(condition, [message: string | Error]);`.
+Alias for `assert(condition [, message: string | Error]);`.
 
 ````javascript
 assert.ok(1 === 1); // passes
 // assert.ok(0, "0 is falsy"); // throws an error
 ````
 
-### `assert.notOk(condition, [message: string | Error]);`
+### `assert.notOk(condition [, message: string | Error]);`
 
 Added in v1.0.0
 
@@ -164,19 +163,22 @@ assert.notOk(""); // passes
 
 ### `assert.fail([message: string | Error]);`
 
+### `assert.fail([actual, expected, message: string, operator]);`
+
 Added in v1.0.0
 
 Forces a failure.
 
 ````javascript
 // assert.fail("This should fail"); // throws an error
+// assert.fail(1, 2, "This should fail", "===") // throws an error
 ````
 
 ---
 
 ## Equality Assertions
 
-### `assert.equal(actual, expected, [message: string | Error]);`
+### `assert.equal(actual, expected [, message: string | Error]);`
 
 Added in v1.0.0
 
@@ -188,18 +190,18 @@ assert.equal(true, 1); // passes
 // assert.equal(1, 2); // throws an error
 ````
 
-### `assert.notEqual(actual, expected, [message: string | Error]);`
+### `assert.notEqual(actual, expected [, message: string | Error]);`
 
 Added in v1.0.0
 
-Inverse of `equal(actual, expected, [message: string | Error]);`.
+Inverse of `equal(actual, expected [, message: string | Error]);`.
 
 ````javascript
 assert.notEqual(1, 2); // passes
 // assert.notEqual(1, "1"); // throws an error
 ````
 
-### `assert.strictEqual(actual, expected, [message: string | Error]);`
+### `assert.strictEqual(actual, expected [, message: string | Error]);`
 
 Added in v1.0.0
 
@@ -211,18 +213,18 @@ assert.strictEqual(NaN, NaN); // passes
 // assert.strictEqual(1, "1"); // throws an error
 ````
 
-### `assert.notStrictEqual(actual, expected, [message: string | Error]);`
+### `assert.notStrictEqual(actual, expected [, message: string | Error]);`
 
 Added in v1.0.0
 
-Inverse of `strictEqual(actual, expected, [message: string | Error]);`.
+Inverse of `strictEqual(actual, expected [, message: string | Error]);`.
 
 ````javascript
 assert.notStrictEqual(1, "1"); // passes
 // assert.notStrictEqual(NaN, NaN); // throws an error
 ````
 
-### `assert.deepEqual(actual, expected, [message: string | Error]);`
+### `assert.deepEqual(actual, expected [, message: string | Error]);`
 
 Added in v1.0.0
 
@@ -234,18 +236,18 @@ assert.deepEqual([1, 2], [1, 2]); // passes
 // assert.deepEqual({ a: 1 }, { a: 2 }); // throws an error
 ````
 
-### `assert.notDeepEqual(actual, expected, [message: string | Error]);`
+### `assert.notDeepEqual(actual, expected [, message: string | Error]);`
 
 Added in v1.0.0
 
-Inverse of `deepEqual(actual, expected, [message: string | Error]);`.
+Inverse of `deepEqual(actual, expected [, message: string | Error]);`.
 
 ````javascript
 assert.notDeepEqual({ a: 1 }, { a: 2 }); // passes
 // assert.notDeepEqual({ a: 1 }, { a: 1 }); // throws an error
 ````
 
-### `assert.oneOf(value, collection, [message: string | Error]);`
+### `assert.oneOf(value, collection [, message: string | Error]);`
 
 Added in v1.1.5
 
@@ -256,7 +258,7 @@ assert.oneOf(1, [1, 2, 3]); // passes
 //assert.OneOf(4, [1, 2, 3]); // throws an error
 ````
 
-### `assert.notOneOf(value, collection, [message: string | Error]);`
+### `assert.notOneOf(value, collection [, message: string | Error]);`
 
 Added in v1.1.5
 
@@ -271,7 +273,7 @@ assert.notOneOf(4, [1, 2, 3]); // passes
 
 ## Exception Assertions
 
-### `assert.throws(fn, [ErrorType|string|RegExp], [message: string | Error]);`
+### `assert.throws(fn, [ErrorType|string|RegExp] [, message: string | Error]);`
 
 Added in v1.0.0
 
@@ -283,7 +285,7 @@ assert.throws(() => { throw new Error("boom"); }, /boom/); // passes
 // assert.throws(() => 42); // did not throw
 ````
 
-### `await assert.rejects(asyncFnOrPromise, [ErrorType|string|RegExp], [message: string | Error]);`
+### `await assert.rejects(asyncFnOrPromise, [ErrorType|string|RegExp] [, message: string | Error]);`
 
 Added in v1.0.0
 
@@ -294,7 +296,7 @@ await assert.rejects(async () => { throw new Error("fail"); }, /fail/);  // pass
 // await assert.rejects(async () => 42); // resolved, didn’t reject
 ````
 
-### `await assert.doesNotReject(asyncFnOrPromise, [ErrorType|string|RegExp], [message: string | Error]);`
+### `await assert.doesNotReject(asyncFnOrPromise, [ErrorType|string|RegExp] [, message: string | Error]);`
 
 Added in v1.0.0
 
@@ -307,61 +309,9 @@ await assert.doesNotReject(async () => 42); // passes
 
 ---
 
-## Boolean Assertions
-
-### `assert.isTrue(value, [message: string | Error]);`
-
-Added in v1.0.0
-
-Ensures value is exactly `true`.
-
-````javascript
-assert.isTrue(true); // passes
-// assert.isTrue(false); // throws an error
-// assert.isTrue(1); // throws an error
-````
-
-### `assert.isNotTrue(value, [message: string | Error]);`
-
-Added in v1.1.5
-
-Ensures value is exactly not `true`.
-
-````javascript
-//assert.isNotTrue(true); // throws an error
-assert.isNotTrue(false); // passes
-assert.isNotTrue(1); // passes
-````
-
-### `assert.isFalse(value, [message: string | Error]);`
-
-Added in v1.0.0
-
-Ensures value is exactly `false`.
-
-````javascript
-//assert.isFalse(true); // throws an error
-assert.isFalse(false); // passes
-//assert.isFalse(1); // throws an error
-````
-
-### `assert.isNotFalse(value, [message: string | Error]);`
-
-Added in v1.1.5
-
-Ensures value is exactly not `false`.
-
-````javascript
-assert.isNotFalse(true); // passes
-//assert.isNotFalse(false); // throws an error
-assert.isNotFalse(1); // passes
-````
-
----
-
 ## String Assertions
 
-### `assert.match(string, regexp, [message: string | Error]);`
+### `assert.match(string, regexp [, message: string | Error]);`
 
 Added in v1.0.0
 
@@ -372,7 +322,7 @@ assert.match("hello world", /world/); // passes
 // assert.match("hello", /bye/); // throws an error
 ````
 
-### `assert.doesNotMatch(string, regexp, [message: string | Error]);`
+### `assert.doesNotMatch(string, regexp [, message: string | Error]);`
 
 Added in v1.0.0
 
@@ -383,7 +333,7 @@ assert.doesNotMatch("hello", /bye/); // passes
 // assert.doesNotMatch("hello world", /world/); // throws an error
 ````
 
-### `assert.stringContains(actual, substring, [message: string | Error]);`
+### `assert.stringContains(actual, substring [, message: string | Error]);`
 
 Added in v1.0.0
 
@@ -394,7 +344,7 @@ assert.stringContains("hello world", "world"); // passes
 // assert.stringContains("hello", "z"); // throws an error
 ````
 
-### `assert.stringNotContains(actual, substring, [message: string | Error]);`
+### `assert.stringNotContains(actual, substring [, message: string | Error]);`
 
 Added in v1.0.0
 
@@ -409,7 +359,7 @@ assert.stringNotContains("hello", "z"); // passes
 
 ## Comparison Assertions
 
-### `assert.lt(value1, value2, [message: string | Error]);`
+### `assert.lt(value1, value2 [, message: string | Error]);`
 
 Added in v1.0.0
 
@@ -420,7 +370,7 @@ assert.lt(3, 5); // passes
 // assert.lt(5, 3); // throws an error
 ````
 
-### `assert.lte(value1, value2, [message: string | Error]);`
+### `assert.lte(value1, value2 [, message: string | Error]);`
 
 Added in v1.0.0
 
@@ -432,7 +382,7 @@ assert.lte(2, 4); // passes
 // assert.lte(5, 3); // throws an error
 ````
 
-### `assert.gt(value1, value2, [message: string | Error]);`
+### `assert.gt(value1, value2 [, message: string | Error]);`
 
 Added in v1.0.0
 
@@ -443,7 +393,7 @@ assert.gt(5, 3); // passes
 // assert.gt(3, 5); // throws an error
 ````
 
-### `assert.gte(value1, value2, [message: string | Error]);`
+### `assert.gte(value1, value2 [, message: string | Error]);`
 
 Added in v1.0.0
 
@@ -455,7 +405,7 @@ assert.gte(5, 3); // passes
 // assert.gte(2, 3); // throws an error
 ````
 
-### `assert.inRange(value, min, max, [message: string | Error]);`
+### `assert.inRange(value, min, max [, message: string | Error]);`
 
 Added in v1.0.3
 
@@ -468,11 +418,11 @@ assert.inRange(1, -5, 3); // passes
 // assert.inRange(2, 1n, 3); // throws an error
 ````
 
-### `assert.notInRange(value, min, max, [message: string | Error]);`
+### `assert.notInRange(value, min, max [, message: string | Error]);`
 
 Added in v1.0.3
 
-Inverse of `inRange(value, min, max, [message: string | Error]);`.
+Inverse of `inRange(value, min, max [, message: string | Error]);`.
 
 ````javascript
 assert.notInRange(0, 1, 3); // passes
@@ -485,7 +435,7 @@ assert.notInRange(2, 1n, 3); // passes
 
 ## Object Assertions
 
-### `assert.includes(container, options: {keyOrValue, [value] }, [message: string | Error]);`
+### `assert.includes(container, options: {keyOrValue, [value] } [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -518,11 +468,11 @@ assert.includes(new Map([["x", 42]]), {keyOrValue: "x", value: 42}); // passes
 // assert.includes(new Map([["x", 42]]), {keyOrValue: "x", value: 43}); // throws an error
 ````
 
-### `assert.doesNotInclude(container, options: {keyOrValue, [value] }, [message: string | Error]);`
+### `assert.doesNotInclude(container, options: {keyOrValue, [value] } [, message: string | Error]);`
 
 Added in v1.0.1
 
-Inverse of `assert.includes(container, options: {keyOrValue, [value] }, [message: string | Error]);`.
+Inverse of `assert.includes(container, options: {keyOrValue, [value] } [, message: string | Error]);`.
 
 ````javascript
 assert.doesNotInclude([1, 2, 3], 4); // passes
@@ -537,7 +487,7 @@ assert.doesNotInclude(new Map([["x", 42]]), {keyOrValue: "x", value: 43}); // pa
 // assert.doesNotInclude(new Map([["x", 42]]), {keyOrValue: "x", value: 42}); // throws an error
 ````
 
-### `assert.isEmpty(value, [message: string | Error]);`
+### `assert.isEmpty(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -555,11 +505,11 @@ assert.isEmpty(new Map()); // passes
 // assert.isEmpty([1, 2, 3]); // throws an error
 ````
 
-### `assert.isNotEmpty(value, [message: string | Error]);`
+### `assert.isNotEmpty(value [, message: string | Error]);`
 
 Added in v1.0.1
 
-Inverse of `assert.isEmpty(value, [message: string | Error]);`.
+Inverse of `assert.isEmpty(value [, message: string | Error]);`.
 
 ````javascript
 assert.isNotEmpty([1, 2, 3]); // passes
@@ -570,7 +520,7 @@ assert.isNotEmpty([1, 2, 3]); // passes
 
 ## Type Assertions
 
-### `assert.is(value, expectedType: string | function | Array<string | function>, [message: string | Error]);`
+### `assert.is(value, expectedType: string | function | Array<string | function> [, message: string | Error]);`
 
 Added in v1.0.0
 
@@ -583,11 +533,11 @@ assert.is(new Map(), [Map, Object]); // passes
 // assert.is("hi", Number); // throws an error
 ````
 
-### `assert.isNot(value, expectedType: string | function | Array<string | function>, [message: string | Error]);`
+### `assert.isNot(value, expectedType: string | function | Array<string | function> [, message: string | Error]);`
 
 Added in v1.0.0
 
-Inverse of `is(value, expectedType, [message: string | Error]);`. The expected type can be a string, function or an array of strings and functions.
+Inverse of `is(value, expectedType [, message: string | Error]);`. The expected type can be a string, function or an array of strings and functions.
 
 ````javascript
 assert.isNot("hello", Number); // passes
@@ -595,7 +545,7 @@ assert.isNot([], Set); // passes
 // assert.isNot([], Array); // throws an error
 ````
 
-### `assert.isPrimitive(value, [message: string | Error]);`
+### `assert.isPrimitive(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -606,7 +556,7 @@ assert.isPrimitive(42); // passes
 // assert.isPrimitive([]]); // throws an error
 ````
 
-### `assert.isNotPrimitive(value, [message: string | Error]);`
+### `assert.isNotPrimitive(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -617,7 +567,7 @@ assert.isNotPrimitive([]); // passes
 // assert.isNotPrimitive(42); // throws an error
 ````
 
-### `assert.isNullish(value, [message: string | Error]);`
+### `assert.isNullish(value [, message: string | Error]);`
 
 Added in v1.0.0
 
@@ -629,7 +579,7 @@ assert.isNullish(null); // passes
 // assert.isNullish(0); // throws an error
 ````
 
-### `assert.isNonNullable(value, [message: string | Error]);`
+### `assert.isNonNullable(value [, message: string | Error]);`
 
 Added in v1.0.0
 
@@ -643,7 +593,7 @@ assert.isNonNullable("ok"); // passes
 // assert.isNonNullable(null); // throws an error
 ````
 
-### `assert.isNull(value, [message: string | Error]);`
+### `assert.isNull(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -654,7 +604,7 @@ assert.isNull(null); // passes
 // assert.isNull(0); // throws an error
 ````
 
-### `assert.isNotNull(value, [message: string | Error]);`
+### `assert.isNotNull(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -665,7 +615,7 @@ assert.isNotNull("ok"); // passes
 // assert.isNotNull(null); // throws an error
 ````
 
-### `assert.isUndefined(value, [message: string | Error]);`
+### `assert.isUndefined(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -676,7 +626,7 @@ assert.isUndefined(undefined); // passes
 // assert.isUndefined(0); // throws an error
 ````
 
-### `assert.isDefined(value, [message: string | Error]);`
+### `assert.isDefined(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -689,7 +639,7 @@ assert.isDefined("ok"); // passes
 // assert.isDefined(undefined); // throws an error
 ````
 
-### `assert.isString(value, [message: string | Error]);`
+### `assert.isString(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -700,7 +650,7 @@ assert.isString("ok"); // passes
 // assert.isString(null); // throws an error
 ````
 
-### `assert.isNotString(value, [message: string | Error]);`
+### `assert.isNotString(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -711,7 +661,7 @@ assert.isNotString(null); // passes
 // assert.isNotString("ok"); // throws an error
 ````
 
-### `assert.isNumber(value, [message: string | Error]);`
+### `assert.isNumber(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -722,7 +672,7 @@ assert.isNumber(42); // passes
 // assert.isNumber(null); // throws an error
 ````
 
-### `assert.isNotNumber(value, [message: string | Error]);`
+### `assert.isNotNumber(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -733,7 +683,7 @@ assert.isNotNumber(null); // passes
 // assert.isNotNumber(42); // throws an error
 ````
 
-### `assert.isBigInt(value, [message: string | Error]);`
+### `assert.isBigInt(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -744,7 +694,7 @@ assert.isBigInt(42n); // passes
 // assert.isBigInt(null); // throws an error
 ````
 
-### `assert.isNotBigInt(value, [message: string | Error]);`
+### `assert.isNotBigInt(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -755,7 +705,7 @@ assert.isNotBigInt(null); // passes
 // assert.isNotBigInt(42n); // throws an error
 ````
 
-### `assert.isBoolean(value, [message: string | Error]);`
+### `assert.isBoolean(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -763,21 +713,71 @@ Ensures value is `boolean`.
 
 ````javascript
 assert.isBoolean(true); // passes
-// assert.isBoolean(null); // throws an error
+assert.isBoolean(false); // passes
+// assert.isBoolean(1); // throws an error
 ````
 
-### `assert.isNotBoolean(value, [message: string | Error]);`
+### `assert.isNotBoolean(value [, message: string | Error]);`
 
 Added in v1.0.1
 
 Ensures value is _not_ `boolean`.
 
 ````javascript
-assert.isNotBoolean(null); // passes
 // assert.isNotBoolean(true); // throws an error
+// assert.isNotBoolean(false); // throws an error
+assert.isNotBoolean(1); // passes
 ````
 
-### `assert.isSymbol(value, [message: string | Error]);`
+### `assert.isTrue(value [, message: string | Error]);`
+
+Added in v1.0.0
+
+Ensures value is exactly `true`.
+
+````javascript
+assert.isTrue(true); // passes
+// assert.isTrue(false); // throws an error
+// assert.isTrue(1); // throws an error
+````
+
+### `assert.isNotTrue(value [, message: string | Error]);`
+
+Added in v1.1.5
+
+Ensures value is exactly not `true`.
+
+````javascript
+//assert.isNotTrue(true); // throws an error
+assert.isNotTrue(false); // passes
+assert.isNotTrue(1); // passes
+````
+
+### `assert.isFalse(value [, message: string | Error]);`
+
+Added in v1.0.0
+
+Ensures value is exactly `false`.
+
+````javascript
+//assert.isFalse(true); // throws an error
+assert.isFalse(false); // passes
+//assert.isFalse(1); // throws an error
+````
+
+### `assert.isNotFalse(value [, message: string | Error]);`
+
+Added in v1.1.5
+
+Ensures value is exactly not `false`.
+
+````javascript
+assert.isNotFalse(true); // passes
+//assert.isNotFalse(false); // throws an error
+assert.isNotFalse(1); // passes
+````
+
+### `assert.isSymbol(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -788,7 +788,7 @@ assert.isSymbol(Symbol("foo")); // passes
 // assert.isSymbol(null); // throws an error
 ````
 
-### `assert.isNotSymbol(value, [message: string | Error]);`
+### `assert.isNotSymbol(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -799,7 +799,7 @@ assert.isNotSymbol(null); // passes
 // assert.isNotSymbol(Symbol("foo")); // throws an error
 ````
 
-### `assert.isFunction(value, [message: string | Error]);`
+### `assert.isFunction(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -810,7 +810,7 @@ assert.isFunction(assert); // passes
 // assert.isFunction(null); // throws an error
 ````
 
-### `assert.isNotFunction(value, [message: string | Error]);`
+### `assert.isNotFunction(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -821,7 +821,7 @@ assert.isNotFunction(null); // passes
 // assert.isNotFunction(assert); // throws an error
 ````
 
-### `assert.isObject(value, [message: string | Error]);`
+### `assert.isObject(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -832,7 +832,7 @@ assert.isObject({a: 1}); // passes
 // assert.isObject(null); // throws an error
 ````
 
-### `assert.isNotObject(value, [message: string | Error]);`
+### `assert.isNotObject(value [, message: string | Error]);`
 
 Added in v1.0.1
 
@@ -843,7 +843,7 @@ assert.isNotObject(null); // passes
 // assert.isNotObject({a: 1}); // throws an error
 ````
 
-### `assert.isNaN(value, [message: string | Error]);`
+### `assert.isNaN(value [, message: string | Error]);`
 
 Added in v1.0.2
 
@@ -855,11 +855,11 @@ assert.isNaN(0 / 0); // passes
 // assert.isNaN("foo"); // throws an error
 ````
 
-### `assert.isNotNaN(value, [message: string | Error]);`
+### `assert.isNotNaN(value [, message: string | Error]);`
 
 Added in v1.0.2
 
-Inverse of `assert.isNaN(value, [message: string | Error]);`.
+Inverse of `assert.isNaN(value [, message: string | Error]);`.
 
 ````javascript
 assert.isNotObject(42); // passes
@@ -867,7 +867,7 @@ assert.isNotObject("foo"); // passes
 // assert.isNotObject(0 /0); // throws an error
 ````
 
-### `assert.isInt(value, [message: string | Error]);`
+### `assert.isInt(value [, message: string | Error]);`
 
 Added in v1.1.4
 
@@ -879,11 +879,11 @@ assert.isInt(42); // passes
 // assert.isInt("foo"); // throws an error
 ````
 
-### `assert.isNotInt(value, [message: string | Error]);`
+### `assert.isNotInt(value [, message: string | Error]);`
 
 Added in v1.1.4
 
-Inverse of `assert.isInt(value, [message: string | Error]);`.
+Inverse of `assert.isInt(value [, message: string | Error]);`.
 
 ````javascript
 // assert.isNotInt(42); // throws an error
@@ -891,7 +891,7 @@ assert.isNotInt(42.5); // passes
 assert.isNotInt("foo"); // passes
 ````
 
-### `assert.isFloat(value, [message: string | Error]);`
+### `assert.isFloat(value [, message: string | Error]);`
 
 Added in v1.1.4
 
@@ -903,11 +903,11 @@ assert.isFloat(42.5); // passes
 // assert.isFloat("foo"); // throws an error
 ````
 
-### `assert.isNotFloat(value, [message: string | Error]);`
+### `assert.isNotFloat(value [, message: string | Error]);`
 
 Added in v1.1.4
 
-Inverse of `assert.isFloat(value, [message: string | Error]);`.
+Inverse of `assert.isFloat(value [, message: string | Error]);`.
 
 ````javascript
 assert.isNotFloat(42); // passes

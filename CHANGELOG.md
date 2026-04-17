@@ -1,6 +1,13 @@
 
 # assert.js version history
 
+## assert.js v1.1.6
+
+1. Documentation, pdf and code fixes.
+2. New `assert-cheatsheet.odt` and `assert-cheatsheet.pdf`.
+3. Fix the `AssertionError();`.
+3. Modify the `fail();` function with the new optional arguments: `assert.fail([value1, value2, message, operator]);`.
+
 ## assert.js v1.1.5
 
 1. Documentation, pdf and code fixes.

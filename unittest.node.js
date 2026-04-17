@@ -2,7 +2,7 @@
 "use strict";
 
 
-/* assert.js v1.1.5 testcases for Node.js environment */
+/* assert.js v1.1.6 testcases for Node.js environment */
 
 
 /* Import the assert function */
@@ -39,11 +39,108 @@ function unitTest (message, error = false, callback) {
       result = true;
     } catch (/** @type any */ _e) { result = false; }
   }
-  if (!result) { console.error(message); }
+  if (!result) { logError(message); }
 }
 
 
+const COLORS = Object.freeze({
+  /*
+  https://stackoverflow.com/questions/9781218/how-to-change-node-jss-console-font-color
+  https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+  ANSI escape codes:
+  */
+  /* styles */
+  reset:      "\x1b[0m",
+  bright:     "\x1b[1m",
+  dim:        "\x1b[2m",
+  italics:    "\x1b[3m",
+  underscore: "\x1b[4m",
+  blink:      "\x1b[5m",
+  reverse:    "\x1b[7m",
+  hidden:     "\x1b[8m",
+  /* foreground (text) colors */
+  fgBlack:    "\x1b[30m",
+  fgRed:      "\x1b[31m",
+  fgGreen:    "\x1b[32m",
+  fgYellow:   "\x1b[33m",
+  fgBlue:     "\x1b[34m",
+  fgMagenta:  "\x1b[35m",
+  fgCyan:     "\x1b[36m",
+  fgWhite:    "\x1b[37m",
+  fgGray:     "\x1b[90m",
+  /* background colors */
+  bgBlack:    "\x1b[40m",
+  bgRed:      "\x1b[41m",
+  bgGreen:    "\x1b[42m",
+  bgYellow:   "\x1b[43m",
+  bgBlue:     "\x1b[44m",
+  bgMagenta:  "\x1b[45m",
+  bgCyan:     "\x1b[46m",
+  bgWhite:    "\x1b[47m",
+  bgGray:     "\x1b[100m"
+});
+
+/* console helpers */
+/**
+ * @description Log info to console.
+ *
+ * @param {string} str
+ * @param {any[]} args
+ * @returns void
+*/
+const logInfo = (str, ...args) =>
+  console.log(
+    `${COLORS.bgBlue + COLORS.fgWhite}[info]${COLORS.reset} ${str}`,
+    ...args
+  );
+/**
+ * @description Log success to console.
+ *
+ * @param {string} str
+ * @param {any[]} args
+ * @returns void
+*/
+const logSuccess = (str, ...args) =>
+  console.log(
+    `${COLORS.bgGreen + COLORS.fgWhite}[success]${COLORS.reset} ${str}`,
+    ...args
+  );
+/**
+ * @description Log warning to console.
+ *
+ * @param {string} str
+ * @param {any[]} args
+ * @returns void
+*/
+const logWarn = (str, ...args) =>
+  console.warn(
+    `${COLORS.bgYellow + COLORS.fgWhite}[warning]${COLORS.reset} ${str}`,
+    ...args
+  );
+/**
+ * @description Log error to console.
+ *
+ * @param {string} str
+ * @param {any[]} args
+ * @returns void
+*/
+const logError = (str, ...args) =>
+  console.error(
+    `${COLORS.bgRed + COLORS.fgWhite}[error]${COLORS.reset} ${str}`,
+    ...args
+  );
+/**
+ * @description Log empty line to console.
+ *
+ * @returns void
+*/
+const logLine = () => console.log("");
+
+
 function autoTestSync () {
+
+  logInfo(`assert.VERSION: "${assert.VERSION}"`);
+  logInfo(`assert.config: ${JSON.stringify(assert.config)}`);
 
   unitTest("assert(); 01", false, () => assert(true));
   unitTest("assert(); 02", true, () => assert(false));
@@ -54,7 +151,9 @@ function autoTestSync () {
   unitTest("assert.ok(); 03", true, () => assert.ok(false, "should be true"));
 
   unitTest("assert.fail(); 01", true, () => assert.fail(new Error("lorem")));
-  unitTest("assert.fail(); 02", true, () => assert.fail("This should fail"));
+  unitTest("assert.fail(); 02", true, () => assert.fail("This should fail 1"));
+  unitTest("assert.fail(); 03", true, () => assert.fail(1, 2, "This should fail 2", "==="));
+  unitTest("assert.fail(); 04", true, () => assert.fail());
 
   unitTest("assert.equal(); 01", false, () => assert.equal(1, "1"));
   unitTest("assert.equal(); 02", false, () => assert.equal(true, 1));
@@ -238,20 +337,20 @@ function autoTestSync () {
   if (assert.testCheck(testSyncResult01)) {
     assert.isFunction(testSyncResult01.block, "testSync(); 01 - passed - block");
     assert.isString(testSyncResult01.name, "testSync(); 01 - passed - name");
-    /* console.log("testSync(); 01 - passed"); */
+    /* logSuccess("testSync(); 01 - passed"); */
   } else {
     assert.isFunction(testSyncResult01.block, "testSync(); 01 - failed - block");
     assert.isString(testSyncResult01.name, "testSync(); 01 - failed - name");
-    console.error("testSync(); 01 - failed");
+    logError("testSync(); 01 - failed");
   }
 
   let testSyncResult02 = assert.testSync(function () { throw new Error("lorem"); })
   if (assert.testCheck(testSyncResult02)) {
     assert.isFunction(testSyncResult02.block, "testSync(); 02 - failed - block");
     assert.isString(testSyncResult02.name, "testSync(); 02 - failed - name");
-    console.error("testSync(); 02 - failed");
+    logError("testSync(); 02 - failed");
   } else {
-    /* console.log("testSync(); 02 - passed"); */
+    /* logSuccess("testSync(); 02 - passed"); */
     assert.isFunction(testSyncResult02.block, "testSync(); 02 - passed - block");
     assert.isString(testSyncResult02.name, "testSync(); 02 - passed - name");
   }
@@ -574,7 +673,7 @@ function autoTestSync () {
     () => assert.notEqual(1, "1", "lorem")
   );
 
-  console.log("\nEnd of the sync test.\n");
+  logInfo("End of the sync test.");
 }
 
 
@@ -588,28 +687,28 @@ async function autoTestAsync () {
     async () => { throw new TypeError("lorem error"); },
     TypeError
   )
-    .then(() => { /* console.log("rejects(); 01 - passed - Caught expected TypeError"); */ })
-    .catch((/** @type any */ _e) => { console.error("rejects(); 02 - bug"); });
+    .then(() => { /* logSuccess("rejects(); 01 - passed - Caught expected TypeError"); */ })
+    .catch((/** @type any */ _e) => { logError("rejects(); 02 - bug"); });
 
   // Passes: resolves successfully
   await assert.rejects(Promise.reject(new Error("ipsum error")), /ipsum/i)
-    .then(() => { /* console.log("rejects(); 02 - passed - Caught expected Error"); */ })
-    .catch((e) => { console.error("rejects(); 02 - bug"); });
+    .then(() => { /* logSuccess("rejects(); 02 - passed - Caught expected Error"); */ })
+    .catch((e) => { logError("rejects(); 02 - bug"); });
 
   // Fails: does not reject
   await assert.rejects(async () => 42)
-    .then(() => { /* console.log("rejects(); 03 - passed"); */ })
-    .catch((/** @type any */ _e) => { console.error("rejects(); 03 - bug"); });
+    .then(() => { /* logSuccess("rejects(); 03 - passed"); */ })
+    .catch((/** @type any */ _e) => { logError("rejects(); 03 - bug"); });
 
   // Passes: resolves successfully
   await assert.doesNotReject(async () => 42)
-    .then(() => { /* console.log("doesNotReject(); 01 - passed"); */ })
-    .catch((/** @type any */ _e) => { console.error("doesNotReject(); 01 - bug"); });
+    .then(() => { /* logSuccess("doesNotReject(); 01 - passed"); */ })
+    .catch((/** @type any */ _e) => { logError("doesNotReject(); 01 - bug"); });
 
   // Fails: rejects unexpectedly
   await assert.doesNotReject(async () => { throw new Error("boom"); })
-    .then(() => { console.error("doesNotReject(); 02 - bug"); })
-    .catch((/** @type any */ _e) => { /* console.log("doesNotReject(); 02 - passed"); */ });
+    .then(() => { logError("doesNotReject(); 02 - bug"); })
+    .catch((/** @type any */ _e) => { /* logSuccess("doesNotReject(); 02 - passed"); */ });
 
   // Fails: rejects with disallowed error type/message
   await assert.doesNotReject(
@@ -617,19 +716,19 @@ async function autoTestAsync () {
     TypeError,
     "Unexpected TypeError"
   )
-    .then(() => { console.error("doesNotReject(); 03 - bug"); })
-    .catch((/** @type any */ _e) => { /* console.log("doesNotReject(); 03 - passed"); */ });
+    .then(() => { logError("doesNotReject(); 03 - bug"); })
+    .catch((/** @type any */ _e) => { /* logSuccess("doesNotReject(); 03 - passed"); */ });
 
   (async () => {
     const result = await assert.testAsync(async function () { return 42; });
     if (assert.testCheck(result)) {
       assert.isFunction(result.block, "testAsync(); 01 - passed - block");
       assert.isString(result.name, "testAsync(); 01 - passed - name");
-      /* console.log("testAsync(); 01 - passed"); */
+      /* logSuccess("testAsync(); 01 - passed"); */
     } else {
       assert.isFunction(result.block, "testAsync(); 01 - failed - block");
       assert.isString(result.name, "testAsync(); 01 - failed - name");
-      console.error("testAsync(); 01 - failed");
+      logError("testAsync(); 01 - failed");
     }
   })();
 
@@ -642,11 +741,11 @@ async function autoTestAsync () {
     } else {
       assert.isFunction(result.block, "testAsync(); 02 - passed - block");
       assert.isString(result.name, "testAsync(); 02 - passed - name");
-      /* console.error("testAsync(); 02 - passed"); */
+      /* logSuccess("testAsync(); 02 - passed"); */
     }
   })();
 
-  console.log("\nEnd of the async test.");
+  logInfo("End of the async test.");
 }
 
 

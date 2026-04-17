@@ -2,11 +2,11 @@ type Falsy = null | undefined | false | 0 | -0 | 0n | "";
 type StringLike = string | String;
 type Comparable = number | bigint | string | boolean | Date;
 type AssertionErrorOptions = {
-    message?: unknown;
-    cause?: unknown;
-    actual?: unknown;
-    expected?: unknown;
-    operator?: string;
+    message?: string;
+    cause?: any;
+    actual?: any;
+    expected?: any;
+    operator?: any;
     stackStartFn?: Function;
     diff?: any;
 };
@@ -36,7 +36,7 @@ declare class AssertionError extends Error {
     operator?: string;
     code?: string;
     generatedMessage?: boolean;
-    constructor(message?: string, options?: AssertionErrorOptions);
+    constructor(options?: AssertionErrorOptions);
 }
 declare function assert(condition: unknown, message?: unknown): asserts condition;
 declare namespace assert {
@@ -45,7 +45,7 @@ declare namespace assert {
         alwaysStrict: boolean;
     };
     var AssertionError: {
-        new (message?: string, options?: AssertionErrorOptions): AssertionError;
+        new (options?: AssertionErrorOptions): AssertionError;
         isError(error: unknown): error is Error;
     };
     var ok: (condition: unknown, message?: unknown) => asserts condition;
@@ -58,7 +58,10 @@ declare namespace assert {
     var throws: (block: Function, Error_opt?: unknown, message?: unknown) => Error | undefined;
     var rejects: (block: Function | Promise<unknown>, Error_opt?: unknown, message?: unknown) => Promise<unknown>;
     var doesNotReject: (block: Function, Error_opt?: unknown, message?: unknown) => Promise<unknown>;
-    var fail: (message?: unknown) => void;
+    var fail: {
+        (message?: unknown): void;
+        (actual?: unknown, expected?: unknown, message?: string, operator?: unknown): void;
+    };
     var notOk: (condition: unknown, message?: unknown) => asserts condition is Falsy;
     var isTrue: (condition: unknown, message?: unknown) => asserts condition is true;
     var isNotTrue: <T>(condition: T, message?: unknown) => asserts condition is Exclude<T, true>;
@@ -66,7 +69,7 @@ declare namespace assert {
     var isNotFalse: <T>(condition: T, message?: unknown) => asserts condition is Exclude<T, false>;
     var is: (value: unknown, expectedType: ExpectedType, message?: unknown) => void;
     var isNot: (value: unknown, expectedType: ExpectedType, message?: unknown) => void;
-    var isNullish: (value: unknown, message?: unknown) => asserts value is Nullish;
+    var isNullish: (value: unknown, message?: unknown) => asserts value is NonNullable<unknown>;
     var isNonNullable: (value: unknown, message?: unknown) => asserts value is NonNullable<unknown>;
     var isNull: (value: unknown, message?: unknown) => asserts value is null;
     var isNotNull: (value: unknown, message?: unknown) => asserts value is Exclude<unknown, null>;

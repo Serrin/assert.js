@@ -2,7 +2,7 @@
 "use strict";
 
 
-/* assert.js v1.1.5 testcases for ESM environment */
+/* assert.js v1.1.6 testcases for ESM environment */
 
 
 /**
@@ -40,7 +40,9 @@ function autoTestSync () {
   unitTest("assert.ok(); 03", true, () => assert.ok(false, "should be true"));
 
   unitTest("assert.fail(); 01", true, () => assert.fail(new Error("lorem")));
-  unitTest("assert.fail(); 02", true, () => assert.fail("This should fail"));
+  unitTest("assert.fail(); 02", true, () => assert.fail("This should fail 1"));
+  unitTest("assert.fail(); 03", true, () => assert.fail(1, 2, "This should fail 2", "==="));
+  unitTest("assert.fail(); 04", true, () => assert.fail());
 
   unitTest("assert.equal(); 01", false, () => assert.equal(1, "1"));
   unitTest("assert.equal(); 02", false, () => assert.equal(true, 1));
