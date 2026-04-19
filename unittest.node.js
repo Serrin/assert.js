@@ -2,7 +2,7 @@
 "use strict";
 
 
-/* assert.js v1.1.6 testcases for Node.js environment */
+/* assert.js v1.1.7 testcases for Node.js environment */
 
 
 /* Import the assert function */
@@ -284,6 +284,12 @@ function autoTestSync () {
   unitTest("assert.stringContains(); 03", true,
     () => assert.stringContains("hello", "z", "lorem")
   );
+  unitTest("assert.stringContains(); 04", true,
+    () => assert.stringContains(42, "z", "lorem")
+  );
+  unitTest("assert.stringContains(); 05", true,
+    () => assert.stringContains("hello", 42, "lorem")
+  );
 
   unitTest("assert.stringNotContains(); 01", false,
     () => assert.stringNotContains("hello", "z")
@@ -293,6 +299,76 @@ function autoTestSync () {
   );
   unitTest("assert.stringNotContains(); 03", true,
     () => assert.stringNotContains("hello", "he", "lorem")
+  );
+  unitTest("assert.stringNotContains(); 04", true,
+    () => assert.stringNotContains(42, "z", "lorem")
+  );
+  unitTest("assert.stringNotContains(); 05", true,
+    () => assert.stringNotContains("hello", 42, "lorem")
+  );
+
+  unitTest("assert.stringStartsWith(); 01", false,
+    () => assert.stringStartsWith("lorem ipsum", "lorem")
+  );
+  unitTest("assert.stringStartsWith(); 02", true,
+    () => assert.stringStartsWith("lorem ipsum", "ipsum")
+  );
+  unitTest("assert.stringNotContains(); 03", true,
+    () => assert.stringStartsWith("lorem ipsum", "ipsum", "lorem")
+  );
+  unitTest("assert.stringNotContains(); 04", true,
+    () => assert.stringStartsWith(42, "z", "lorem")
+  );
+  unitTest("assert.stringNotContains(); 05", true,
+    () => assert.stringStartsWith("hello", 42, "lorem")
+  );
+
+  unitTest("assert.stringNotStartsWith(); 01", false,
+    () => assert.stringNotStartsWith("lorem ipsum", "ipsum")
+  );
+  unitTest("assert.stringNotStartsWith(); 02", true,
+    () => assert.stringNotStartsWith("lorem ipsum", "lorem")
+  );
+  unitTest("assert.stringNotStartsWith(); 03", true,
+    () => assert.stringNotStartsWith("lorem ipsum", "lorem", "lorem")
+  );
+  unitTest("assert.stringNotStartsWith(); 04", true,
+    () => assert.stringNotStartsWith(42, "z", "lorem")
+  );
+  unitTest("assert.stringNotStartsWith(); 05", true,
+    () => assert.stringNotStartsWith("hello", 42, "lorem")
+  );
+
+  unitTest("assert.stringEndsWith(); 01", false,
+    () => assert.stringEndsWith("lorem ipsum", "ipsum")
+  );
+  unitTest("assert.stringEndsWith(); 02", true,
+    () => assert.stringEndsWith("lorem ipsum", "lorem")
+  );
+  unitTest("assert.stringEndsWith(); 03", true,
+    () => assert.stringEndsWith("lorem ipsum", "lorem", "lorem")
+  );
+  unitTest("assert.stringEndsWith(); 04", true,
+    () => assert.stringEndsWith(42, "z", "lorem")
+  );
+  unitTest("assert.stringEndsWith(); 05", true,
+    () => assert.stringEndsWith("hello", 42, "lorem")
+  );
+
+  unitTest("assert.stringNotEndsWith(); 01", false,
+    () => assert.stringNotEndsWith("lorem ipsum", "lorem")
+  );
+  unitTest("assert.stringNotEndsWith(); 02", true,
+    () => assert.stringNotEndsWith("lorem ipsum", "ipsum")
+  );
+  unitTest("assert.stringNotEndsWith(); 03", true,
+    () => assert.stringNotEndsWith("lorem ipsum", "ipsum", "lorem")
+  );
+  unitTest("assert.stringNotEndsWith(); 04", true,
+    () => assert.stringNotEndsWith(42, "z", "lorem")
+  );
+  unitTest("assert.stringNotEndsWith(); 05", true,
+    () => assert.stringNotEndsWith("hello", 42, "lorem")
   );
 
   unitTest("assert.lt(); 01", false, () => assert.lt(3, 5));

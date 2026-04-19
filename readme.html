@@ -29,9 +29,9 @@ body {
 
 <h1 id="top" class="center">assert.js</h1>
 
-<p>Latest version: 1.1.6</p>
+<p>Latest version: 1.1.7</p>
 
-<p>Date: 2026-04-17T16:50:24.702Z</p>
+<p>Date: 2026-04-19T15:06:28.052Z</p>
 
 <p>A modern, zero-dependency assertion library for Node.js, Deno and browser (ESM) environments.</p>
 
@@ -85,7 +85,7 @@ body {
   </tr>
   <tr>
     <td><a href="#category-String">String</a></td>
-    <td><a href ="#fn-match"><code>assert.match();</code></a>, <a href ="#fn-doesNotMatch"><code>assert.doesNotMatch();</code></a>,<br/><a href ="#fn-stringContains"><code>assert.stringContains();</code></a>, <a href ="#fn-stringNotContains"><code>assert.stringNotContains();</code></a></td>
+    <td><a href ="#fn-match"><code>assert.match();</code></a>, <a href ="#fn-doesNotMatch"><code>assert.doesNotMatch();</code></a>,<br/><a href ="#fn-stringContains"><code>assert.stringContains();</code></a>, <a href ="#fn-stringNotContains"><code>assert.stringNotContains();</code></a><br/><a href ="#fn-stringStartsWith"><code>assert.stringStartsWith();</code></a>, <a href ="#fn-stringNotStartsWith"><code>assert.stringNotStartsWith();</code></a><br/><a href ="#fn-stringEndsWith"><code>assert.stringEndsWith();</code></a>, <a href ="#fn-stringNotEndsWith"><code>assert.stringNotEndsWith();</code></a></td>
   </tr>
   <tr>
     <td><a href="#category-Comparison">Comparison</a></td>
@@ -161,7 +161,7 @@ globalThis.assert = assert;</pre>
 
 <p>Returns the library version string.</p>
 
-<pre>console.log(assert.VERSION); // "assert.js v1.1.6"</pre>
+<pre>console.log(assert.VERSION); // "assert.js v1.1.4"</pre>
 
 <p><a href="#Summary">&#9650; Back to Summary</a></p>
 
@@ -415,7 +415,7 @@ assert.throws(() =&gt; { throw new Error("boom"); }, /boom/); // passes
 <p>Ensures a string contains a substring.</p>
 
 <pre>assert.stringContains("hello world", "world"); // passes
-// assert.stringContains("hello", "z"); // throws an error</pre>
+// assert.stringContains("hello world", "lorem"); // throws an error</pre>
 
 <p><a href="#Summary">&#9650; Back to Summary</a></p>
 
@@ -425,8 +425,52 @@ assert.throws(() =&gt; { throw new Error("boom"); }, /boom/); // passes
 
 <p>Ensures a string <em>does not</em> contain a substring.</p>
 
-<pre>assert.stringNotContains("hello", "z"); // passes
-// assert.stringNotContains("hello", "he"); // throws an error</pre>
+<pre>assert.stringNotContains("hello world", "lorem"); // passes
+// assert.stringNotContains("hello world", "world"); // throws an error</pre>
+
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-stringStartsWith" class="round-25 padding font-monospace bg-lightblue">assert.stringStartsWith(actual, substring [, message: string | Error]);</h3>
+
+<p>Added in v1.1.7</p>
+
+<p>Ensures a string starts with a substring.</p>
+
+<pre>assert.stringStartsWith("hello world", "hello"); // passes
+// assert.stringStartsWith("hello world", "world"); // throws an error</pre>
+
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-stringNotStartsWith" class="round-25 padding font-monospace bg-lightblue">assert.stringNotStartsWith(actual, substring [, message: string | Error]);</h3>
+
+<p>Added in v1.1.7</p>
+
+<p>Ensures a string <em>does not</em> start with a substring.</p>
+
+<pre>assert.stringNotStartsWith("hello world", "world"); // passes
+// assert.stringNotStartsWith("hello world", "hello"); // throws an error</pre>
+
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-stringEndsWith" class="round-25 padding font-monospace bg-lightblue">assert.stringEndsWith(actual, substring [, message: string | Error]);</h3>
+
+<p>Added in v1.1.7</p>
+
+<p>Ensures a string ends with a substring.</p>
+
+<pre>assert.stringEndsWith("hello world", "world"); // passes
+// assert.stringEndsWith("hello world", "hello"); // throws an error</pre>
+
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-stringNotEndsWith" class="round-25 padding font-monospace bg-lightblue">assert.stringNotEndsWith(actual, substring [, message: string | Error]);</h3>
+
+<p>Added in v1.1.7</p>
+
+<p>Ensures a string <em>does not</em> end with a substring.</p>
+
+<pre>assert.stringNotEndsWith("hello world", "hello"); // passes
+// assert.stringNotEndsWith("hello world", "world"); // throws an error</pre>
 
 <p><a href="#Summary">&#9650; Back to Summary</a></p>
 

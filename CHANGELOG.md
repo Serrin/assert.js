@@ -1,6 +1,16 @@
 
 # assert.js version history
 
+## assert.js v1.1.7
+
+1. Documentation, pdf and code fixes.
+2. Add these functions:
+
+- `stringStartsWith();`
+- `stringNotStartsWith();`
+- `stringEndsWith();`
+- `stringNotEndsWith();`
+
 ## assert.js v1.1.6
 
 1. Documentation, pdf and code fixes.

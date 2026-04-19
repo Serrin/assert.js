@@ -1,8 +1,8 @@
 # assert.js
 
-Latest version: 1.1.6
+Latest version: 1.1.7
 
-Date: 2026-04-17T16:50:24.702Z
+Date: 2026-04-19T15:06:28.052Z
 
 A modern, zero-dependency assertion library for Node.js, Deno and browser (ESM) environments.
 
@@ -20,7 +20,7 @@ Errors     | `assert.AssertionError();`
 Basic      | `assert();`,<BR>`assert.ok();`, `assert.notOk();`,<BR>`assert.fail();`
 Equality   | `assert.equal();`, `assert.notEqual();`,<BR>`assert.strictEqual();`, `assert.notStrictEqual();`,<BR>`assert.deepEqual();`, `assert.notDeepEqual();`,<BR>`assert.oneOf();`, `assert.notOneOf();`
 Exception  | `assert.throws();`,<BR>`await assert.rejects();`,<BR>`await assert.doesNotReject();`
-String     | `assert.match();`, `assert.doesNotMatch();`,<BR>`assert.stringContains();`, `assert.stringNotContains();`
+String     | `assert.match();`, `assert.doesNotMatch();`,<BR>`assert.stringContains();`, `assert.stringNotContains();`,<BR>`assert.stringStartsWith();`, `assert.stringNotStartsWith();`,<BR>`assert.stringEndsWith();`, `assert.stringNotEndsWith();`
 Comparison | `assert.lt();`, `assert.lte();`,<BR>`assert.gt();`, `assert.gte();`,<BR>`assert.inRange();`, `assert.notInRange();`
 Object     | `assert.includes();`, `assert.doesNotInclude();`,<BR>`assert.isEmpty();`, `assert.isNotEmpty();`
 Type       | `assert.is();`, `assert.isNot();`,<BR>`assert.isPrimitive();`, `assert.isNotPrimitive();`,<BR>`assert.isNullish();`, `assert.isNonNullable();`,<BR>`assert.isNull();`, `assert.isNotNull();`,<BR>`assert.isUndefined();`, `assert.isDefined();`,<BR> `assert.isString();`, `assert.isNotString();`,<BR>`assert.isNumber();`, `assert.isNotNumber();`,<BR>`assert.isInt();`, `assert.isNotInt();`,<BR>`assert.isFloat();`, `assert.isNotFloat();`,<BR>`assert.isBigInt();`, `assert.isNotBigInt();`,<BR> `assert.isBoolean();`, `assert.isNotBoolean();`,<BR>`assert.isTrue();`, `assert.isNotTrue();`,<BR>`assert.isFalse();`, `assert.isNotFalse();`,<BR>`assert.isSymbol();`, `assert.isNotSymbol();`,<BR>`assert.isFunction();`, `assert.isNotFunction();`,<BR>`<BR>assert.isObject();`, `assert.isNotObject();`,<BR>`assert.isNaN();`, `assert.isNotNaN();`
@@ -88,7 +88,7 @@ Added in v1.0.0
 Returns the library version string.
 
 ````javascript
-console.log(assert.VERSION); // "assert.js v1.1.6"
+console.log(assert.VERSION); // "assert.js v1.1.7"
 ````
 
 ---
@@ -341,7 +341,7 @@ Ensures a string contains a substring.
 
 ````javascript
 assert.stringContains("hello world", "world"); // passes
-// assert.stringContains("hello", "z"); // throws an error
+// assert.stringContains("hello", "lorem"); // throws an error
 ````
 
 ### `assert.stringNotContains(actual, substring [, message: string | Error]);`
@@ -351,8 +351,52 @@ Added in v1.0.0
 Ensures a string _does not_ contain a substring.
 
 ````javascript
-assert.stringNotContains("hello", "z"); // passes
-// assert.stringNotContains("hello", "he"); // throws an error
+assert.stringNotContains("hello world", "lorem"); // passes
+// assert.stringNotContains("hello world", "hello"); // throws an error
+````
+
+### `assert.stringStartsWith(actual, substring [, message: string | Error]);`
+
+Added in v1.1.7
+
+Ensures a string starts with a substring.
+
+````javascript
+assert.stringStartsWith("hello world", "hello"); // passes
+// assert.stringStartsWith("hello world", "world"); // throws an error
+````
+
+### `assert.stringNotStartsWith(actual, substring [, message: string | Error]);`
+
+Added in v1.1.7
+
+Ensures a string _does not_ start with a substring.
+
+````javascript
+assert.stringNotStartsWith("hello world", "world"); // passes
+// assert.stringNotStartsWith("hello world", "hello"); // throws an error
+````
+
+### `assert.stringEndsWith(actual, substring [, message: string | Error]);`
+
+Added in v1.1.7
+
+Ensures a string ends with a substring.
+
+````javascript
+assert.stringEndsWith("hello world", "world"); // passes
+// assert.stringEndsWith("hello world", "hello"); // throws an error
+````
+
+### `assert.stringNotEndsWith(actual, substring [, message: string | Error]);`
+
+Added in v1.1.7
+
+Ensures a string _does not_ end with a substring.
+
+````javascript
+assert.stringNotEndsWith("hello world", "hello"); // passes
+// assert.stringNotEndsWith("hello world", "world"); // throws an error
 ````
 
 ---

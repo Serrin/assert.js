@@ -10,14 +10,14 @@
 
 /**
  * @name assert.js
- * @version 1.1.6
+ * @version 1.1.7
  * @author Ferenc Czigler
  * @see https://github.com/Serrin/assert.js/
  * @license MIT https://opensource.org/licenses/MIT
  */
 
 
-const VERSION = "assert.js v1.1.6";
+const VERSION = "assert.js v1.1.7";
 
 
 const config = { "alwaysStrict": false };
@@ -1582,10 +1582,7 @@ const isNotObject = (value: unknown, message?: unknown): asserts value is Exclud
  * @throws {assert.AssertionError} If assertion is failed.
  */
 const isPrimitive = (value: unknown, message?: unknown): asserts value is Primitive =>
-  assert.isNot(value,
-    ["object", "function"],
-    `[isPrimitive] Assertion failed: ${_toSafeString(value)} should be not object or function${message ? ` - ${_toSafeString(message)}` : ""}`
-);
+  assert.isNot(value, ["object", "function"], message);
 
 
 /**
@@ -1597,10 +1594,7 @@ const isPrimitive = (value: unknown, message?: unknown): asserts value is Primit
  * @throws {assert.AssertionError} If assertion is failed.
  */
 const isNotPrimitive = (value: unknown, message?: unknown): asserts value is NonPrimitive =>
-  assert.is(value,
-    ["object", "function"],
-    `[isNotPrimitive] Assertion failed: ${_toSafeString(value)} should be object or function${message ? ` - ${_toSafeString(message)}` : ""}`
-);
+  assert.is(value, ["object", "function"], message);
 
 
 /**
@@ -2061,7 +2055,7 @@ function stringContains(actual: StringLike, substring: StringLike, message?: unk
     );
   }
   /* Assertion */
-  if (!actual.includes(String(substring))) {
+  if (!String(actual).includes(String(substring))) {
     _errorCheck(message, stringContains);
     let errorMessage =
       `[stringContains] Assertion failed: ${_toSafeString(actual)} does not contain substring ${_toSafeString(substring)}${message ? ` - ${_toSafeString(message)}` : ""}`;
@@ -2110,6 +2104,162 @@ function stringNotContains(actual: StringLike, substring: StringLike, message?: 
       actual,
       expected: substring,
       operator: "stringNotContains"
+    });
+  }
+}
+
+
+/**
+ * @description Asserts that `actual` (a string) starts with the specified `substring`.
+ *
+ * @param {string} actual - The string to check.
+ * @param {string} substring - The substring expected to appear within `actual`.
+ * @param {unknown} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function stringStartsWith(actual: StringLike, substring: StringLike, message?: unknown): void {
+  /* Type validation */
+  if (typeof actual !== "string" || (actual as any) instanceof String) {
+    _errorCheck(message, stringStartsWith);
+    throw new TypeError(
+      `[stringStartsWith] TypeError: ${_toSafeString(actual)} is not a string${message ? ` - ${_toSafeString(message)}` : ""}`
+    );
+  }
+  if (typeof substring !== "string" || (substring as any) instanceof String) {
+    _errorCheck(message, stringStartsWith);
+    throw new TypeError(
+      `[stringStartsWith] TypeError: ${_toSafeString(substring)} is not a string${message ? ` - ${_toSafeString(message)}` : ""}`
+    );
+  }
+  /* Assertion */
+  if (!String(actual).startsWith(String(substring))) {
+    _errorCheck(message, stringStartsWith);
+    let errorMessage =
+      `[stringStartsWith] Assertion failed: ${_toSafeString(actual)} does not start with substring ${_toSafeString(substring)}${message ? ` - ${_toSafeString(message)}` : ""}`;
+    throw new assert.AssertionError({
+      message: errorMessage,
+      cause: errorMessage,
+      actual,
+      expected: substring,
+      operator: "stringStartsWith"
+    });
+  }
+}
+
+
+/**
+ * @description Asserts that `actual` (a string) does not start with the specified `substring`.
+ *
+ * @param {string} actual - The string to check.
+ * @param {string} substring - The substring expected to appear within `actual`.
+ * @param {unknown} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function stringNotStartsWith(actual: StringLike, substring: StringLike, message?: unknown): void {
+  /* Type validation */
+  if (typeof actual !== "string" || (actual as any) instanceof String) {
+    _errorCheck(message, stringNotStartsWith);
+    throw new TypeError(
+      `[stringNotStartsWith] TypeError: ${_toSafeString(actual)} is not a string${message ? ` - ${_toSafeString(message)}` : ""}`
+    );
+  }
+  if (typeof substring !== "string" || (substring as any) instanceof String) {
+    _errorCheck(message, stringNotStartsWith);
+    throw new TypeError(
+      `[stringNotStartsWith] TypeError: ${_toSafeString(substring)} is not a string${message ? ` - ${_toSafeString(message)}` : ""}`
+    );
+  }
+  /* Assertion */
+  if (String(actual).startsWith(String(substring))) {
+    _errorCheck(message, stringNotStartsWith);
+    let errorMessage =
+      `[stringNotStartsWith] Assertion failed: ${_toSafeString(actual)} starts with substring ${_toSafeString(substring)}${message ? ` - ${_toSafeString(message)}` : ""}`;
+    throw new assert.AssertionError({
+      message: errorMessage,
+      cause: errorMessage,
+      actual,
+      expected: substring,
+      operator: "doesNotStartWith"
+    });
+  }
+}
+
+
+/**
+ * @description Asserts that `actual` (a string) ends with the specified `substring`.
+ *
+ * @param {string} actual - The string to check.
+ * @param {string} substring - The substring expected to appear within `actual`.
+ * @param {unknown} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function stringEndsWith(actual: StringLike, substring: StringLike, message?: unknown): void {
+  /* Type validation */
+  if (typeof actual !== "string" || (actual as any) instanceof String) {
+    _errorCheck(message, stringEndsWith);
+    throw new TypeError(
+      `[stringEndsWith] TypeError: ${_toSafeString(actual)} is not a string${message ? ` - ${_toSafeString(message)}` : ""}`
+    );
+  }
+  if (typeof substring !== "string" || (substring as any) instanceof String) {
+    _errorCheck(message, stringEndsWith);
+    throw new TypeError(
+      `[stringEndsWith] TypeError: ${_toSafeString(substring)} is not a string${message ? ` - ${_toSafeString(message)}` : ""}`
+    );
+  }
+  /* Assertion */
+  if (!String(actual).endsWith(String(substring))) {
+    _errorCheck(message, stringEndsWith);
+    let errorMessage =
+      `[stringEndsWith] Assertion failed: ${_toSafeString(actual)} does not end with substring ${_toSafeString(substring)}${message ? ` - ${_toSafeString(message)}` : ""}`;
+    throw new assert.AssertionError({
+      message: errorMessage,
+      cause: errorMessage,
+      actual,
+      expected: substring,
+      operator: "stringEndsWith"
+    });
+  }
+}
+
+
+/**
+ * @description Asserts that `actual` (a string) does not end with the specified `substring`.
+ *
+ * @param {string} actual - The string to check.
+ * @param {string} substring - The substring expected to appear within `actual`.
+ * @param {unknown} [message] - Optional message or Error to throw.
+ * @returns {void}
+ * @throws {assert.AssertionError} If assertion is failed.
+ */
+function stringNotEndsWith(actual: StringLike, substring: StringLike, message?: unknown): void {
+  /* Type validation */
+  if (typeof actual !== "string" || (actual as any) instanceof String) {
+    _errorCheck(message, stringNotEndsWith);
+    throw new TypeError(
+      `[stringEndsWith] TypeError: ${_toSafeString(actual)} is not a string${message ? ` - ${_toSafeString(message)}` : ""}`
+    );
+  }
+  if (typeof substring !== "string" || (substring as any) instanceof String) {
+    _errorCheck(message, stringNotEndsWith);
+    throw new TypeError(
+      `[stringEndsWith] TypeError: ${_toSafeString(substring)} is not a string${message ? ` - ${_toSafeString(message)}` : ""}`
+    );
+  }
+  /* Assertion */
+  if (String(actual).endsWith(String(substring))) {
+    _errorCheck(message, stringNotEndsWith);
+    let errorMessage =
+      `[stringNotEndsWith] Assertion failed: ${_toSafeString(actual)} ends with substring ${_toSafeString(substring)}${message ? ` - ${_toSafeString(message)}` : ""}`;
+    throw new assert.AssertionError({
+      message: errorMessage,
+      cause: errorMessage,
+      actual,
+      expected: substring,
+      operator: "stringEndsWith"
     });
   }
 }
@@ -2337,6 +2487,10 @@ assert.inRange = inRange;
 assert.notInRange = notInRange;
 assert.stringContains = stringContains;
 assert.stringNotContains = stringNotContains;
+assert.stringStartsWith = stringStartsWith;
+assert.stringNotStartsWith = stringNotStartsWith;
+assert.stringEndsWith = stringEndsWith;
+assert.stringNotEndsWith = stringNotEndsWith;
 assert.includes = includes; // xxx
 assert.doesNotInclude = doesNotInclude; /// xxx
 assert.oneOf = oneOf;

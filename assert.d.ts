@@ -109,6 +109,10 @@ declare namespace assert {
     var notInRange: (value: Comparable, min: Comparable, max: Comparable, message?: unknown) => void;
     var stringContains: (actual: StringLike, substring: StringLike, message?: unknown) => void;
     var stringNotContains: (actual: StringLike, substring: StringLike, message?: unknown) => void;
+    var stringStartsWith: (actual: StringLike, substring: StringLike, message?: unknown) => void;
+    var stringNotStartsWith: (actual: StringLike, substring: StringLike, message?: unknown) => void;
+    var stringEndsWith: (actual: StringLike, substring: StringLike, message?: unknown) => void;
+    var stringNotEndsWith: (actual: StringLike, substring: StringLike, message?: unknown) => void;
     var includes: (container: any, options: IncludesOptions, message?: unknown) => void;
     var doesNotInclude: (container: any, options: IncludesOptions, message?: unknown) => void;
     var oneOf: (value: unknown, collection: unknown, message?: unknown) => void;
