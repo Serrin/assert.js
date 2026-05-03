@@ -2,7 +2,7 @@
 "use strict";
 
 
-/* assert.js v1.1.7 testcases for ESM environment */
+/* assert.js v1.1.8 testcases for ESM environment */
 
 
 /**
@@ -25,7 +25,8 @@ function unitTest (message, error = false, callback) {
       result = true;
     } catch (_e) { result = false; }
   }
-  if (!result) { alert(message); }
+  if (!result) { alert(message); } // browser
+  // if (!result) { logError(message); } // nodejs
 }
 
 
@@ -543,7 +544,7 @@ function autoTestSync () {
   unitTest("assert.isEmpty(); 15", true, () => assert.isEmpty([42]));
   unitTest("assert.isEmpty(); 16", true, () => assert.isEmpty(new Uint16Array([1,2])));
   unitTest("assert.isEmpty(); 17", true, () => assert.isEmpty("foo"));
-  // @ts-ignore
+  /* @ts-ignore */
   unitTest("assert.isEmpty(); 18", true, () => assert.isEmpty(new Map([[1, 2]])));
   unitTest("assert.isEmpty(); 19", true, () => assert.isEmpty(new Set([1,2])));
   unitTest("assert.isEmpty(); 20", true, () => assert.isEmpty(new ArrayBuffer(2)));
@@ -568,7 +569,7 @@ function autoTestSync () {
   unitTest("assert.isNotEmpty(); 15", false, () => assert.isNotEmpty([42]));
   unitTest("assert.isNotEmpty(); 16", false, () => assert.isNotEmpty(new Uint16Array([1,2])));
   unitTest("assert.isNotEmpty(); 17", false, () => assert.isNotEmpty("foo"));
-  // @ts-ignore
+  /* @ts-ignore */
   unitTest("assert.isNotEmpty(); 18", false, () => assert.isNotEmpty(new Map([[1, 2]])));
   unitTest("assert.isNotEmpty(); 19", false, () => assert.isNotEmpty(new Set([1,2])));
   unitTest("assert.isNotEmpty(); 20", false, () => assert.isNotEmpty(new ArrayBuffer(2)));

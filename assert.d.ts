@@ -1,5 +1,9 @@
 type Falsy = null | undefined | false | 0 | -0 | 0n | "";
 type StringLike = string | String;
+type Nullish = undefined | null;
+type NonNullablePrimitive = boolean | number | bigint | string | symbol;
+type Primitive = Nullish | NonNullablePrimitive;
+type NonPrimitive = object | Function;
 type Comparable = number | bigint | string | boolean | Date;
 type AssertionErrorOptions = {
     message?: string;
@@ -26,10 +30,6 @@ type IncludesOptions = {
     keyOrValue: any;
     value?: any;
 };
-type Nullish = null | undefined;
-type NonNullablePrimitive = number | bigint | boolean | string | symbol;
-type Primitive = Nullish | NonNullablePrimitive;
-type NonPrimitive = object | Function;
 declare class AssertionError extends Error {
     actual?: unknown;
     expected?: unknown;
@@ -69,7 +69,7 @@ declare namespace assert {
     var isNotFalse: <T>(condition: T, message?: unknown) => asserts condition is Exclude<T, false>;
     var is: (value: unknown, expectedType: ExpectedType, message?: unknown) => void;
     var isNot: (value: unknown, expectedType: ExpectedType, message?: unknown) => void;
-    var isNullish: (value: unknown, message?: unknown) => asserts value is NonNullable<unknown>;
+    var isNullish: (value: unknown, message?: unknown) => asserts value is Nullish;
     var isNonNullable: (value: unknown, message?: unknown) => asserts value is NonNullable<unknown>;
     var isNull: (value: unknown, message?: unknown) => asserts value is null;
     var isNotNull: (value: unknown, message?: unknown) => asserts value is Exclude<unknown, null>;

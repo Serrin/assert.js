@@ -1,6 +1,11 @@
 
 # assert.js version history
 
+## assert.js v1.1.8
+
+1. Documentation, pdf and code fixes and many optimalisations.
+2. Faster type checking without breaking changes.
+
 ## assert.js v1.1.7
 
 1. Documentation, pdf and code fixes.

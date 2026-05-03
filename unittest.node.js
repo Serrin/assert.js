@@ -2,7 +2,7 @@
 "use strict";
 
 
-/* assert.js v1.1.7 testcases for Node.js environment */
+/* assert.js v1.1.8 testcases for Node.js environment */
 
 
 /* Import the assert function */
@@ -39,7 +39,8 @@ function unitTest (message, error = false, callback) {
       result = true;
     } catch (/** @type any */ _e) { result = false; }
   }
-  if (!result) { logError(message); }
+  // if (!result) { alert(message); } // browser
+  if (!result) { logError(message); } // nodejs
 }
 
 
@@ -431,9 +432,9 @@ function autoTestSync () {
     assert.isString(testSyncResult02.name, "testSync(); 02 - passed - name");
   }
 
-  // @ts-ignore
+  /* @ts-ignore */
   unitTest("assert.includes(); 01", true, () => assert.includes("lorem", 42));
-  // @ts-ignore
+  /* @ts-ignore */
   unitTest("assert.includes(); 01", true, () => assert.includes("lorem", 42, "lorem"));
 
   unitTest("assert.includes(); 02", true, () => assert.includes(null, {keyOrValue: "a"}));
@@ -598,7 +599,7 @@ function autoTestSync () {
   unitTest("assert.isEmpty(); 15", true, () => assert.isEmpty([42]));
   unitTest("assert.isEmpty(); 16", true, () => assert.isEmpty(new Uint16Array([1,2])));
   unitTest("assert.isEmpty(); 17", true, () => assert.isEmpty("foo"));
-  // @ts-ignore
+  /* @ts-ignore */
   unitTest("assert.isEmpty(); 18", true, () => assert.isEmpty(new Map([[1, 2]])));
   unitTest("assert.isEmpty(); 19", true, () => assert.isEmpty(new Set([1,2])));
   unitTest("assert.isEmpty(); 20", true, () => assert.isEmpty(new ArrayBuffer(2)));
@@ -623,7 +624,7 @@ function autoTestSync () {
   unitTest("assert.isNotEmpty(); 15", false, () => assert.isNotEmpty([42]));
   unitTest("assert.isNotEmpty(); 16", false, () => assert.isNotEmpty(new Uint16Array([1,2])));
   unitTest("assert.isNotEmpty(); 17", false, () => assert.isNotEmpty("foo"));
-  // @ts-ignore
+  /* @ts-ignore */
   unitTest("assert.isNotEmpty(); 18", false, () => assert.isNotEmpty(new Map([[1, 2]])));
   unitTest("assert.isNotEmpty(); 19", false, () => assert.isNotEmpty(new Set([1,2])));
   unitTest("assert.isNotEmpty(); 20", false, () => assert.isNotEmpty(new ArrayBuffer(2)));
