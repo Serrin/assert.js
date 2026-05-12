@@ -2,7 +2,7 @@
 "use strict";
 
 
-/* assert.js v1.1.8 testcases for Node.js environment */
+/* assert.js v1.1.9 testcases for Node.js environment */
 
 
 /* Import the assert function */
@@ -250,6 +250,26 @@ function autoTestSync () {
   unitTest("assert.isNot(); 03", true, () => assert.isNot([], Array));
   unitTest("assert.isNot(); 03", true, () => assert.isNot([], ["string", Array]));
   unitTest("assert.isNot(); 04", true, () => assert.isNot([], Array, "lorem"));
+
+  unitTest("assert.typeOf(); 01", false, () => assert.typeOf(42, "number"));
+  unitTest("assert.typeOf(); 01", true, () => assert.typeOf(42, "string"));
+  unitTest("assert.typeOf(); 01", true, () => assert.typeOf([], Array));
+  unitTest("assert.typeOf(); 01", true, () => assert.typeOf([], Map));
+
+  unitTest("assert.notTypeOf(); 01", true, () => assert.notTypeOf(42, "number"));
+  unitTest("assert.notTypeOf(); 01", false, () => assert.notTypeOf(42, "string"));
+  unitTest("assert.notTypeOf(); 01", true, () => assert.notTypeOf([], Array));
+  unitTest("assert.notTypeOf(); 01", true, () => assert.notTypeOf([], Map));
+
+  unitTest("assert.instanceOf(); 01", true, () => assert.instanceOf(42, "number"));
+  unitTest("assert.instanceOf(); 01", true, () => assert.instanceOf(42, "string"));
+  unitTest("assert.instanceOf(); 01", false, () => assert.instanceOf([], Array));
+  unitTest("assert.instanceOf(); 01", true, () => assert.instanceOf([], Map));
+
+  unitTest("assert.notInstanceOf(); 01", true, () => assert.notInstanceOf(42, "number"));
+  unitTest("assert.notInstanceOf(); 01", true, () => assert.notInstanceOf(42, "string"));
+  unitTest("assert.notInstanceOf(); 01", true, () => assert.notInstanceOf([], Array));
+  unitTest("assert.notInstanceOf(); 01", false, () => assert.notInstanceOf([], Map));
 
   unitTest("assert.isNullish(); 01", false, () => assert.isNullish(undefined));
   unitTest("assert.isNullish(); 02", false, () => assert.isNullish(null));

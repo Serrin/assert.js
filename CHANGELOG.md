@@ -1,6 +1,16 @@
 
 # assert.js version history
 
+## assert.js v1.1.9
+
+1. Documentation, pdf and code fixes.
+2. Add these functions:
+
+- `typeOf();`
+- `notTypeOf();`
+- `instanceOf();`
+- `notInstanceOf();`
+
 ## assert.js v1.1.8
 
 1. Documentation, pdf and code fixes and many optimalisations.

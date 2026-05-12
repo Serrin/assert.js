@@ -68,6 +68,10 @@ declare namespace assert {
     var isFalse: (condition: unknown, message?: unknown) => asserts condition is false;
     var isNotFalse: <T>(condition: T, message?: unknown) => asserts condition is Exclude<T, false>;
     var is: (value: unknown, expectedType: ExpectedType, message?: unknown) => void;
+    var typeOf: (value: unknown, expectedType: string, message: unknown) => void;
+    var notTypeOf: (value: unknown, expectedType: string, message: unknown) => void;
+    var instanceOf: (value: unknown, expectedConstructor: Function, message: unknown) => void;
+    var notInstanceOf: (value: unknown, expectedConstructor: Function, message: unknown) => void;
     var isNot: (value: unknown, expectedType: ExpectedType, message?: unknown) => void;
     var isNullish: (value: unknown, message?: unknown) => asserts value is Nullish;
     var isNonNullable: (value: unknown, message?: unknown) => asserts value is NonNullable<unknown>;
