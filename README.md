@@ -1,8 +1,8 @@
 # assert.js
 
-Latest version: 1.1.9
+Latest version: 1.1.10
 
-Date: 2026-05-11T14:29:55.518Z
+Date: 2026-05-13T19:27:38.793Z
 
 A modern, zero-dependency assertion library for Node.js, Deno and browser (ESM) environments.
 
@@ -18,12 +18,12 @@ Constants  | `assert.VERSION;`
 Config     | `assert.config.alwaysStrict;` (Default value is `false`.)
 Errors     | `assert.AssertionError();`
 Basic      | `assert();`,<BR>`assert.ok();`, `assert.notOk();`,<BR>`assert.fail();`
-Equality   | `assert.equal();`, `assert.notEqual();`,<BR>`assert.strictEqual();`, `assert.notStrictEqual();`,<BR>`assert.deepEqual();`, `assert.notDeepEqual();`,<BR>`assert.oneOf();`, `assert.notOneOf();`
+Equality   | `assert.equal();`, `assert.notEqual();`,<BR>`assert.strictEqual();`, `assert.notStrictEqual();`,<BR>`assert.deepEqual();`, `assert.notDeepEqual();`,<BR>`assert.deepStrictEqual();`, `assert.notDeepStrictEqual();`,<BR>`assert.oneOf();`, `assert.notOneOf();`
 Exception  | `assert.throws();`,<BR>`await assert.rejects();`,<BR>`await assert.doesNotReject();`
 String     | `assert.match();`, `assert.doesNotMatch();`,<BR>`assert.stringContains();`, `assert.stringNotContains();`,<BR>`assert.stringStartsWith();`, `assert.stringNotStartsWith();`,<BR>`assert.stringEndsWith();`, `assert.stringNotEndsWith();`
 Comparison | `assert.lt();`, `assert.lte();`,<BR>`assert.gt();`, `assert.gte();`,<BR>`assert.inRange();`, `assert.notInRange();`
 Object     | `assert.includes();`, `assert.doesNotInclude();`,<BR>`assert.isEmpty();`, `assert.isNotEmpty();`
-Type       | `assert.is();`, `assert.isNot();`,<BR>`assert.typeOf();`, `assert.notTypeOf();`,<BR>`assert.instanceOf();`, `assert.notInstanceOf();`,<BR>`assert.isPrimitive();`, `assert.isNotPrimitive();`,<BR>`assert.isNullish();`, `assert.isNonNullable();`,<BR>`assert.isNull();`, `assert.isNotNull();`,<BR>`assert.isUndefined();`, `assert.isDefined();`,<BR> `assert.isString();`, `assert.isNotString();`,<BR>`assert.isNumber();`, `assert.isNotNumber();`,<BR>`assert.isInt();`, `assert.isNotInt();`,<BR>`assert.isFloat();`, `assert.isNotFloat();`,<BR>`assert.isBigInt();`, `assert.isNotBigInt();`,<BR> `assert.isBoolean();`, `assert.isNotBoolean();`,<BR>`assert.isTrue();`, `assert.isNotTrue();`,<BR>`assert.isFalse();`, `assert.isNotFalse();`,<BR>`assert.isSymbol();`, `assert.isNotSymbol();`,<BR>`assert.isFunction();`, `assert.isNotFunction();`,<BR>`<BR>assert.isObject();`, `assert.isNotObject();`,<BR>`assert.isNaN();`, `assert.isNotNaN();`
+Type       | `assert.is();`, `assert.isNot();`,<BR>`assert.typeOf();`, `assert.notTypeOf();`,<BR>`assert.instanceOf();`, `assert.notInstanceOf();`,<BR>`assert.isPrimitive();`, `assert.isNotPrimitive();`,<BR>`assert.isNullish();`, `assert.ifError();`, `assert.isNonNullable();`,<BR>`assert.isNull();`, `assert.isNotNull();`,<BR>`assert.isUndefined();`, `assert.isDefined();`,<BR> `assert.isString();`, `assert.isNotString();`,<BR>`assert.isNumber();`, `assert.isNotNumber();`,<BR>`assert.isInt();`, `assert.isNotInt();`,<BR>`assert.isFloat();`, `assert.isNotFloat();`,<BR>`assert.isBigInt();`, `assert.isNotBigInt();`,<BR> `assert.isBoolean();`, `assert.isNotBoolean();`,<BR>`assert.isTrue();`, `assert.isNotTrue();`,<BR>`assert.isFalse();`, `assert.isNotFalse();`,<BR>`assert.isSymbol();`, `assert.isNotSymbol();`,<BR>`assert.isFunction();`, `assert.isNotFunction();`,<BR>`<BR>assert.isObject();`, `assert.isNotObject();`,<BR>`assert.isNaN();`, `assert.isNotNaN();`
 Testrunner | `assert.testSync();`,<BR>`await assert.testAsync();`,<BR>`assert.testCheck();`
 
 ---
@@ -88,7 +88,7 @@ Added in v1.0.0
 Returns the library version string.
 
 ````javascript
-console.log(assert.VERSION); // "assert.js v1.1.9"
+console.log(assert.VERSION); // "assert.js v1.1.10"
 ````
 
 ---
@@ -226,9 +226,11 @@ assert.notStrictEqual(1, "1"); // passes
 
 ### `assert.deepEqual(actual: unknown, expected: unknown [, message: string | Error]): void;`
 
+__Alias:__ `assert.deepStrictEqualEqual(actual: unknown, expected: unknown [, message: string | Error]): void;`
+
 Added in v1.0.0
 
-Deep equality check.
+Deep equality check. Always strict (uses `Object.is();`).
 
 ````javascript
 assert.deepEqual({ a: 1 }, { a: 1 }); // passes
@@ -238,9 +240,11 @@ assert.deepEqual([1, 2], [1, 2]); // passes
 
 ### `assert.notDeepEqual(actual: unknown, expected: unknown [, message: string | Error]): void;`
 
+__Alias:__ `assert.notDeepStrictEqualEqual(actual: unknown, expected: unknown [, message: string | Error]): void;`
+
 Added in v1.0.0
 
-Inverse of `assert.deepEqual(actual: unknown, expected: unknown [, message: string | Error]): void;`.
+Inverse of `assert.deepEqual(actual: unknown, expected: unknown [, message: string | Error]): void;`.  Always strict (uses `Object.is();`).
 
 ````javascript
 assert.notDeepEqual({ a: 1 }, { a: 2 }); // passes
@@ -664,6 +668,8 @@ assert.isNotPrimitive([]); // passes
 ````
 
 ### `assert.isNullish(value: unknown [, message: string | Error]): void;`
+
+__Alias:__ `assert.ifError(actual: unknown, expected: unknown [, message: string | Error]): void;`
 
 Added in v1.0.0
 

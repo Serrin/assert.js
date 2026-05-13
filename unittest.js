@@ -2,7 +2,7 @@
 "use strict";
 
 
-/* assert.js v1.1.9 testcases for ESM environment */
+/* assert.js v1.1.10 testcases for ESM environment */
 
 
 /**
@@ -31,6 +31,20 @@ function unitTest (message, error = false, callback) {
 
 
 function autoTestSync () {
+  
+  /* aliases */
+  unitTest("aliases 01", false, () => assert.strictEqual(
+    assert.isNullish, 
+    assert.ifError
+  ));
+  unitTest("aliases 02", false, () => assert.strictEqual(
+    assert.deepEqual, 
+    assert.deepStrictEqual
+  ));
+  unitTest("aliases 03", false, () => assert.strictEqual(
+    assert.notDeepEqual, 
+    assert.notDeepStrictEqual
+  ));
 
   unitTest("assert(); 01", false, () => assert(true));
   unitTest("assert(); 02", true, () => assert(false));

@@ -1,6 +1,19 @@
 
 # assert.js version history
 
+## assert.js v1.1.10
+
+1. __FIX__ Add JSDOC `@private` at the helper functions.
+2. __FIX__ Change the argument `message` from `message: unknown` to `message?: string | Error` in the exported functions.
+3. __FIX__ Remove `cause` from the properties of the `AssertionErrorOptions`.
+4. __ADD__ Add aliases:
+
+Original function | Alias
+------------------|---------------------------
+`isNullish();`    | `ifError();`
+`deepEqual();`    | `deepStrictEqual();`
+`notDeepEqual();` | `notDeepStrictEqual();`
+
 ## assert.js v1.1.9
 
 1. Documentation, pdf and code fixes.

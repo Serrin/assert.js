@@ -30,9 +30,9 @@ button { border-radius: 0px; }
 
 <h1 id="top" class="center">assert.js</h1>
 
-<p>Latest version: 1.1.9</p>
+<p>Latest version: 1.1.10</p>
 
-<p>Date: 2026-05-11T14:29:55.518Z</p>
+<p>Date: 2026-05-13T19:27:38.793Z</p>
 
 <p>A modern, zero-dependency assertion library for Node.js, Deno and browser (ESM) environments.</p>
 
@@ -86,6 +86,7 @@ button { border-radius: 0px; }
       <a href ="#fn-equal"><code>assert.equal();</code></a>, <a href ="#fn-notEqual"><code>assert.notEqual();</code></a>,
       <br/><a href ="#fn-strictEqual"><code>assert.strictEqual();</code></a>, <a href ="#fn-notStrictEqual"><code>assert.notStrictEqual();</code></a>,
       <br/><a href ="#fn-deepEqual"><code>assert.deepEqual();</code></a>, <a href ="#fn-notDeepEqual"><code>assert.notDeepEqual();</code></a>,
+      <br/><a href ="#fn-deepEqual"><code>assert.deepStrictEqual();</code></a>, <a href ="#fn-notDeepEqual"><code>assert.notDeepStrictEqual();</code></a>,
       <br/><a href ="#fn-oneOf"><code>assert.oneOf();</code></a>, <a href ="#fn-notOneOf"><code>assert.notOneOf();</code></a>
     </td>
   </tr>
@@ -129,7 +130,7 @@ button { border-radius: 0px; }
       <br/><a href ="#fn-typeOf"><code>assert.typeOf();</code></a>, <a href ="#fn-notTypeOf"><code>assert.notTypeOf();</code></a>,
       <br/><a href ="#fn-instanceOf"><code>assert.instanceOf();</code></a>, <a href ="#fn-notInstanceOf"><code>assert.notInstanceOf();</code></a>,
       <br/><a href ="#fn-isPrimitive"><code>assert.isPrimitive();</code></a>, <a href ="#fn-isNotPrimitive"><code>assert.isNotPrimitive();</code></a>,
-      <br/><a href ="#fn-isNullish"><code>assert.isNullish();</code></a>, <a href ="#fn-isNonNullable"><code>assert.isNonNullable();</code></a>,
+      <br/><a href ="#fn-isNullish"><code>assert.isNullish();</code></a>, <a href ="#fn-isNullish"><code>assert.ifError();</code></a>, <a href ="#fn-isNonNullable"><code>assert.isNonNullable();</code></a>,
       <br/><a href ="#fn-isNull"><code>assert.isNull();</code></a>, <a href ="#fn-isNotNull"><code>assert.isNotNull();</code></a>,
       <br/><a href ="#fn-isUndefined"><code>assert.isUndefined();</code></a>, <a href ="#fn-isDefined"><code>assert.isDefined();</code></a>,
       <br/><a href ="#fn-isString"><code>assert.isString();</code></a>, <a href ="#fn-isNotString"><code>assert.isNotString();</code></a>,
@@ -252,29 +253,29 @@ globalThis.assert = assert;</pre>
 
 <h2 id="category-Basic">Basic Assertions</h2>
 
-<h3 id="fn-assert" class="round-25 padding font-monospace bg-lightblue">assert(condition: unknown [, message: string | Error]): void;</h3>
+<h3 id="fn-assert" class="round-25 padding font-monospace bg-lightblue">assert(value: unknown [, message: string | Error]): void;</h3>
 
 <p>Added in v1.0.0</p>
 
-<p>Ensures that <code>condition</code> is truthy. Throws an <code>AssertionError</code> if falsy.</p>
+<p>Ensures that <code>value</code> is truthy. Throws an <code>AssertionError</code> if falsy.</p>
 
 <pre>assert(1 === 1); // passes
 // assert(0, "0 is falsy"); // throws an error</pre>
 
 <p><a href="#Summary">&#9650; Back to Summary</a></p>
 
-<h3 id="fn-ok" class="round-25 padding font-monospace bg-lightblue">assert.ok(condition: unknown [, message: string | Error]): void;</h3>
+<h3 id="fn-ok" class="round-25 padding font-monospace bg-lightblue">assert.ok(value: unknown [, message: string | Error]): void;</h3>
 
 <p>Added in v1.0.0</p>
 
-<p>Alias for <code>assert(condition: unknown [, message: string | Error]): void;</code>.</p>
+<p>Alias for <code>assert(value: unknown [, message: string | Error]): void;</code>.</p>
 
 <pre>assert.ok(1 === 1); // passes
 // assert.ok(0, "0 is falsy"); // throws an error</pre>
 
 <p><a href="#Summary">&#9650; Back to Summary</a></p>
 
-<h3 id="fn-notOk" class="round-25 padding font-monospace bg-lightblue">assert.notOk(condition: unknown [, message: string | Error]): void;</h3>
+<h3 id="fn-notOk" class="round-25 padding font-monospace bg-lightblue">assert.notOk(value: unknown [, message: string | Error]): void;</h3>
 
 <p>Added in v1.0.0</p>
 
@@ -350,9 +351,11 @@ assert.strictEqual(NaN, NaN); // passes
 
 <h3 id="fn-deepEqual" class="round-25 padding font-monospace bg-lightblue">assert.deepEqual(actual: unknown, expected: unknown [, message: string | Error]): void;</h3>
 
+<p><strong>Alias:</strong> <code>assert.deepStrictEqualEqual(actual: unknown, expected: unknown [, message: string | Error]): void;</code></p>
+
 <p>Added in v1.0.0</p>
 
-<p>Deep equality check.</p>
+<p>Deep equality check. Always strict (uses <code>Object.is();</code>).</p>
 
 <pre>assert.deepEqual({ a: 1 }, { a: 1 }); // passes
 assert.deepEqual([1, 2], [1, 2]); // passes
@@ -362,9 +365,11 @@ assert.deepEqual([1, 2], [1, 2]); // passes
 
 <h3 id="fn-notDeepEqual" class="round-25 padding font-monospace bg-lightblue">assert.notDeepEqual(actual: unknown, expected: unknown [, message: string | Error]): void;</h3>
 
+<p><strong>Alias:</strong> <code>assert.notDeepStrictEqualEqual(actual: unknown, expected: unknown [, message: string | Error]): void;</code></p>
+
 <p>Added in v1.0.0</p>
 
-<p>Inverse of <code>assert.deepEqual(actual: unknown, expected: unknown [, message: string | Error]): void;</code>.</p>
+<p>Inverse of <code>assert.deepEqual(actual: unknown, expected: unknown [, message: string | Error]): void;</code>. Always strict (uses <code>Object.is();</code>).</p>
 
 <pre>assert.notDeepEqual({ a: 1 }, { a: 2 }); // passes
 // assert.notDeepEqual({ a: 1 }, { a: 1 }); // throws an error</pre>
@@ -792,6 +797,8 @@ assert.notInstanceOf([], Map); // throws an error</pre>
 <p><a href="#Summary">&#9650; Back to Summary</a></p>
 
 <h3 id="fn-isNullish" class="round-25 padding font-monospace bg-lightblue">assert.isNullish(value: unknown [, message: string | Error]): void;</h3>
+
+<p><strong>Alias:</strong> <code>assert.ifError(value: unknown [, message: string | Error]): void;</code></p>
 
 <p>Added in v1.0.0</p>
 

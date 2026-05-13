@@ -2,7 +2,7 @@
 "use strict";
 
 
-/* assert.js v1.1.9 testcases for Node.js environment */
+/* assert.js v1.1.10 testcases for Node.js environment */
 
 
 /* Import the assert function */
@@ -139,6 +139,20 @@ const logLine = () => console.log("");
 
 
 function autoTestSync () {
+  
+  /* aliases */
+  unitTest("aliases 01", false, () => assert.strictEqual(
+    assert.isNullish, 
+    assert.ifError
+  ));
+  unitTest("aliases 02", false, () => assert.strictEqual(
+    assert.deepEqual, 
+    assert.deepStrictEqual
+  ));
+  unitTest("aliases 03", false, () => assert.strictEqual(
+    assert.notDeepEqual, 
+    assert.notDeepStrictEqual
+  ));
 
   logInfo(`assert.VERSION: "${assert.VERSION}"`);
   logInfo(`assert.config: ${JSON.stringify(assert.config)}`);
