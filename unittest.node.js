@@ -2,7 +2,7 @@
 "use strict";
 
 
-/* assert.js v1.1.10 testcases for Node.js environment */
+/* assert.js v1.2.0 testcases for Node.js environment */
 
 
 /* Import the assert function */
@@ -139,23 +139,75 @@ const logLine = () => console.log("");
 
 
 function autoTestSync () {
-  
+
   /* aliases */
-  unitTest("aliases 01", false, () => assert.strictEqual(
-    assert.isNullish, 
-    assert.ifError
-  ));
-  unitTest("aliases 02", false, () => assert.strictEqual(
-    assert.deepEqual, 
-    assert.deepStrictEqual
-  ));
-  unitTest("aliases 03", false, () => assert.strictEqual(
-    assert.notDeepEqual, 
-    assert.notDeepStrictEqual
-  ));
+  unitTest("aliases 01 - isNullish - > ifError", false,
+    () => assert.strictEqual( assert.isNullish, assert.ifError)
+  );
+  unitTest("aliases 02 - deepEqual - > deepStrictEqual", false,
+    () => assert.strictEqual(assert.deepEqual, assert.deepStrictEqual)
+  );
+  unitTest("aliases 03 - notDeepEqual - > notDeepStrictEqual", false,
+    () => assert.strictEqual(assert.notDeepEqual, assert.notDeepStrictEqual)
+  );
+  unitTest("aliases 04 - testSync - > test", false,
+    () => assert.strictEqual( assert.testSync, assert.test)
+  );
+  unitTest("aliases 04 - testSync - > it", false,
+    () => assert.strictEqual( assert.testSync, assert.it)
+  );
 
   logInfo(`assert.VERSION: "${assert.VERSION}"`);
   logInfo(`assert.config: ${JSON.stringify(assert.config)}`);
+
+  let testSuite1 = new assert.TestSuite();
+  testSuite1.add(
+    assert.test("TC1 passed", () => assert.equal(1, 1)), // passed
+    assert.test("TC2 passed", () => assert.equal(2, 2),) // passed
+  ).add(assert.test("TC3 failed", () => assert.equal(1, 2))); // failed
+  unitTest("assert.TestSuite(); 01", false, () => {
+    assert.strictEqual(testSuite1.size, 3);
+    let testSuite1array = testSuite1.toArray();
+    assert.isTrue(
+      Array.isArray(testSuite1array) && testSuite1array.length === 3
+    );
+  });
+  testSuite1.clear();
+  unitTest("assert.TestSuite(); 02", false,
+    () => assert.strictEqual(testSuite1.size, 0)
+  );
+  testSuite1.add(
+    assert.test("TC1 passed", () => assert.equal(1, 1)), // passed
+    assert.test("TC2 passed", () => assert.equal(2, 2),) // passed
+  ).add(assert.test("TC3 failed", () => assert.equal(1, 2))); // failed
+  unitTest("assert.TestSuite(); 03", false, () => {
+    assert.strictEqual(testSuite1.size, 3);
+    let testSuite1array = [...testSuite1];
+    assert.isTrue(
+      Array.isArray(testSuite1array) && testSuite1array.length === 3
+    );
+  });
+  unitTest("assert.TestSuite(); 04", false, () => {
+    assert.strictEqual(testSuite1.size, 3);
+    let testSuite1array = [...testSuite1.values()];
+    assert.isTrue(
+      Array.isArray(testSuite1array) && testSuite1array.length === 3
+    );
+  });
+  unitTest("assert.TestSuite(); 05", false, () => {
+    assert.strictEqual(testSuite1.size, 3);
+    let testSuite1array = [...testSuite1.success()];
+    assert.isTrue(
+      Array.isArray(testSuite1array) && testSuite1array.length === 2
+    );
+  });
+  unitTest("assert.TestSuite(); 06", false, () => {
+    assert.strictEqual(testSuite1.size, 3);
+    let testSuite1array = [...testSuite1.failed()];
+    assert.isTrue(
+      Array.isArray(testSuite1array) && testSuite1array.length === 1
+    );
+  });
 
   unitTest("assert(); 01", false, () => assert(true));
   unitTest("assert(); 02", true, () => assert(false));
@@ -444,7 +496,7 @@ function autoTestSync () {
     );
   }
 
-  let testSyncResult01 = assert.testSync(() => 42);
+  let testSyncResult01 = assert.testSync("name", () => 42);
   if (assert.testCheck(testSyncResult01)) {
     assert.isFunction(testSyncResult01.block, "testSync(); 01 - passed - block");
     assert.isString(testSyncResult01.name, "testSync(); 01 - passed - name");
@@ -455,7 +507,7 @@ function autoTestSync () {
     logError("testSync(); 01 - failed");
   }
 
-  let testSyncResult02 = assert.testSync(function () { throw new Error("lorem"); })
+  let testSyncResult02 = assert.testSync("name", function () { throw new Error("lorem"); })
   if (assert.testCheck(testSyncResult02)) {
     assert.isFunction(testSyncResult02.block, "testSync(); 02 - failed - block");
     assert.isString(testSyncResult02.name, "testSync(); 02 - failed - name");
@@ -831,7 +883,7 @@ async function autoTestAsync () {
     .catch((/** @type any */ _e) => { /* logSuccess("doesNotReject(); 03 - passed"); */ });
 
   (async () => {
-    const result = await assert.testAsync(async function () { return 42; });
+    const result = await assert.testAsync("name", async function () { return 42; });
     if (assert.testCheck(result)) {
       assert.isFunction(result.block, "testAsync(); 01 - passed - block");
       assert.isString(result.name, "testAsync(); 01 - passed - name");
@@ -844,7 +896,7 @@ async function autoTestAsync () {
   })();
 
   (async () => {
-    const result = await assert.testAsync(async function () { throw new Error("lorem"); });
+    const result = await assert.testAsync("name", async function () { throw new Error("lorem"); });
     if (assert.testCheck(result)) {
       assert.isFunction(result.block, "testAsync(); 02 - failed - block");
       assert.isString(result.name, "testAsync(); 02 - failed - name");

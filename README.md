@@ -1,10 +1,10 @@
 # assert.js
 
-Latest version: 1.1.10
+Latest version: 1.2.0
 
-Date: 2026-05-13T19:27:38.793Z
+Date: 2026-05-17T17:49:48.213Z
 
-A modern, zero-dependency assertion library for Node.js, Deno and browser (ESM) environments.
+A zero-dependency assertion library for Node.js, Deno and browser (ESM) environments.
 
 Implements and extends the [CommonJS Unit Testing 1.0 spec](https://wiki.commonjs.org/wiki/Unit_Testing/1.0).
 
@@ -23,8 +23,8 @@ Exception  | `assert.throws();`,<BR>`await assert.rejects();`,<BR>`await assert.
 String     | `assert.match();`, `assert.doesNotMatch();`,<BR>`assert.stringContains();`, `assert.stringNotContains();`,<BR>`assert.stringStartsWith();`, `assert.stringNotStartsWith();`,<BR>`assert.stringEndsWith();`, `assert.stringNotEndsWith();`
 Comparison | `assert.lt();`, `assert.lte();`,<BR>`assert.gt();`, `assert.gte();`,<BR>`assert.inRange();`, `assert.notInRange();`
 Object     | `assert.includes();`, `assert.doesNotInclude();`,<BR>`assert.isEmpty();`, `assert.isNotEmpty();`
-Type       | `assert.is();`, `assert.isNot();`,<BR>`assert.typeOf();`, `assert.notTypeOf();`,<BR>`assert.instanceOf();`, `assert.notInstanceOf();`,<BR>`assert.isPrimitive();`, `assert.isNotPrimitive();`,<BR>`assert.isNullish();`, `assert.ifError();`, `assert.isNonNullable();`,<BR>`assert.isNull();`, `assert.isNotNull();`,<BR>`assert.isUndefined();`, `assert.isDefined();`,<BR> `assert.isString();`, `assert.isNotString();`,<BR>`assert.isNumber();`, `assert.isNotNumber();`,<BR>`assert.isInt();`, `assert.isNotInt();`,<BR>`assert.isFloat();`, `assert.isNotFloat();`,<BR>`assert.isBigInt();`, `assert.isNotBigInt();`,<BR> `assert.isBoolean();`, `assert.isNotBoolean();`,<BR>`assert.isTrue();`, `assert.isNotTrue();`,<BR>`assert.isFalse();`, `assert.isNotFalse();`,<BR>`assert.isSymbol();`, `assert.isNotSymbol();`,<BR>`assert.isFunction();`, `assert.isNotFunction();`,<BR>`<BR>assert.isObject();`, `assert.isNotObject();`,<BR>`assert.isNaN();`, `assert.isNotNaN();`
-Testrunner | `assert.testSync();`,<BR>`await assert.testAsync();`,<BR>`assert.testCheck();`
+Type       | `assert.is();`, `assert.isNot();`,<BR>`assert.typeOf();`, `assert.notTypeOf();`,<BR>`assert.instanceOf();`, `assert.notInstanceOf();`,<BR>`assert.isPrimitive();`, `assert.isNotPrimitive();`,<BR>`assert.isNullish();`, `assert.ifError();`, `assert.isNonNullable();`,<BR>`assert.isNull();`, `assert.isNotNull();`,<BR>`assert.isUndefined();`, `assert.isDefined();`,<BR> `assert.isString();`, `assert.isNotString();`,<BR>`assert.isNumber();`, `assert.isNotNumber();`,<BR>`assert.isInt();`, `assert.isNotInt();`,<BR>`assert.isFloat();`, `assert.isNotFloat();`,<BR>`assert.isBigInt();`, `assert.isNotBigInt();`,<BR> `assert.isBoolean();`, `assert.isNotBoolean();`,<BR>`assert.isTrue();`, `assert.isNotTrue();`,<BR>`assert.isFalse();`, `assert.isNotFalse();`,<BR>`assert.isSymbol();`, `assert.isNotSymbol();`,<BR>`assert.isFunction();`, `assert.isNotFunction();`,<BR>`assert.isObject();`, `assert.isNotObject();`,<BR>`assert.isNaN();`, `assert.isNotNaN();`
+Testrunner | `assert.testSync();`, `assert.test();`, `assert.it();`<BR>`await assert.testAsync();`,<BR>`assert.testCheck();`,<BR>`class assert.TestSuite();`
 
 ---
 
@@ -88,7 +88,7 @@ Added in v1.0.0
 Returns the library version string.
 
 ````javascript
-console.log(assert.VERSION); // "assert.js v1.1.10"
+console.log(assert.VERSION); // "assert.js v1.2.0"
 ````
 
 ---
@@ -1021,7 +1021,13 @@ assert.isNotFloat("foo"); // passes
 
 ## Testrunner
 
-### `assert.testSync(block, name = "assert.testSync"): {ok: true, value: T, block: Function, name: string} | {ok: false, error: Error, block: Function, name: string}`
+### `assert.testSync(name = "assert.testSync", block): {ok: true, value: T, block: Function, name: string} | {ok: false, error: Error, block: Function, name: string}`
+
+__Alias:__ `assert.test(name = "assert.testSync", block): {ok: true, value: T, block: Function, name: string} | {ok: false, error: Error, block: Function, name: string}`
+
+__Alias:__ `assert.it(name = "assert.testSync", block): {ok: true, value: T, block: Function, name: string} | {ok: false, error: Error, block: Function, name: string}`
+
+__In v1.2.0 the order of the arguments has been changed from `block, name` to `name, block`.__
 
 Added in v1.0.0
 
@@ -1035,7 +1041,9 @@ if (assert.testCheck(assert.testSync(() => 42))) {
 }
 ````
 
-### `await assert.testASync(block, name = "assert.testAsync"): {ok: true, value: T, block: Function, name: string} | {ok: false, error: Error, block: Function, name: string}`
+### `await assert.testASync(name = "assert.testAsync", block): {ok: true, value: T, block: Function, name: string} | {ok: false, error: Error, block: Function, name: string}`
+
+__In v1.2.0 the order of the arguments has been changed from `block, name` to `name, block`.__
 
 Added in v1.0.0
 
@@ -1064,6 +1072,69 @@ if (assert.testCheck(assert.testSync(() => 42))) {
 } else {
   console.error("failed");
 }
+````
+
+### `class assert.TestSuite();`
+
+Added in v1.2.0
+
+The TestSuite is a collection of TestResults with custom methods. This is a class and can create with the new operator.
+
+__Methods:__
+
+Method                                     | Details
+-------------------------------------------|-----------------------------------------
+`Add(...args: <TestResult>): this;`        |Add testcases. The return value is the testsuite and can be used as a chainable method.
+`clear(): this;`                           |Clear all testcases.  The return value is the testsuite and can be used as a chainable method.
+`get size(): number;`                      | Return the count of the testcases.
+`toArray(): Array<TestResult>`             | Return all testcases in an `Array`.
+`success(): IterableIterator<TestResult>;` | Return success testcases in an `Iterator`.
+`failed(): IterableIterator<TestResult>;`  | Return failed testcases in an `Iterator`.
+`values(): IterableIterator<TestResult>;`  | Return all testcases in an `Iterator`.
+`[Symbol.iterator]()`                      | Return all testcases in an `Iterator`.
+
+````javascript
+let testSuite1 = new assert.TestSuite();
+
+testSuite1.add(
+  assert.test("TC1 passed", () => assert.equal(1, 1)), // passed TC
+  assert.test("TC2 passed", () => assert.equal(2, 2),) // passed TC
+).add(assert.test("TC3 failed", () => assert.equal(1, 2))); // failed TC
+assert.strictEqual(testSuite1.size, 3); // passed
+
+let testSuite1array = testSuite1.toArray();
+assert.isTrue(
+  Array.isArray(testSuite1array) && testSuite1array.length === 3
+); // passed
+
+testSuite1.clear();
+assert.strictEqual(testSuite1.size, 0); // passed
+
+testSuite1.add(
+  assert.test("TC1 passed", () => assert.equal(1, 1)), // passed TC
+  assert.test("TC2 passed", () => assert.equal(2, 2),) // passed TC
+).add(assert.test("TC3 failed", () => assert.equal(1, 2))); // failed TC
+assert.strictEqual(testSuite1.size, 3); // passed
+
+let testSuite2array = [...testSuite1];
+assert.isTrue(
+  Array.isArray(testSuite2array) && testSuite2array.length === 3
+);
+
+let testSuite3array = [...testSuite1.values()];
+assert.isTrue(
+  Array.isArray(testSuite3array) && testSuite3array.length === 3
+); // passed
+
+let testSuite4array = [...testSuite1.success()];
+assert.isTrue(
+  Array.isArray(testSuite4array) && testSuite4array.length === 2
+);
+
+let testSuite5array = [...testSuite1.failed()];
+assert.isTrue(
+  Array.isArray(testSuite5array) && testSuite5array.length === 1
+);
 ````
 
 ---

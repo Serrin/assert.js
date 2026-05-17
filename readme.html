@@ -30,11 +30,11 @@ button { border-radius: 0px; }
 
 <h1 id="top" class="center">assert.js</h1>
 
-<p>Latest version: 1.1.10</p>
+<p>Latest version: 1.2.0</p>
 
-<p>Date: 2026-05-13T19:27:38.793Z</p>
+<p>Date: 2026-05-17T17:49:48.213Z</p>
 
-<p>A modern, zero-dependency assertion library for Node.js, Deno and browser (ESM) environments.</p>
+<p>A zero-dependency assertion library for Node.js, Deno and browser (ESM) environments.</p>
 
 <p>Implements and extends the <a href="https://wiki.commonjs.org/wiki/Unit_Testing/1.0" target="_blank">CommonJS Unit Testing 1.0 spec</a>.</p>
 
@@ -149,9 +149,10 @@ button { border-radius: 0px; }
   <tr>
     <td><a href="#category-Testrunner">Testrunner</a></td>
     <td>
-      <a href ="#fn-testSync"><code>assert.testSync();</code></a>,
+      <a href ="#fn-testSync"><code>assert.testSync();</code></a>, <a href ="#fn-testSync"><code>assert.test();</code></a>, <a href ="#fn-testSync"><code>assert.it();</code></a>
       <br/><a href ="#fn-testAsync"><code>await assert.testAsync();</code></a>,
       <br/><a href ="#fn-testCheck"><code>assert.testCheck();</code></a>
+      <br/><a href ="#fn-TestSuite"><code>class assert.TestSuite();</code></a>
     </td>
   </tr>
 </table>
@@ -1152,7 +1153,13 @@ assert.isNotFloat("foo"); // passes</pre>
 
 <h2 id="category-Testrunner">Testrunner</h2>
 
-<h3 id="fn-testSync" class="round-25 padding font-monospace bg-lightblue">assert.testSync(block, name = "assert.testSync"): {ok: true, value: T, block: Function, name: string} | {ok: false, error: Error, block: Function, name: string}</h3>
+<h3 id="fn-testSync" class="round-25 padding font-monospace bg-lightblue">assert.testSync(name = "assert.testSync", block): {ok: true, value: T, block: Function, name: string} | {ok: false, error: Error, block: Function, name: string}</h3>
+
+<p><strong>Alias:</strong> <code>assert.test(name = "assert.testSync", block): {ok: true, value: T, block: Function, name: string} | {ok: false, error: Error, block: Function, name: string}</code></p>
+
+<p><strong>Alias:</strong> <code>assert.it(name = "assert.testSync", block): {ok: true, value: T, block: Function, name: string} | {ok: false, error: Error, block: Function, name: string}</code></p>
+
+<p><span class="info">In v1.2.0 the order of the arguments has been changed from <code>block, name</code> to <code>name, block</code>.</span></p>
 
 <p>Added in v1.0.0</p>
 
@@ -1166,7 +1173,9 @@ assert.isNotFloat("foo"); // passes</pre>
 
 <p><a href="#Summary">&#9650; Back to Summary</a></p>
 
-<h3 id="fn-testAsync" class="round-25 padding font-monospace bg-lightblue">await assert.testAsync(block, name = "assert.testAsync"): {ok: true, value: T, block: Function, name: string} | {ok: false, error: Error, block: Function, name: string}</h3>
+<h3 id="fn-testAsync" class="round-25 padding font-monospace bg-lightblue">await assert.testAsync(name = "assert.testAsync", block): {ok: true, value: T, block: Function, name: string} | {ok: false, error: Error, block: Function, name: string}</h3>
+
+<p><span class="info">In v1.2.0 the order of the arguments has been changed from <code>block, name</code> to <code>name, block</code>.</span></p>
 
 <p>Added in v1.0.0</p>
 
@@ -1194,6 +1203,70 @@ assert.isNotFloat("foo"); // passes</pre>
 } else {
   console.error("failed");
 }</pre>
+
+<p><a href="#Summary">&#9650; Back to Summary</a></p>
+
+<h3 id="fn-TestSuite" class="round-25 padding font-monospace bg-lightblue">class assert.TestSuite();</h3>
+
+<p>Added in v1.2.0</p>
+
+<p>The TestSuite is a collection of TestResults with custom methods. This is a class and can create with the new operator.</p>
+
+<p><strong>Methods:</strong></p>
+
+<table>
+  <tr><td><strong>Method</strong></td><td><strong>Details</strong></td></tr>
+  <tr><td><code>Add(...args: Array&#60;TestResult&#62;): this;</code></td><td>Add testcases. The return value is the testsuite and can be used as a chainable method.</td></tr>
+  <tr><td><code>clear(): this;</code></td><td>Clear all testcases.  The return value is the testsuite and can be used as a chainable method.</td></tr>
+  <tr><td><code>get size(): number;</code></td><td>Return the count of the testcases.</td></tr>
+  <tr><td><code>toArray(): Array<TestResult></code></td><td>Return all testcases in an <code>Array</code>.</td></tr>
+  <tr><td><code>success(): IterableIterator&#60;TestResult&#62;;</code></td><td>Return success testcases in an <code>Iterator</code>.</td></tr>
+  <tr><td><code>failed(): IterableIterator&#60;TestResult&#62;;</code></td><td>Return failed testcases in an <code>Iterator</code>.</td></tr>
+  <tr><td><code>values(): IterableIterator&#60;TestResult&#62;;</code></td><td>Return all testcases in an <code>Iterator</code>.</td></tr>
+  <tr><td><code>[Symbol.iterator]()</code></td><td>Return all testcases in an <code>Iterator</code>.</td></tr>
+</table>
+
+<pre>let testSuite1 = new assert.TestSuite();
+
+testSuite1.add(
+  assert.test("TC1 passed", () => assert.equal(1, 1)), // passed TC
+  assert.test("TC2 passed", () => assert.equal(2, 2),) // passed TC
+).add(assert.test("TC3 failed", () => assert.equal(1, 2))); // failed TC
+assert.strictEqual(testSuite1.size, 3); // passed
+
+let testSuite1array = testSuite1.toArray();
+assert.isTrue(
+  Array.isArray(testSuite1array) && testSuite1array.length === 3
+); // passed
+
+testSuite1.clear();
+assert.strictEqual(testSuite1.size, 0); // passed
+
+testSuite1.add(
+  assert.test("TC1 passed", () => assert.equal(1, 1)), // passed TC
+  assert.test("TC2 passed", () => assert.equal(2, 2),) // passed TC
+).add(assert.test("TC3 failed", () => assert.equal(1, 2))); // failed TC
+assert.strictEqual(testSuite1.size, 3); // passed
+
+let testSuite2array = [...testSuite1];
+assert.isTrue(
+  Array.isArray(testSuite2array) && testSuite2array.length === 3
+);
+
+let testSuite3array = [...testSuite1.values()];
+assert.isTrue(
+  Array.isArray(testSuite3array) && testSuite3array.length === 3
+); // passed
+
+let testSuite4array = [...testSuite1.success()];
+assert.isTrue(
+  Array.isArray(testSuite4array) && testSuite4array.length === 2
+);
+
+let testSuite5array = [...testSuite1.failed()];
+assert.isTrue(
+  Array.isArray(testSuite5array) && testSuite5array.length === 1
+);</pre>
 
 <p><a href="#Summary">&#9650; Back to Summary</a></p>
 

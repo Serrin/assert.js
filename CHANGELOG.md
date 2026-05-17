@@ -1,6 +1,22 @@
 
 # assert.js version history
 
+## assert.js v1.2.0
+
+1. Documentation, pdf and code fixes and many optimalisations.
+2. __FIX__ Type checking in `match();`.
+3. __FIX__ Change the order of arguments in these functions: `testSync();` and `testAsync();`
+4. __ADD__ New class: `assert.TestSuite();`
+5. __ADD__ Add a new TS type: `type Message = string | Error;`.
+6. __ADD__ Enhance the helper function `_isSameType()` with a new argument.
+7. __ADD__ Developer (helper) functions in properties of function `assert();`, but only during development.
+8. __ADD__ Add aliases:
+
+Original function | Alias
+------------------|---------------------------
+`testSync();`     | `test();`
+`testSync();`     | `it();`
+
 ## assert.js v1.1.10
 
 1. __FIX__ Add JSDOC `@private` at the helper functions.
@@ -44,7 +60,7 @@ Original function | Alias
 1. Documentation, pdf and code fixes.
 2. New `assert-cheatsheet.odt` and `assert-cheatsheet.pdf`.
 3. Fix the `AssertionError();`.
-3. Modify the `fail();` function with the new optional arguments: `assert.fail([value1, value2, message, operator]);`.
+4. Modify the `fail();` function with the new optional arguments: `assert.fail([value1, value2, message, operator]);`.
 
 ## assert.js v1.1.5
 

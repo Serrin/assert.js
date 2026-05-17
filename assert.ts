@@ -10,14 +10,14 @@
 
 /**
  * @name assert.js
- * @version 1.1.10
+ * @version 1.2.0
  * @author Ferenc Czigler
  * @see https://github.com/Serrin/assert.js/
  * @license MIT https://opensource.org/licenses/MIT
  */
 
 
-const VERSION = "assert.js v1.1.10";
+const VERSION = "assert.js v1.2.0";
 
 
 const config = { "alwaysStrict": false };
@@ -149,11 +149,14 @@ type TestResult<T> =
   | {ok: true, value: T, block: Function, name: string}
   | {ok: false, error: Error, block: Function, name: string};
 
-/** * The expected type(s) for type checking. * @private */
+/** * @description The expected type(s) for type checking. * @private */
 type ExpectedType = string | Function | Array<string | Function>;
 
-/** * The expected options object for type includes functions * @private */
+/** * @description The includes options object. * @private */
 type IncludesOptions = { keyOrValue: any, value?: any };
+
+/** * @description assertion message argument * @private */
+type Message = string | Error;
 
 
 /** polyfills **/
@@ -199,16 +202,20 @@ const _typeOf = (x: unknown): string => x === null ? "null" : typeof x;
  * @description Checks if two values are the same type.
  * @param {any} x
  * @param {any} y
+ * @param {string} [type]
  * @returns {boolean}
  * @private
  */
-const _isSameType = (x: any, y: any): boolean => _typeOf(x) === _typeOf(y);
+const _isSameType = (x: any, y: any, type?: string): boolean =>
+  typeof type === "string"
+    ? _typeOf(x) === type && _typeOf(x) === _typeOf(y)
+    : _typeOf(x) === _typeOf(y);
 
 
 /**
  * @description Return the typeof operator result of the given value, except return "null" instead of "object" for null, and provide detailed object class names (Array, Date, etc. and custom classes).
  * @param {unknown} v
- * @returns {ClassOfTag}
+ * @returns {string}
  * @private
  * @example
  * console.log(_classOf(null))                   // "null"
@@ -225,8 +232,8 @@ const _isSameType = (x: any, y: any): boolean => _typeOf(x) === _typeOf(y);
  */
 function _classOf (v: unknown): string {
   /* primitives */
-  let valueType: string = _typeOf(v);
-  if (valueType !== "object" && valueType !== "function") { return valueType; }
+  let vType: string = _typeOf(v);
+  if (vType !== "object" && vType !== "function") { return vType; }
   /* objects and functions */
   let ctor: string;
   try {
@@ -272,7 +279,7 @@ function _isDeepEqual (x: any, y: any): boolean {
   /*if (_deepType(value1) !== _deepType(value2)) { return false; }*/
   if (!_isSameType(x, y)) { return false; }
   /* objects */
-  if (_typeOf(x) === "object" && _typeOf(y) === "object") {
+  if (_isSameType(x, y, "object")) {
     /* objects / same memory adress */
     if (Object.is(x, y)) { return true; }
     /* objects / not same constructor */
@@ -311,7 +318,8 @@ function _isDeepEqual (x: any, y: any): boolean {
     if (_isSameInstance(x, y, ArrayBuffer)) {
       if (x.byteLength !== y.byteLength) { return false; }
       if (x.byteLength === 0) { return true; }
-      let xTA = new Int8Array(x), yTA = new Int8Array(y);
+      let xTA = new Int8Array(x)
+      let yTA = new Int8Array(y);
       return xTA.every(
         (v: unknown, i: number): boolean => Object.is(v, yTA[i])
       );
@@ -366,7 +374,8 @@ function _isDeepEqual (x: any, y: any): boolean {
     if (xKeys.length !== yKeys.length) { return false; }
     if (xKeys.length === 0) { return true; }
     return xKeys.every((key: string | symbol): boolean =>
-      _isDeepEqual(x[key], y[key]));
+      _isDeepEqual(x[key], y[key])
+    );
   }
   /* default return false */
   return false;
@@ -454,11 +463,11 @@ function _toStr (v: unknown): string {
 
 /**
  * @description Error message generator helper function.
- * @param {unknown} v
+ * @param {unknown} msg
  * @returns {string}
  * @private
  */
-const _addMsg = (v: unknown): string => v ? ` - ${_toStr(v)}` : "";
+const _addMsg = (msg: unknown): string => msg ? ` - ${_toStr(msg)}` : "";
 
 
 /**
@@ -494,10 +503,7 @@ const _lte = (x: Comparable, y: Comparable): boolean =>
 const _inRange = (v: Comparable, min: Comparable, max: Comparable): boolean =>
   _isSameType(v, min)
     && _isSameType(min, max)
-    && ((min < v && v < max)
-      || Object.is(v, min)
-      || Object.is(v, max)
-    );
+    && ((min < v && v < max) || Object.is(v, min) || Object.is(v, max));
 
 
 /**
@@ -508,7 +514,10 @@ const _inRange = (v: Comparable, min: Comparable, max: Comparable): boolean =>
  * @returns {boolean}
  * @private
  */
-function _includes(container: any, keyOrValue: any, valueIfKey?: unknown): boolean {
+function _includes (
+  container: any,
+  keyOrValue: any,
+  valueIfKey?: unknown): boolean {
   /* String */
   if (typeof container === "string" || container instanceof String) {
     return String(container).includes(keyOrValue);
@@ -628,22 +637,22 @@ const _isPrimitive = (v: unknown): v is Primitive =>
  * @private
  */
 const _isFloat = (v: unknown): boolean =>
-  typeof v === "number" && v === v && Boolean(v % 1);
+  typeof v === "number" && !Number.isNaN(v) && !Number.isInteger(v);
 
 
 /**
  * @description If value is an error, then it will be thrown.
- * @param {unknown} v
+ * @param {unknown} msg
  * @param {Function} caller
  * @returns {void}
  * @private
  */
-function _errorCheck (v: unknown, caller: Function): void {
-  if (Error.isError(v)) {
+function _errorCheck (msg: unknown, caller: Function): void {
+  if (Error.isError(msg)) {
     if (typeof (Error as ObjectLike).captureStackTrace === "function") {
-      (Error as any).captureStackTrace(caller, v);
+      (Error as any).captureStackTrace(caller, msg);
     }
-    throw v;
+    throw msg;
   }
 }
 
@@ -695,7 +704,7 @@ class AssertionError extends Error {
  * @returns {void}
  * @throws {AssertionError}
  */
-function assert (value: unknown, message?: string | Error): asserts value {
+function assert (value: unknown, message?: Message): asserts value {
   if (!value) {
     _errorCheck(message, assert);
     let msg =
@@ -717,7 +726,7 @@ function assert (value: unknown, message?: string | Error): asserts value {
  * @returns {void}
  * @throws {AssertionError}
  */
-const ok = (value: unknown, message?: string | Error): asserts value =>
+const ok = (value: unknown, message?: Message): asserts value =>
   assert(value, message);
 
 
@@ -729,10 +738,7 @@ const ok = (value: unknown, message?: string | Error): asserts value =>
  * @returns {void}
  * @throws {AssertionError}
  */
-function equal (
-  actual: unknown,
-  expected: unknown,
-  message?: string | Error): void {
+function equal (actual: unknown, expected: unknown, message?: Message): void {
   if (assert.config.alwaysStrict === true) {
     return strictEqual(actual, expected, message);
   }
@@ -761,7 +767,7 @@ function equal (
 function notEqual (
   actual: unknown,
   expected: unknown,
-  message?: string | Error): void {
+  message?: Message): void {
   if (assert.config.alwaysStrict === true) {
     return notStrictEqual(actual, expected, message);
   }
@@ -790,7 +796,7 @@ function notEqual (
 function strictEqual (
   actual: unknown,
   expected: unknown,
-  message?: string | Error): void {
+  message?: Message): void {
   if (!Object.is(actual, expected)) {
     _errorCheck(message, strictEqual);
     let msg =
@@ -816,7 +822,7 @@ function strictEqual (
 function notStrictEqual (
   actual: unknown,
   expected: unknown,
-  message?: string | Error): void {
+  message?: Message): void {
   if (Object.is(actual, expected)) {
     _errorCheck(message, notStrictEqual);
     let msg =
@@ -842,7 +848,7 @@ function notStrictEqual (
 function deepEqual (
   actual: unknown,
   expected: unknown,
-  message?: string | Error): void {
+  message?: Message): void {
   if (!_isDeepEqual(actual, expected)) {
     _errorCheck(message, deepEqual);
     let msg =
@@ -868,7 +874,7 @@ function deepEqual (
 function notDeepEqual (
   actual: unknown,
   expected: unknown,
-  message?: string | Error): void {
+  message?: Message): void {
   if (_isDeepEqual(actual, expected)) {
     _errorCheck(message, notDeepEqual);
     let msg =
@@ -894,7 +900,7 @@ function notDeepEqual (
 function throws (
   block: Function,
   Error_opt?: unknown,
-  message?: string | Error): Error | undefined {
+  message?: Message): Error | undefined {
   let thrownError: any = undefined;
   try {
     block();
@@ -943,7 +949,7 @@ function throws (
 async function rejects (
   block: Function | Promise<unknown>,
   Error_opt?: unknown,
-  message?: string | Error): Promise<unknown> {
+  message?: Message): Promise<unknown> {
   let rejectedError: any = undefined;
   try {
     let result = typeof block === "function" ? await block() : await block;
@@ -994,7 +1000,7 @@ async function rejects (
 async function doesNotReject (
   block: Function,
   Error_opt?: unknown,
-  message?: string | Error): Promise<unknown> {
+  message?: Message): Promise<unknown> {
   try {
     /* Execute async function or promise */
     let result = typeof block === "function" ? await block() : block;
@@ -1039,8 +1045,8 @@ async function doesNotReject (
  * @returns {void}
  * @throws {AssertionError}
  */
-function fail (message?: string | Error): void;
-function fail (actual?: unknown, expected?: unknown, message?: string | Error, operator?: unknown): void;
+function fail (message?: Message): void;
+function fail (actual?: unknown, expected?: unknown, message?: Message, operator?: unknown): void;
 function fail (...args: unknown[]): void {
   let message = args.length === 1 ? args[0] :
     (args.length > 1 ? args[2] : undefined);
@@ -1063,9 +1069,7 @@ function fail (...args: unknown[]): void {
  * @returns {void}
  * @throws {AssertionError}
  */
-function notOk (
-  value: unknown,
-  message?: string | Error): asserts value is Falsy {
+function notOk (value: unknown, message?: Message): asserts value is Falsy {
   if (value) {
     _errorCheck(message, notOk);
     let msg =
@@ -1087,9 +1091,7 @@ function notOk (
  * @returns {void}
  * @throws {AssertionError}
  */
-const isTrue = (
-  value: unknown,
-  message?: string | Error): asserts value is true =>
+const isTrue = (value: unknown, message?: Message): asserts value is true =>
   strictEqual(value, true, message);
 
 
@@ -1102,7 +1104,7 @@ const isTrue = (
  */
 const isNotTrue = <T>(
   value: T,
-  message?: string | Error): asserts value is Exclude<T, true> =>
+  message?: Message): asserts value is Exclude<T, true> =>
   notStrictEqual(value, true, message);
 
 
@@ -1113,9 +1115,7 @@ const isNotTrue = <T>(
  * @returns {void}
  * @throws {AssertionError}
  */
-const isFalse = (
-  value: unknown,
-  message?: string | Error): asserts value is false =>
+const isFalse = (value: unknown, message?: Message): asserts value is false =>
   strictEqual(value, false, message);
 
 
@@ -1128,7 +1128,7 @@ const isFalse = (
  */
 const isNotFalse = <T>(
   value: T,
-  message?: string | Error): asserts value is Exclude<T, false> =>
+  message?: Message): asserts value is Exclude<T, false> =>
   notStrictEqual(value, false, message);
 
 
@@ -1143,7 +1143,7 @@ const isNotFalse = <T>(
 function is (
   value: unknown,
   expectedType: ExpectedType,
-  message?: string | Error): void {
+  message?: Message): void {
   if (!_is(value, expectedType, "is")) {
     _errorCheck(message, is);
     let msg =
@@ -1169,7 +1169,7 @@ function is (
 function isNot (
   value: unknown,
   expectedType: ExpectedType,
-  message?: string | Error): void {
+  message?: Message): void {
   if (_is(value, expectedType, "isNot")) {
     _errorCheck(message, isNot);
     let msg =
@@ -1195,7 +1195,7 @@ function isNot (
 function typeOf (
   value: unknown,
   expectedType: string,
-  message?: string | Error): void {
+  message?: Message): void {
   oneOf(
     expectedType,
     ["undefined", "null", "boolean", "number", "bigint", "string", "symbol",
@@ -1217,7 +1217,7 @@ function typeOf (
 function notTypeOf (
   value: unknown,
   expectedType: string,
-  message?: string | Error): void {
+  message?: Message): void {
   oneOf(
     expectedType,
     ["undefined", "null", "boolean", "number", "bigint", "string", "symbol",
@@ -1239,7 +1239,7 @@ function notTypeOf (
 function instanceOf (
   value: unknown,
   expectedConstructor: Function,
-  message?: string | Error): void {
+  message?: Message): void {
   is(expectedConstructor, "function", message);
   is(value, expectedConstructor, message);
 }
@@ -1256,7 +1256,7 @@ function instanceOf (
 function notInstanceOf (
   value: unknown,
   expectedConstructor: Function,
-  message?: string | Error): void {
+  message?: Message): void {
   is(expectedConstructor, "function", message);
   isNot(value, expectedConstructor, message);
 }
@@ -1271,7 +1271,7 @@ function notInstanceOf (
  */
 const isNullish = (
   value: unknown,
-  message?: string | Error): asserts value is Nullish =>
+  message?: Message): asserts value is Nullish =>
   is(value, ["null", "undefined"], message);
 
 
@@ -1284,7 +1284,7 @@ const isNullish = (
  */
 const isNonNullable = (
   value: unknown,
-  message?: string | Error): asserts value is NonNullable<unknown> =>
+  message?: Message): asserts value is NonNullable<unknown> =>
   isNot(value, ["null", "undefined"], message);
 
 
@@ -1295,9 +1295,7 @@ const isNonNullable = (
  * @returns {void}
  * @throws {AssertionError}
  */
-const isNull = (
-  value: unknown,
-  message?: string | Error): asserts value is null =>
+const isNull = (value: unknown, message?: Message): asserts value is null =>
   is(value, "null", message);
 
 
@@ -1310,7 +1308,7 @@ const isNull = (
  */
 const isNotNull = (
   value: unknown,
-  message?: string | Error): asserts value is Exclude<unknown, null> =>
+  message?: Message): asserts value is Exclude<unknown, null> =>
   isNot(value, "null", message);
 
 
@@ -1323,7 +1321,7 @@ const isNotNull = (
  */
 const isUndefined = (
   value: unknown,
-  message?: string | Error): asserts value is undefined =>
+  message?: Message): asserts value is undefined =>
   is(value, "undefined", message);
 
 
@@ -1336,7 +1334,7 @@ const isUndefined = (
  */
 const isDefined = (
   value: unknown,
-  message?: string | Error): asserts value is Exclude<unknown, undefined> =>
+  message?: Message): asserts value is Exclude<unknown, undefined> =>
   isNot(value, "undefined", message);
 
 
@@ -1347,9 +1345,7 @@ const isDefined = (
  * @returns {void}
  * @throws {AssertionError}
  */
-const isString = (
-  value: unknown,
-  message?: string | Error): asserts value is string =>
+const isString = (value: unknown, message?: Message): asserts value is string =>
   is(value, "string", message);
 
 
@@ -1362,7 +1358,7 @@ const isString = (
  */
 const isNotString = (
   value: unknown,
-  message?: string | Error): asserts value is Exclude<unknown, string> =>
+  message?: Message): asserts value is Exclude<unknown, string> =>
   isNot(value, "string", message);
 
 
@@ -1373,9 +1369,7 @@ const isNotString = (
  * @returns {void}
  * @throws {AssertionError}
  */
-const isNumber = (
-  value: unknown,
-  message?: string | Error): asserts value is number =>
+const isNumber = (value: unknown, message?: Message): asserts value is number =>
   is(value, "number", message);
 
 
@@ -1388,7 +1382,7 @@ const isNumber = (
  */
 const isNotNumber = (
   value: unknown,
-  message?: string | Error): asserts value is Exclude<unknown, number> =>
+  message?: Message): asserts value is Exclude<unknown, number> =>
   isNot(value, "number", message);
 
 
@@ -1399,9 +1393,7 @@ const isNotNumber = (
  * @returns {void}
  * @throws {AssertionError}
  */
-const isBigInt = (
-  value: unknown,
-  message?: string | Error): asserts value is bigint =>
+const isBigInt = (value: unknown, message?: Message): asserts value is bigint =>
   is(value, "bigint", message);
 
 
@@ -1414,7 +1406,7 @@ const isBigInt = (
  */
 const isNotBigInt = (
   value: unknown,
-  message?: string | Error): asserts value is Exclude<unknown, bigint> =>
+  message?: Message): asserts value is Exclude<unknown, bigint> =>
   isNot(value, "bigint", message);
 
 
@@ -1427,7 +1419,7 @@ const isNotBigInt = (
  */
 const isBoolean = (
   value: unknown,
-  message?: string | Error): asserts value is boolean =>
+  message?: Message): asserts value is boolean =>
   is(value, "boolean", message);
 
 
@@ -1440,7 +1432,7 @@ const isBoolean = (
  */
 const isNotBoolean = (
   value: unknown,
-  message?: string | Error): asserts value is Exclude<unknown, boolean> =>
+  message?: Message): asserts value is Exclude<unknown, boolean> =>
   isNot(value, "boolean", message);
 
 
@@ -1451,9 +1443,7 @@ const isNotBoolean = (
  * @returns {void}
  * @throws {AssertionError}
  */
-const isSymbol = (
-  value: unknown,
-  message?: string | Error): asserts value is symbol =>
+const isSymbol = (value: unknown, message?: Message): asserts value is symbol =>
   is(value, "symbol", message);
 
 
@@ -1466,7 +1456,7 @@ const isSymbol = (
  */
 const isNotSymbol = (
   value: unknown,
-  message?: string | Error): asserts value is Exclude<unknown, symbol> =>
+  message?: Message): asserts value is Exclude<unknown, symbol> =>
   isNot(value, "symbol", message);
 
 
@@ -1479,7 +1469,7 @@ const isNotSymbol = (
  */
 const isFunction = (
   value: unknown,
-  message?: string | Error): asserts value is Function =>
+  message?: Message): asserts value is Function =>
   is(value, "function", message);
 
 
@@ -1492,7 +1482,7 @@ const isFunction = (
  */
 const isNotFunction = (
   value: unknown,
-  message?: string | Error): asserts value is Exclude<unknown, Function> =>
+  message?: Message): asserts value is Exclude<unknown, Function> =>
   isNot(value, "function", message);
 
 
@@ -1503,9 +1493,7 @@ const isNotFunction = (
  * @returns {void}
  * @throws {AssertionError}
  */
-const isObject = (
-  value: unknown,
-  message?: string | Error): asserts value is object =>
+const isObject = (value: unknown, message?: Message): asserts value is object =>
   is(value, "object", message);
 
 
@@ -1518,7 +1506,7 @@ const isObject = (
  */
 const isNotObject = (
   value: unknown,
-  message?: string | Error): asserts value is Exclude<unknown, object> =>
+  message?: Message): asserts value is Exclude<unknown, object> =>
   isNot(value, "object", message);
 
 
@@ -1531,7 +1519,7 @@ const isNotObject = (
  */
 const isPrimitive = (
   value: unknown,
-  message?: string | Error): asserts value is Primitive =>
+  message?: Message): asserts value is Primitive =>
   isNot(value, ["object", "function"], message);
 
 
@@ -1544,7 +1532,7 @@ const isPrimitive = (
  */
 const isNotPrimitive = (
   value: unknown,
-  message?: string | Error): asserts value is NonPrimitive =>
+  message?: Message): asserts value is NonPrimitive =>
   is(value, ["object", "function"], message);
 
 
@@ -1555,7 +1543,7 @@ const isNotPrimitive = (
  * @returns {void}
  * @throws {AssertionError}
  */
-const isNaN = (value: unknown, message?: string | Error): void =>
+const isNaN = (value: unknown, message?: Message): void =>
   strictEqual(value, NaN, message);
 
 
@@ -1566,7 +1554,7 @@ const isNaN = (value: unknown, message?: string | Error): void =>
  * @returns {void}
  * @throws {AssertionError}
  */
-const isNotNaN = (value: unknown, message?: string | Error): void =>
+const isNotNaN = (value: unknown, message?: Message): void =>
   notStrictEqual(value, NaN, message);
 
 
@@ -1577,7 +1565,7 @@ const isNotNaN = (value: unknown, message?: string | Error): void =>
  * @returns {void}
  * @throws {AssertionError}
  */
-function isInt (value: unknown, message?: string | Error): void {
+function isInt (value: unknown, message?: Message): void {
   if (!Number.isInteger(value)) {
     _errorCheck(message, isInt);
     let msg =
@@ -1599,7 +1587,7 @@ function isInt (value: unknown, message?: string | Error): void {
  * @returns {void}
  * @throws {AssertionError}
  */
-function isNotInt (value: unknown, message?: string | Error): void {
+function isNotInt (value: unknown, message?: Message): void {
   if (Number.isInteger(value)) {
     _errorCheck(message, isNotInt);
     let msg =
@@ -1621,7 +1609,7 @@ function isNotInt (value: unknown, message?: string | Error): void {
  * @returns {void}
  * @throws {AssertionError}
  */
-function isFloat (value: unknown, message?: string | Error): void {
+function isFloat (value: unknown, message?: Message): void {
   if (!_isFloat(value)) {
     _errorCheck(message, isFloat);
     let msg =
@@ -1643,7 +1631,7 @@ function isFloat (value: unknown, message?: string | Error): void {
  * @returns {void}
  * @throws {AssertionError}
  */
-function isNotFloat (value: unknown, message?: string | Error): void {
+function isNotFloat (value: unknown, message?: Message): void {
   if (_isFloat(value)) {
     _errorCheck(message, isNotFloat);
     let msg =
@@ -1671,7 +1659,7 @@ function isNotFloat (value: unknown, message?: string | Error): void {
  * @returns {void}
  * @throws {AssertionError}
  */
-function isEmpty (value: unknown, message?: string | Error): void {
+function isEmpty (value: unknown, message?: Message): void {
   if (!_isEmpty(value)) {
     _errorCheck(message, isEmpty);
     let msg =
@@ -1699,7 +1687,7 @@ function isEmpty (value: unknown, message?: string | Error): void {
  * @returns {void}
  * @throws {AssertionError}
  */
-function isNotEmpty (value: unknown, message?: string | Error): void {
+function isNotEmpty (value: unknown, message?: Message): void {
   if (_isEmpty(value)) {
     _errorCheck(message, isNotEmpty);
     let msg =
@@ -1723,15 +1711,12 @@ function isNotEmpty (value: unknown, message?: string | Error): void {
  * @throws {TypeError} If parameter types are not matched.
  * @throws {AssertionError}
  */
-function match (
-  string: StringLike,
-  regexp: RegExp,
-  message?: string | Error): void {
+function match (string: StringLike, regexp: RegExp, message?: Message): void {
   /* Type validation */
   is(string, ["string", String], message);
   is(regexp, RegExp, message);
   /* Assertion */
-  if (!(regexp.test(String(string)) || (string as any) instanceof String)) {
+  if (!(regexp.test(String(string)))) {
     _errorCheck(message, match);
     let msg =
       `[match] Assertion failed: ${_toStr(string)} is not matched with ${_toStr(regexp)}${_addMsg(message)}`;
@@ -1756,7 +1741,8 @@ function match (
  */
 function doesNotMatch (
   string: StringLike,
-  regexp: RegExp, message?: string | Error): void {
+  regexp: RegExp,
+  message?: Message): void {
   /* Type validation */
   is(string, ["string", String], message);
   is(regexp, RegExp, message);
@@ -1783,10 +1769,7 @@ function doesNotMatch (
  * @returns {void}
  * @throws {AssertionError}
  */
-function lt (
-  value1: Comparable,
-  value2: Comparable,
-  message?: string | Error): void {
+function lt (value1: Comparable, value2: Comparable, message?: Message): void {
   if (!_lt(value1, value2)) {
     _errorCheck(message, lt);
     let msg =
@@ -1809,10 +1792,7 @@ function lt (
  * @returns {void}
  * @throws {AssertionError}
  */
-function lte (
-  value1: Comparable,
-  value2: Comparable,
-  message?: string | Error): void {
+function lte (value1: Comparable, value2: Comparable, message?: Message): void {
   if (!_lte(value1, value2)) {
     _errorCheck(message, lte);
     let msg =
@@ -1835,10 +1815,7 @@ function lte (
  * @returns {void}
  * @throws {AssertionError}
  */
-function gt (
-  value1: Comparable,
-  value2: Comparable,
-  message?: string | Error): void {
+function gt (value1: Comparable, value2: Comparable, message?: Message): void {
   if (!_lt(value2, value1)) {
     _errorCheck(message, gt);
     let msg =
@@ -1861,10 +1838,7 @@ function gt (
  * @returns {void}
  * @throws {AssertionError}
  */
-function gte (
-  value1: Comparable,
-  value2: Comparable,
-  message?: string | Error): void {
+function gte (value1: Comparable, value2: Comparable, message?: Message): void {
   if (!_lte(value2, value1)) {
     _errorCheck(message, gte);
     let msg =
@@ -1892,7 +1866,7 @@ function inRange (
   value: Comparable,
   min: Comparable,
   max: Comparable,
-  message?: string | Error): void {
+  message?: Message): void {
   if (!_inRange(value, min, max)) {
     _errorCheck(message, inRange);
     let msg =
@@ -1920,7 +1894,7 @@ function notInRange (
   value: Comparable,
   min: Comparable,
   max: Comparable,
-  message?: string | Error): void {
+  message?: Message): void {
   if (_inRange(value, min, max)) {
     _errorCheck(message, notInRange);
     let msg =
@@ -1946,7 +1920,7 @@ function notInRange (
 function stringContains (
   actual: StringLike,
   substring: StringLike,
-  message?: string | Error): void {
+  message?: Message): void {
   /* Type validation */
   is(actual, ["string", String], message);
   is(substring, ["string", String], message);
@@ -1976,7 +1950,7 @@ function stringContains (
 function stringNotContains (
   actual: StringLike,
   substring: StringLike,
-  message?: string | Error): void {
+  message?: Message): void {
   /* Type validation */
   is(actual, ["string", String], message);
   is(substring, ["string", String], message);
@@ -2006,7 +1980,7 @@ function stringNotContains (
 function stringStartsWith (
   actual: StringLike,
   substring: StringLike,
-  message?: string | Error): void {
+  message?: Message): void {
   /* Type validation */
   is(actual, ["string", String], message);
   is(substring, ["string", String], message);
@@ -2036,7 +2010,7 @@ function stringStartsWith (
 function stringNotStartsWith (
   actual: StringLike,
   substring: StringLike,
-  message?: string | Error): void {
+  message?: Message): void {
   /* Type validation */
   is(actual, ["string", String], message);
   is(substring, ["string", String], message);
@@ -2066,7 +2040,7 @@ function stringNotStartsWith (
 function stringEndsWith (
   actual: StringLike,
   substring: StringLike,
-  message?: string | Error): void {
+  message?: Message): void {
   /* Type validation */
   is(actual, ["string", String], message);
   is(substring, ["string", String], message);
@@ -2096,7 +2070,7 @@ function stringEndsWith (
 function stringNotEndsWith (
   actual: StringLike,
   substring: StringLike,
-  message?: string | Error): void {
+  message?: Message): void {
   /* Type validation */
   is(actual, ["string", String], message);
   is(substring, ["string", String], message);
@@ -2127,7 +2101,7 @@ function stringNotEndsWith (
 function includes (
   container: any,
   options: IncludesOptions,
-  message?: string | Error): void {
+  message?: Message): void {
   /* Type validation */
   is(options, "object", message);
   /* Assertion */
@@ -2157,7 +2131,7 @@ function includes (
 function doesNotInclude (
   container: any,
   options: IncludesOptions,
-  message?: string | Error): void {
+  message?: Message): void {
   /* Type validation */
   is(options, "object", message);
   /* Assertion */
@@ -2183,10 +2157,7 @@ function doesNotInclude (
  * @returns {void}
  * @throws {AssertionError}
  */
-const oneOf = (
-  value: unknown,
-  collection: unknown,
-  message?: string | Error): void =>
+const oneOf = (value: unknown, collection: unknown, message?: Message): void =>
   includes(collection, {keyOrValue: value}, message);
 
 
@@ -2201,7 +2172,7 @@ const oneOf = (
 const notOneOf = (
   value: unknown,
   collection: unknown,
-  message?: string | Error): void =>
+  message?: Message): void =>
   doesNotInclude(collection, {keyOrValue: value}, message);
 
 
@@ -2210,10 +2181,13 @@ const notOneOf = (
 
 /**
  * @description Synchronously runs a block of code and returns either its result or the caught error.
+ * @param {string} name
  * @param {Function} block - The function to execute.
  * @returns {TestResult<T>} The result of the block if successful, or the caught error if it throws.
  */
-function testSync <T>(block: () => T, name = "assert.testSync"): TestResult<T> {
+function testSync <T>(
+  name: string = "assert.testSync",
+  block: () => T): TestResult<T> {
   try {
     return {ok: true, value: block(), block: block, name: _toStr(name)};
   } catch (error) {
@@ -2229,12 +2203,14 @@ function testSync <T>(block: () => T, name = "assert.testSync"): TestResult<T> {
 
 /**
  * @description Asynchronously runs a block of code and returns either its resolved result or the caught error.
+ * @param {string} name
  * @param {Function} block - The async function to execute.
  * @returns {Promise<TestResult<T>>} A promise that resolves to either the result or an Error.
  */
 async function testAsync <T>(
-  block: () => Promise<T>,
-  name = "assert.testAsync"): Promise<TestResult<T>> {
+  name: string = "assert.testAsync",
+  block: () => Promise<T>
+  ): Promise<TestResult<T>> {
   try {
     return {
       ok: true,
@@ -2261,6 +2237,70 @@ async function testAsync <T>(
 function testCheck <T>(result: TestResult<T>):
   result is { ok: true; value: T, block: Function, name: string} {
   return result.ok;
+}
+
+
+/**
+ * @description The TestSuite is a collection of TestResults with custom methods.
+ * @constructor
+ */
+class TestSuite {
+  private readonly results: TestResult<any>[] = [];
+  /**
+   * @description Add testcases.
+   * @param {Array<TestResult<any>>} args
+   * @returns {TestSuite} this
+   */
+  add(...args: Array<TestResult<any>>): this {
+    for (let item of args) { this.results.push(item); }
+    return this;
+  }
+  /**
+   * @description Clear all testResults.
+   * @returns {TestSuite} this
+   */
+  clear(): this {
+    this.results.length = 0;
+    return this;
+  }
+  /**
+   * @description Return an IterableIterator with failed testCases.
+   * @returns {IterableIterator<TestResult<any>>}
+   */
+  get size(): number { return this.results.length; }
+  /**
+   * @description Return an IterableIterator with success testCases.
+   * @returns {IterableIterator<TestResult<any>>}
+   */
+  success (): IterableIterator<TestResult<any>> {
+    return this.results.filter((testCase) => testCase.ok).values();
+  }
+  /**
+   * @description Return an IterableIterator with failed testCases.
+   * @returns {IterableIterator<TestResult<any>>}
+   */
+  failed (): IterableIterator<TestResult<any>> {
+    return this.results.filter((testCase) => !testCase.ok).values();
+  }
+  /**
+   * @description Return an IterableIterator with all testCases.
+   * @returns {IterableIterator<TestResult<any>>}
+   */
+  values (): IterableIterator<TestResult<any>> {
+    return this.results.values();
+  }
+  /**
+   * @description Return an Array with all testCases.
+   * @returns {Array<TestResult<any>>}
+   */
+  toArray (): Array<TestResult<any>> { return this.results.slice(); }
+  /**
+   * @description Return an IterableIterator with all testCases.
+   * @returns {IterableIterator<TestResult<any>>}
+   */
+  [Symbol.iterator](): Iterator<TestResult<any>> {
+    return this.results[Symbol.iterator]();
+  }
 }
 
 
@@ -2347,8 +2387,28 @@ assert.oneOf = oneOf;
 assert.notOneOf = notOneOf;
 /* testrunner functions */
 assert.testSync = testSync;
+assert.test = testSync; /* alias */
+assert.it = testSync; /* alias */
 assert.testAsync = testAsync;
 assert.testCheck = testCheck;
+assert.TestSuite = TestSuite;
+/* undocumented developer functions */
+/*assert._typeOf = _typeOf;
+assert._isSameType = _isSameType;
+assert._classOf = _classOf;
+assert._isTypedArray = _isTypedArray;
+assert._isDeepEqual = _isDeepEqual;
+assert._is = _is;
+assert._toStr = _toStr;
+assert._addMsg = _addMsg;
+assert._lt = _lt;
+assert._lte = _lte;
+assert._inRange = _inRange;
+assert._includes = _includes;
+assert._isEmpty = _isEmpty;
+assert._isPrimitive = _isPrimitive;
+assert._isFloat = _isFloat;
+assert._errorCheck = _errorCheck;*/
 
 
 /* ESM export */
