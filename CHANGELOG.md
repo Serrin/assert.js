@@ -1,6 +1,11 @@
 
 # assert.js version history
 
+## assert.js v1.2.1
+
+1. Documentation, pdf and code fixes and many optimalisations.
+2. TypeScript 7.0 compatibility
+
 ## assert.js v1.2.0
 
 1. Documentation, pdf and code fixes and many optimalisations.

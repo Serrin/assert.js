@@ -1,0 +1,27 @@
+SCRIPT_DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
+cd "$SCRIPT_DIR"
+echo ""
+echo "$(sw_vers)"
+echo ""
+echo "$(date)"
+echo ""
+echo "current directory: "
+pwd
+echo ""
+echo "========================================================================"
+echo ""
+echo Node.js Version:
+node --version
+echo ""
+node unittest.node.js
+echo ""
+read -r -n 1 -s -p $'Press any key to continue...\n'
+echo "========================================================================"
+echo ""
+echo "Deno Version:"
+deno --version
+echo ""
+deno unittest.node.js
+echo ""
+echo "========================================================================"
+read -r -n 1 -s -p $'Press any key to continue...\n'
