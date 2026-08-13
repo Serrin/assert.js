@@ -1,6 +1,12 @@
 
 # assert.js version history
 
+## assert.js v1.2.2
+
+1. Documentation, pdf and code fixes and many optimalisations.
+2. Replace the helper function `_is();` with the new version in the microlibrary.
+3. Add a new function: `operator();`
+
 ## assert.js v1.2.1
 
 1. Documentation, pdf and code fixes and many optimalisations.

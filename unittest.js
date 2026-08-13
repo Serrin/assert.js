@@ -2,7 +2,7 @@
 "use strict";
 
 
-/* assert.js v1.2.1 testcases for ESM environment */
+/* assert.js v1.2.2 testcases for ESM environment */
 
 
 /**
@@ -747,6 +747,87 @@ function autoTestSync () {
   );
   unitTest("assert.notStrictEqual(); 03", true,
     () => assert.notStrictEqual(NaN, NaN, "lorem")
+  );
+
+  unitTest("assert.operator(); 01",
+    false,
+    () => assert.operator(0, "==", "0")
+  );
+  unitTest("assert.operator(); 02",
+    true,
+    () => assert.operator(0, "==", "d")
+  );
+  unitTest("assert.operator(); 03",
+    false,
+    () => assert.operator(0, "!=", "d")
+  );
+  unitTest("assert.operator(); 04",
+    true,
+    () => assert.operator(0, "!=", "0")
+  );
+  unitTest("assert.operator(); 05",
+    false,
+    () => assert.operator(0, "===", 0)
+  );
+  unitTest("assert.operator(); 06",
+    true,
+    () => assert.operator(0, "===", "0")
+  );
+  unitTest("assert.operator(); 07",
+    false,
+    () => assert.operator(0, "<", 1)
+  );
+  unitTest("assert.operator(); 08",
+    true,
+    () => assert.operator(1, "<", 0)
+  );
+  unitTest("assert.operator(); 09",
+    false,
+    () => assert.operator(0, "<=", 1)
+  );
+  unitTest("assert.operator(); 10",
+    false,
+    () => assert.operator(0, "<=", "0")
+  );
+  unitTest("assert.operator(); 11",
+    true,
+    () => assert.operator(1, "<=", 0)
+  );
+  unitTest("assert.operator(); 12",
+    false,
+    () => assert.operator(1, ">", 0)
+  );
+  unitTest("assert.operator(); 13",
+    true,
+    () => assert.operator(0, ">", 1)
+  );
+  unitTest("assert.operator(); 14",
+    false,
+    () => assert.operator(1, ">=", 0)
+  );
+  unitTest("assert.operator(); 15",
+    false,
+    () => assert.operator(1, ">=", "1")
+  );
+  unitTest("assert.operator(); 16",
+    true,
+    () => assert.operator(0, ">=", 1)
+  );
+  unitTest("assert.operator(); 17",
+    false,
+    () => assert.operator(1, "Object.is", 1)
+  );
+  unitTest("assert.operator(); 18",
+    true,
+    () => assert.operator(1, "Object.is", "1")
+  );
+  unitTest("assert.operator(); 19",
+    false,
+    () => assert.operator(1, "!Object.is", "1")
+  );
+  unitTest("assert.operator(); 20",
+    true,
+    () => assert.operator(1, "!Object.is", 1)
   );
 
   assert.config.alwaysStrict = false;

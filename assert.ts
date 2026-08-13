@@ -1,26 +1,16 @@
 /// <reference lib="esnext" />
-/// <reference lib="esnext.iterator" />
 /// <reference lib="dom" />
-/// <reference lib="dom.iterable" />
-/// <reference lib="dom.asynciterable" />
 /// <reference lib="webworker.importscripts" />
+/// <reference lib="scripthost" />
 "use strict";
-
 
 /**
  * @name assert.js
- * @version 1.2.1
+ * @version 1.2.2
  * @author Ferenc Czigler
  * @see https://github.com/Serrin/assert.js/
  * @license MIT https://opensource.org/licenses/MIT
  */
-
-
-const VERSION = "assert.js v1.2.1";
-
-
-const config = { "alwaysStrict": false };
-
 
 /*
 Commonjs unit testing:    https://wiki.commonjs.org/wiki/Unit_Testing/1.0
@@ -29,8 +19,7 @@ Google Clojure Asserts:   https://google.github.io/closure-library/api/goog.asse
 */
 
 
-/** TS browser and NodeJS common types from Celestra v7.0.0 **/
-
+/** TS browser and NodeJS common types from Celestra v7.1.0 **/
 
 /**
  * @description False like values.
@@ -63,7 +52,7 @@ type BigIntLike = bigint | BigInt;
 /* @ts-ignore */
 type Numeric = number | bigint;
 
-/** * @description Number and BigInt-like object. * @private */
+/** * @description Number-like and BigInt-like object. * @private */
 type NumericLike = NumberLike | BigIntLike;
 
 /** * @description String-like object. * @private */
@@ -73,18 +62,15 @@ type StringLike = string | String;
 type SymbolLike = symbol | Symbol;
 
 /** * @description Any iterable or iterator. * @private */
-/* @ts-ignore */
 type IterableLike = Iterable<any> | Iterator<any> | IterableIterator<any>;
 
 /** * @description Any iterable, iterator or array-like objects. * @private */
 /* @ts-ignore */
-type IterableLikeAndArrayLike =
-  Iterable<any> | Iterator<any> | IterableIterator<any> | ArrayLike<any>;
+type IterableLikeAndArrayLike = IterableLike | ArrayLike<any>;
 
 /** * @description Iterable and Iterator and Generator types. * @private */
 /* @ts-ignore */
-type GeneratorLike =
-  Iterable<any> | Iterator<any> | Generator<any, void, unknown>;
+type GeneratorLike = IterableLike | Generator<any, void, unknown>;
 
 /** * @description Type for undefined and null values. * @private */
 type Nullish = undefined | null;
@@ -118,7 +104,7 @@ type AsyncFunction<T> = (...args: ReadonlyArray<any>) => Promise<T>;
 
 /** * @description ArrowFunction. * @private */
 /* @ts-ignore */
-type ArrowFunction<Args extends any[] = any[], R = any> =
+type ArrowFunction<Args extends any[] = [], R = any> =
   (this: void, ...args: Args) => R;
 
 /** * @description TypedArray types. * @private */
@@ -126,7 +112,6 @@ type TypedArray = Exclude<ArrayBufferView, DataView>;
 
 
 /** assert.js types **/
-
 
 /** * @description Options for AssertionError. * @private */
 type AssertionErrorOptions = {
@@ -155,7 +140,6 @@ type Message = string | Error;
 
 /** polyfills **/
 
-
  /* globalThis; polyfill */
 (function (global) {
   if (!global.globalThis) {
@@ -169,19 +153,16 @@ type Message = string | Error;
   }
 })(typeof this === "object" ? this : Function("return this")());
 
-
 /* Error.isError(); polyfill */
 if (!("isError" in Error)) {
-  (Error as any).isError = function isError (value: unknown) {
-    let className =
-      Object.prototype.toString.call(value).slice(8, -1).toLowerCase();
-    return (className === "error" || className === "domexception");
+  (Error as any).isError = function isError (v: unknown) {
+    let cName = Object.prototype.toString.call(v).slice(8, -1).toLowerCase();
+    return (cName === "error" || cName === "domexception");
   };
 }
 
 
 /* Helper functions */
-
 
 /* Standard helpers */
 /** @private */
@@ -195,15 +176,13 @@ const _oIs = Object.is;
 /** @private */
 const _getPrototypeOf = Object.getPrototypeOf;
 
-
 /**
- * Extended typeof operator with "null" type as string.
+ * @description Extended typeof operator with "null" type as string.
  * @param {unknown} v
  * @returns string
  * @private
  */
 const _typeOf = (v: unknown): string => v === null ? "null" : typeof v;
-
 
 /**
  * @description Checks if two values are the same type.
@@ -217,7 +196,6 @@ const _isSameType = (x: any, y: any, type?: string): boolean =>
   typeof type === "string"
     ? _typeOf(x) === type && _typeOf(x) === _typeOf(y)
     : _typeOf(x) === _typeOf(y);
-
 
 /**
  * @description Return the typeof operator result of the given value, except return "null" instead of "object" for null, and provide detailed object class names (Array, Date, etc. and custom classes).
@@ -239,8 +217,8 @@ const _isSameType = (x: any, y: any, type?: string): boolean =>
  */
 function _classOf (v: unknown): string {
   /* primitives */
-  let vType = _typeOf(v);
-  if (vType !== "object" && vType !== "function") { return vType; }
+  let vT = _typeOf(v);
+  if (vT !== "object" && vT !== "function") { return vT; }
   /* objects and functions */
   let ctor: string;
   try {
@@ -251,7 +229,6 @@ function _classOf (v: unknown): string {
   return ctor === "Object" || ctor === "Function" ? ctor.toLowerCase() : ctor;
 }
 
-
 /**
  * @description Checks if the given value is a TypedArray (Int8Array, etc.).
  * @param {unknown} v
@@ -260,7 +237,6 @@ function _classOf (v: unknown): string {
  */
 const _isTypedArray = (v: unknown): v is TypedArray =>
   ArrayBuffer.isView(v) && !(v instanceof DataView);
-
 
 /**
  * @description Checks if the values are deep equal.
@@ -374,8 +350,7 @@ function _isDeepEqual (x: any, y: any): boolean {
     /* objects / Proxy -> not detectable */
     /* objects / objects */
     let xKeys = _ownKeys(x);
-    let yKeys = _ownKeys(y);
-    if (xKeys.length !== yKeys.length) { return false; }
+    if (xKeys.length !== _ownKeys(y).length) { return false; }
     if (xKeys.length === 0) { return true; }
     return xKeys.every((key: PropertyKey): boolean =>
       _isDeepEqual(x[key], y[key])
@@ -385,42 +360,54 @@ function _isDeepEqual (x: any, y: any): boolean {
   return false;
 }
 
-
 /**
  * @description Checks if the given value is the given type(s).
- * @param {unknown} v
- * @param {ExpectedType} eT
- * @param {string} [caller] - The name of the caller function.
+ * @notes From is.js v1.0.0 and added the "caller" argument.
+ * @param {unknown} value
+ * @param {string | Function | (string | Function)[]} expectedType
  * @returns {boolean}
- * @throws {TypeError} If ExpectedType is not a neccesary type.
- * @private
+ * @throws {RangeError} If expectedType array is empty.
+ * @throws {TypeError} If elements of expectedType array are not a valid type.
+ * @throws {TypeError} If expectedType is not a valid type.
  */
-function _is (v: unknown, eT: ExpectedType, caller: string = "is"): boolean {
-  /* caching types of the arguments */
-  let eTT = _typeOf(eT);
-  /* expectedType is a `string` */
-  if (eTT === "string") { return _typeOf(v) === eT; }
-  /* expectedType is a `function` */
-  if (eTT === "function") { return v instanceof (eT as Function); }
-  /* expectedType is an `Array` */
-  if (_isArray(eT)) {
-    return (eT as Array<unknown>).some(
-      function (item: unknown) {
-        if (typeof item === "string") { return _typeOf(v) === item; }
-        if (typeof item === "function") { return v instanceof item; }
-        /* other types -> throw a TypeError */
+function _is (
+  value: unknown,
+  expectedType: ExpectedType,
+  caller: string = "is"): boolean {
+  /* helper functions */
+  function _matches (value: unknown, expected: string | Function): boolean {
+    if (typeof expected === "string") { return _typeOf(value) === expected; }
+    try {
+      return value instanceof expected;
+    } catch (_error) {
+      return false;
+    }
+  }
+  /* expectedType is a string or function */
+  if (typeof expectedType === "string" || typeof expectedType  === "function") {
+    return _matches(value, expectedType);
+  }
+  /* expectedType is an Array */
+  if (Array.isArray(expectedType)) {
+    /* expectedType array is empty -> throw a RangeError */
+    if (!expectedType.length) {
+      throw new RangeError(`[${_str(caller)}] expectedType array must be not empty.`);
+    }
+    for (const item of expectedType) {
+      if (typeof item !== "string" && typeof item !== "function") {
+        /* item of expectedType is not a string or function -> throw a TypeError */
         throw new TypeError(
-          `[${caller}] TypeError: expectedType array elements have to be string or function. Got ${_typeOf(item)}`
+          `[${_str(caller)}] TypeError: expectedType array elements must be string or function. Got ${_typeOf(item)}`
         );
       }
-    );
+    }
+    return expectedType.some((item) => _matches(value, item));
   }
-  /* expectedtype error -> throw a `TypeError` */
+  /* expectedType error -> throw a TypeError */
   throw new TypeError(
-    `[${_str(caller)}] TypeError: expectedType must be a string, function or array. Got ${_str(eTT)}`
+    `[${_str(caller)}] expectedType array elements must be strings or constructors. Got ${_typeOf(expectedType)}`
   );
 }
-
 
 /**
  * @description This function is a general purpose, type safe, predictable stringifier. Converts a value into a human-readable string for error messages, symbols, functions, nullish, circular references, etc.
@@ -437,9 +424,7 @@ function _str (v: unknown): string {
     }
     if (vT === "symbol") { return (v as Symbol).toString(); }
     if (v instanceof Date) { return `Date(${v.toISOString()})`; }
-    if (v instanceof Error) {
-      return `${v.name}: ${v.message}, ${v.stack ?? ""}`;
-    }
+    if (_isError(v)) { return `${v.name}: ${v.message}, ${v.stack ?? ""}`; }
     if (vT === "object") {
       if (seen.has(v as object)) { return "[Circular]"; }
       seen.add(v as object);
@@ -470,15 +455,13 @@ function _str (v: unknown): string {
   }
 }
 
-
 /**
  * @description Error message generator helper function.
- * @param {unknown} msg
+ * @param {unknown} m
  * @returns {string}
  * @private
  */
-const _msg = (msg: unknown): string => msg ? ` - ${_str(msg)}` : "";
-
+const _msg = (m: unknown): string => m ? ` - ${_str(m)}` : "";
 
 /**
  * @description Checks value1 is less than value2.
@@ -490,7 +473,6 @@ const _msg = (msg: unknown): string => msg ? ` - ${_str(msg)}` : "";
 const _lt = (x: Comparable, y: Comparable): boolean =>
   _isSameType(x, y) && x < y;
 
-
 /**
  * @description Checks value1 is less than value2 or equal (uses `Object.is();`).
  * @param {Comparable} x
@@ -499,7 +481,6 @@ const _lt = (x: Comparable, y: Comparable): boolean =>
  * @private
  */
 const _lte = (x: Comparable, y: Comparable): boolean => _lt(x, y) || _oIs(x, y);
-
 
 /**
  * @description Checks value is greater than or equal min and value is less than or equal max.
@@ -514,10 +495,9 @@ const _inRange = (v: Comparable, min: Comparable, max: Comparable): boolean =>
     && _isSameType(min, max)
     && ((min < v && v < max) || _oIs(v, min) || _oIs(v, max));
 
-
 /**
  * @description Checks if a key or value exists in a container.
- * @param {any} container The container to check.
+ * @param {any} container
  * @param {any} keyOrValue The key or value to look for.
  * @param {unknown} valueIfKey The value to check if the key exists.
  * @returns {boolean}
@@ -527,7 +507,7 @@ function _includes (
   container: any,
   keyOrValue: any,
   valueIfKey?: unknown): boolean {
-  /* String */
+  /* string and String */
   if (typeof container === "string" || container instanceof String) {
     return String(container).includes(keyOrValue);
   }
@@ -554,10 +534,9 @@ function _includes (
   return valueIfKey === undefined || _oIs(container[keyOrValue], valueIfKey);
 }
 
-
 /**
  * @description Checks if a value is empty.
- * - `null`, `undefined`, and `NaN` are empty.
+ * - null, undefined, and NaN are empty.
  * - Arrays, TypedArrays, and strings are empty if length === 0.
  * - Maps and Sets are empty if size === 0.
  * - ArrayBuffer and DataView are empty if byteLength === 0.
@@ -612,7 +591,6 @@ function _isEmpty (v: any): boolean {
   return false;
 }
 
-
 /**
  * @description Checks if the given value is Primitive.
  * @param {unknown} v
@@ -622,7 +600,6 @@ function _isEmpty (v: any): boolean {
 const _isPrimitive = (v: unknown): v is Primitive =>
   _typeOf(v) !== "object" && typeof v !== "function";
 
-
 /**
  * @description Checks if a value is a floating-point number.
  * @param {unknown} v
@@ -631,7 +608,6 @@ const _isPrimitive = (v: unknown): v is Primitive =>
  */
 const _isFloat = (v: unknown): boolean =>
   typeof v === "number" && v === v && !Number.isInteger(v);
-
 
 /**
  * @description If value is an error, then it will be thrown.
@@ -651,7 +627,6 @@ function _watchdog (msg: unknown, caller: Function): void {
 
 
 /* Exported functions */
-
 
 /**
  * @description An error thrown when an assertion fails.
@@ -689,11 +664,10 @@ class AssertionError extends Error {
   }
 }
 
-
 /**
- * @description Ensures that `value` is truthy. Throws an `AssertionError` if falsy.
+ * @description Ensures that value is truthy. Throws an AssertionError if falsy.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -709,122 +683,77 @@ function assert (value: unknown, message?: Message): asserts value {
   }
 }
 
-
 /**
- * @description Alias for `assert(value, [message: string | Error]);`.
+ * @description Alias of `assert(value, [message: Message]);`.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
 const ok = (value: unknown, message?: Message): asserts value =>
   assert(value, message);
 
-
 /**
- * @description `assert.equal(actual, expected, [message: string | Error]);`
+ * @description Ensures that actual is equal to expected.
  * @param {unknown} actual
  * @param {unknown} expected
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
-function equal (actual: unknown, expected: unknown, message?: Message): void {
-  if (assert.config.alwaysStrict === true) {
-    return strictEqual(actual, expected, message);
-  }
-  if (actual != expected) {
-    _watchdog(message, equal);
-    throw new AssertionError({
-      message: `[equal] Assertion failed: ${_str(actual)} and ${_str(expected)} should be equal${_msg(message)}`,
-      actual,
-      expected,
-      operator: "!="
-    });
-  }
-}
-
+const equal = (actual: unknown, expected: unknown, message?: Message): void =>
+  operator(
+    actual,
+    assert.config.alwaysStrict ? "Object.is" : "==",
+    expected,
+    message
+  );
 
 /**
- * @description Inverse of `equal(actual, expected, [message: string | Error]);`.
+ * @description Inverse of `equal(actual, expected, [message: Message]);`.
  * @param {unknown} actual
  * @param {unknown} expected
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
-function notEqual (
-  actual: unknown,
-  expected: unknown,
-  message?: Message): void {
-  if (assert.config.alwaysStrict === true) {
-    return notStrictEqual(actual, expected, message);
-  }
-  if (actual == expected) {
-    _watchdog(message, notEqual);
-    throw new AssertionError({
-      message: `[notEqual] Assertion failed: ${_str(actual)} and ${_str(expected)} should be equal${_msg(message)}`,
-      actual,
-      expected,
-      operator: "=="
-    });
-  }
-}
-
+const notEqual =
+  (actual: unknown, expected: unknown, message?: Message): void => operator(
+    actual,
+    assert.config.alwaysStrict ? "!Object.is" : "!=",
+    expected,
+    message
+  );
 
 /**
  * @description Strict equality (`Object.is();`).
  * @param {unknown} actual
  * @param {unknown} expected
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
-function strictEqual (
-  actual: unknown,
-  expected: unknown,
-  message?: Message): void {
-  if (!_oIs(actual, expected)) {
-    _watchdog(message, strictEqual);
-    throw new AssertionError({
-      message: `[strictEqual] Assertion failed: ${_str(actual)} and ${_str(expected)} should be strictly equal${_msg(message)}`,
-      actual,
-      expected,
-      operator: "strictEqual"
-    });
-  }
-}
-
+const strictEqual =
+  (actual: unknown, expected: unknown, message?: Message): void =>
+  operator(actual, "Object.is", expected, message);
 
 /**
- * @description Inverse of `strictEqual(actual, expected, [message: string | Error]);`.
+ * @description Inverse of `strictEqual(actual, expected, [message: Message]);`.
  * @param {unknown} actual
  * @param {unknown} expected
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
-function notStrictEqual (
-  actual: unknown,
-  expected: unknown,
-  message?: Message): void {
-  if (_oIs(actual, expected)) {
-    _watchdog(message, notStrictEqual);
-    throw new AssertionError({
-      message: `[notStrictEqual] Assertion failed: ${_str(actual)} and ${_str(expected)} should not be strictly equal${_msg(message)}`,
-      actual,
-      expected,
-      operator: "notStrictEqual"
-    });
-  }
-}
-
+const notStrictEqual =
+  (actual: unknown, expected: unknown, message?: Message): void =>
+  operator(actual, "!Object.is", expected, message);
 
 /**
  * @description Deep equality check.
  * @param {unknown} actual
  * @param {unknown} expected
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -843,12 +772,11 @@ function deepEqual (
   }
 }
 
-
 /**
- * @description Inverse of `deepEqual(actual, expected, [message: string | Error]);`.
+ * @description Inverse of `deepEqual(actual, expected, [message: Message]);`.
  * @param {unknown} actual
  * @param {unknown} expected
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -867,12 +795,11 @@ function notDeepEqual (
   }
 }
 
-
 /**
  * @description Ensures that a function throws.
  * @param {Function} block
  * @param {unknown} Error_opt
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {Error | undefined}
  * @throws {AssertionError}
  */
@@ -880,7 +807,7 @@ function throws (
   block: Function,
   Error_opt?: unknown,
   message?: Message): Error | undefined {
-  let thrownError: any = undefined;
+  let thrownError: any;
   try {
     block();
   } catch (catchedError) {
@@ -912,12 +839,11 @@ function throws (
   return thrownError;
 }
 
-
 /**
  * @description Asserts that an async function or Promise rejects.
  * @param {(() => Promise<unknown>) | Promise<unknown>} block - Async function or promise expected to reject.
  * @param {ErrorConstructor | string | RegExp} [Error_opt] - Expected error type, substring, or pattern.
- * @param {string | Error} [message] - Optional custom message or Error.
+ * @param {Message} [message] - Optional custom message or Error.
  * @returns {Promise<unknown>} - Resolves with the rejection reason if assertion passes.
  * @throws {AssertionError}
  */
@@ -959,12 +885,11 @@ async function rejects (
   return rejectedError;
 }
 
-
 /**
  * @description Asserts that an async function or Promise resolves successfully (i.e., does NOT reject).
  * @param {(() => Promise<unknown>) | Promise<unknown>} block - Async function or promise expected to resolve.
  * @param {ErrorConstructor | string | RegExp} [Error_opt] - Optional: an error type, message, or pattern that must NOT appear in a rejection.
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {Promise<unknown>} - Resolves with the resolved value if assertion passes.
  * @throws {AssertionError} If the function or promise rejects.
  */
@@ -1003,7 +928,6 @@ async function doesNotReject (
   }
 }
 
-
 /**
  * @description Forces a failure.
  * @param {unknown[]} ...args - Optional arguments.
@@ -1024,80 +948,63 @@ function fail (...args: unknown[]): void {
   });
 }
 
-
 /**
  * @description Ensures a value is falsy.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
-function notOk (value: unknown, message?: Message): asserts value is Falsy {
-  if (value) {
-    _watchdog(message, notOk);
-    throw new AssertionError({
-      message: `[notOk] Assertion failed: ${_str(value)} should be falsy${_msg(message)}`,
-      actual: value,
-      expected: false,
-      operator: "=="
-    });
-  }
-}
-
+const notOk = (value: unknown, message?: Message): asserts value is Falsy =>
+  operator(value, "!=", true, message);
 
 /**
- * @description Ensures value is exactly `true`.
+ * @description Ensures value is exactly true.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
 const isTrue = (value: unknown, message?: Message): asserts value is true =>
   strictEqual(value, true, message);
 
-
 /**
- * @description Ensures value is exactly not `true`, but can be `false` or truthy or falsy.
+ * @description Ensures value is exactly not true, but can be false or truthy or falsy.
  * @param {T} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
-const isNotTrue = <T>(
-  value: T,
-  message?: Message): asserts value is Exclude<T, true> =>
+const isNotTrue =
+  <T>(value: T, message?: Message): asserts value is Exclude<T, true> =>
   notStrictEqual(value, true, message);
 
-
 /**
- * @description Ensures value is exactly `false`.
+ * @description Ensures value is exactly false.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
 const isFalse = (value: unknown, message?: Message): asserts value is false =>
   strictEqual(value, false, message);
 
-
 /**
- * @description Ensures value is exactly not `false`, but can be `true` or truthy or falsy.
+ * @description Ensures value is exactly not false, but can be true or truthy or falsy.
  * @param {T} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
-const isNotFalse = <T>(
-  value: T,
-  message?: Message): asserts value is Exclude<T, false> =>
+const isNotFalse =
+  <T>(value: T, message?: Message): asserts value is Exclude<T, false> =>
   notStrictEqual(value, false, message);
-
 
 /**
  * @description Ensures a value matches a type or constructor. The expected type can be a string, function or an array of strings and functions.
  * @param {unknown} value
  * @param {string | Function | Array<string | Function>} expectedType
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1116,12 +1023,11 @@ function is (
   }
 }
 
-
 /**
- * @description Inverse of `is(value, expectedType, [message: string | Error]);`. The expected type can be a string, function or an array of strings and functions.
+ * @description Inverse of `is(value, expectedType, [message: Message]);`. The expected type can be a string, function or an array of strings and functions.
  * @param {unknown} value
  * @param {string | Function | Array<string | Function>} expectedType
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1140,12 +1046,11 @@ function isNot (
   }
 }
 
-
 /**
  * @description Ensures a value matches a type. The expected type can be a string.
  * @param {unknown} value
  * @param {string} expectedType
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1162,12 +1067,11 @@ function typeOf (
   is(value, expectedType, message);
 }
 
-
 /**
  * @description Ensures a value don't match a type. The expected type can be a string.
  * @param {unknown} value
  * @param {string} expectedType
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1184,12 +1088,11 @@ function notTypeOf (
   isNot(value, expectedType, message);
 }
 
-
 /**
  * @description Ensures a value matches a constructor. The expected type can be a function.
  * @param {unknown} value
  * @param {Function} expectedConstructor
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1201,12 +1104,11 @@ function instanceOf (
   is(value, expectedConstructor, message);
 }
 
-
 /**
  * @description Ensures a value don't match a constructor. The expected type can be a function.
  * @param {unknown} value
  * @param {Function} expectedConstructor
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1218,48 +1120,42 @@ function notInstanceOf (
   isNot(value, expectedConstructor, message);
 }
 
-
 /**
- * @description Ensures value is `null` or `undefined`.
+ * @description Ensures value is null or undefined.
  * @param {unknown} value
-* @param {string | Error} [message]
+* @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
-const isNullish = (
-  value: unknown,
-  message?: Message): asserts value is Nullish =>
+const isNullish =
+  (value: unknown, message?: Message): asserts value is Nullish =>
   is(value, ["null", "undefined"], message);
 
-
 /**
- * @description Ensures value is not `null` or `undefined`.
+ * @description Ensures value is not null or undefined.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
-const isNonNullable = (
-  value: unknown,
-  message?: Message): asserts value is NonNullable<unknown> =>
+const isNonNullable =
+  (value: unknown, message?: Message): asserts value is NonNullable<unknown> =>
   isNot(value, ["null", "undefined"], message);
 
-
 /**
- * @description Ensures value is `null`.
+ * @description Ensures value is null.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
 const isNull = (value: unknown, message?: Message): asserts value is null =>
   is(value, "null", message);
 
-
 /**
- * @description Ensures value is not `null`.
+ * @description Ensures value is not null.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1268,24 +1164,21 @@ const isNotNull = (
   message?: Message): asserts value is Exclude<unknown, null> =>
   isNot(value, "null", message);
 
-
 /**
- * @description Ensures value is `undefined`.
+ * @description Ensures value is undefined.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
-const isUndefined = (
-  value: unknown,
-  message?: Message): asserts value is undefined =>
+const isUndefined =
+  (value: unknown, message?: Message): asserts value is undefined =>
   is(value, "undefined", message);
 
-
 /**
- * @description Ensures value is not `undefined`.
+ * @description Ensures value is not undefined.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1294,22 +1187,20 @@ const isDefined = (
   message?: Message): asserts value is Exclude<unknown, undefined> =>
   isNot(value, "undefined", message);
 
-
 /**
- * @description Ensures value is `string`.
+ * @description Ensures value is string.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
 const isString = (value: unknown, message?: Message): asserts value is string =>
   is(value, "string", message);
 
-
 /**
- * @description Ensures value is not `string`.
+ * @description Ensures value is not string.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1318,22 +1209,20 @@ const isNotString = (
   message?: Message): asserts value is Exclude<unknown, string> =>
   isNot(value, "string", message);
 
-
 /**
- * @description Ensures value is `number`.
+ * @description Ensures value is number.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
 const isNumber = (value: unknown, message?: Message): asserts value is number =>
   is(value, "number", message);
 
-
 /**
- * @description Ensures value is not `number`.
+ * @description Ensures value is not number.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1342,22 +1231,20 @@ const isNotNumber = (
   message?: Message): asserts value is Exclude<unknown, number> =>
   isNot(value, "number", message);
 
-
 /**
- * @description Ensures value is `bigint`.
+ * @description Ensures value is bigint.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
 const isBigInt = (value: unknown, message?: Message): asserts value is bigint =>
   is(value, "bigint", message);
 
-
 /**
- * @description Ensures value is not `bigint`.
+ * @description Ensures value is not bigint.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1366,24 +1253,21 @@ const isNotBigInt = (
   message?: Message): asserts value is Exclude<unknown, bigint> =>
   isNot(value, "bigint", message);
 
-
 /**
- * @description Ensures value is `boolean`.
+ * @description Ensures value is boolean.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
-const isBoolean = (
-  value: unknown,
-  message?: Message): asserts value is boolean =>
+const isBoolean =
+  (value: unknown, message?: Message): asserts value is boolean =>
   is(value, "boolean", message);
 
-
 /**
- * @description Ensures value is not `boolean`.
+ * @description Ensures value is not boolean.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1392,22 +1276,20 @@ const isNotBoolean = (
   message?: Message): asserts value is Exclude<unknown, boolean> =>
   isNot(value, "boolean", message);
 
-
 /**
- * @description Ensures value is `symbol`.
+ * @description Ensures value is symbol.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
 const isSymbol = (value: unknown, message?: Message): asserts value is symbol =>
   is(value, "symbol", message);
 
-
 /**
- * @description Ensures value is not `symbol`.
+ * @description Ensures value is not symbol.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1416,24 +1298,21 @@ const isNotSymbol = (
   message?: Message): asserts value is Exclude<unknown, symbol> =>
   isNot(value, "symbol", message);
 
-
 /**
- * @description Ensures value is `function`.
+ * @description Ensures value is function.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
-const isFunction = (
-  value: unknown,
-  message?: Message): asserts value is Function =>
+const isFunction =
+  (value: unknown, message?: Message): asserts value is Function =>
   is(value, "function", message);
 
-
 /**
- * @description Ensures value is not `function`.
+ * @description Ensures value is not function.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1442,22 +1321,20 @@ const isNotFunction = (
   message?: Message): asserts value is Exclude<unknown, Function> =>
   isNot(value, "function", message);
 
-
 /**
- * @description Ensures value is `object`.
+ * @description Ensures value is object.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
 const isObject = (value: unknown, message?: Message): asserts value is object =>
   is(value, "object", message);
 
-
 /**
- * @description Ensures value is not `object`.
+ * @description Ensures value is not object.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1466,59 +1343,52 @@ const isNotObject = (
   message?: Message): asserts value is Exclude<unknown, object> =>
   isNot(value, "object", message);
 
-
 /**
- * @description Ensures value is not `object` or `function`.
+ * @description Ensures value is not object or function.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
-const isPrimitive = (
-  value: unknown,
-  message?: Message): asserts value is Primitive =>
+const isPrimitive =
+  (value: unknown, message?: Message): asserts value is Primitive =>
   isNot(value, ["object", "function"], message);
 
-
 /**
- * @description Ensures value is `object` or `function`.
+ * @description Ensures value is object or function.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
-const isNotPrimitive = (
-  value: unknown,
-  message?: Message): asserts value is NonPrimitive =>
+const isNotPrimitive =
+  (value: unknown, message?: Message): asserts value is NonPrimitive =>
   is(value, ["object", "function"], message);
-
 
 /**
  * @description Ensures value is a number and NaN.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
 const isNaN = (value: unknown, message?: Message): void =>
   strictEqual(value, NaN, message);
 
-
 /**
  * @description Ensures value is not a number and NaN.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
 const isNotNaN = (value: unknown, message?: Message): void =>
   notStrictEqual(value, NaN, message);
 
-
 /**
  * @description Ensures value is a number and integer.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1533,11 +1403,10 @@ function isInt (value: unknown, message?: Message): void {
   }
 }
 
-
 /**
  * @description Ensures value is not a number and integer.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1552,11 +1421,10 @@ function isNotInt (value: unknown, message?: Message): void {
   }
 }
 
-
 /**
  * @description Ensures value is a float and integer.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1571,11 +1439,10 @@ function isFloat (value: unknown, message?: Message): void {
   }
 }
 
-
 /**
  * @description Ensures value is not a number and float.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1590,17 +1457,16 @@ function isNotFloat (value: unknown, message?: Message): void {
   }
 }
 
-
 /**
  * @description Ensures value is empty.
- * - `null`, `undefined`, and `NaN` are empty.
+ * - null, undefined, and NaN are empty.
  * - Arrays, TypedArrays, and strings are empty if length === 0.
  * - Maps and Sets are empty if size === 0.
  * - ArrayBuffer and DataView are empty if byteLength === 0.
  * - Iterable objects are empty if they have no elements.
  * - Plain objects are empty if they have no own properties.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1615,17 +1481,16 @@ function isEmpty (value: unknown, message?: Message): void {
   }
 }
 
-
 /**
  * @description Ensures value is not empty.
- * - `null`, `undefined`, and `NaN` are empty.
+ * - null, undefined, and NaN are empty.
  * - Arrays, TypedArrays, and strings are empty if length === 0.
  * - Maps and Sets are empty if size === 0.
  * - ArrayBuffer and DataView are empty if byteLength === 0.
  * - Iterable objects are empty if they have no elements.
  * - Plain objects are empty if they have no own properties.
  * @param {unknown} value
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1640,22 +1505,21 @@ function isNotEmpty (value: unknown, message?: Message): void {
   }
 }
 
-
 /**
  * @description Ensures a string matches a regular expression.
  * @param {string} string
  * @param {RegExp} regexp
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {TypeError} If parameter types are not matched.
  * @throws {AssertionError}
  */
 function match (string: StringLike, regexp: RegExp, message?: Message): void {
-  /* Type validation */
+  /* validation */
   is(string, ["string", String], message);
   is(regexp, RegExp, message);
-  /* Assertion */
-  if (!(regexp.test(String(string)))) {
+  /* assertion */
+  if (!regexp.test(String(string))) {
     _watchdog(message, match);
     throw new AssertionError({
       message: `[match] Assertion failed: ${_str(string)} is not matched with ${_str(regexp)}${_msg(message)}`,
@@ -1666,12 +1530,11 @@ function match (string: StringLike, regexp: RegExp, message?: Message): void {
   }
 }
 
-
 /**
  * @description Ensures a string does not match a regular expression.
  * @param {string} string
  * @param {RegExp} regexp
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {TypeError} If parameter types are not matched.
  * @throws {AssertionError}
@@ -1680,10 +1543,10 @@ function doesNotMatch (
   string: StringLike,
   regexp: RegExp,
   message?: Message): void {
-  /* Type validation */
+  /* validation */
   is(string, ["string", String], message);
   is(regexp, RegExp, message);
-  /* Assertion */
+  /* assertion */
   if (regexp.test(String(string))) {
     _watchdog(message, doesNotMatch);
     throw new AssertionError({
@@ -1695,12 +1558,11 @@ function doesNotMatch (
   }
 }
 
-
 /**
  * @description Ensures `a < b` and value types have to be same type.
- * @param {Comparable} value1 The value1 to check.
- * @param {Comparable} value2 The value2 to check.
- * @param {string | Error} [message]
+ * @param {Comparable} value1
+ * @param {Comparable} value2
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1716,12 +1578,11 @@ function lt (value1: Comparable, value2: Comparable, message?: Message): void {
   }
 }
 
-
 /**
  * @description Ensures `a >= b` and value types have to be same type.
- * @param {Comparable} value1 The value1 to check.
- * @param {Comparable} value2 The value2 to check.
- * @param {string | Error} [message]
+ * @param {Comparable} value1
+ * @param {Comparable} value2
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1737,12 +1598,11 @@ function lte (value1: Comparable, value2: Comparable, message?: Message): void {
   }
 }
 
-
 /**
  * @description Ensures `a > b` and value types have to be same type.
- * @param {Comparable} value1 The value1 to check.
- * @param {Comparable} value2 The value2 to check.
- * @param {string | Error} [message]
+ * @param {Comparable} value1
+ * @param {Comparable} value2
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1758,12 +1618,11 @@ function gt (value1: Comparable, value2: Comparable, message?: Message): void {
   }
 }
 
-
 /**
  * @description Ensures `a <= b` and value types have to be same type.
- * @param {Comparable} value1 The value1 to check.
- * @param {Comparable} value2 The value2 to check.
- * @param {string | Error} [message]
+ * @param {Comparable} value1
+ * @param {Comparable} value2
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1779,13 +1638,12 @@ function gte (value1: Comparable, value2: Comparable, message?: Message): void {
   }
 }
 
-
 /**
  * @description Ensures `min <= value <= max` and the value types have to be same type.
  * @param {Comparable} value
  * @param {Comparable} min
  * @param {Comparable} max
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1805,13 +1663,12 @@ function inRange (
   }
 }
 
-
 /**
- * @description Inverse of `inRange(value, min, max, [message: string | Error]);`.
+ * @description Inverse of `inRange(value, min, max, [message: Message]);`.
  * @param {Comparable} value
  * @param {Comparable} min
  * @param {Comparable} max
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1831,12 +1688,11 @@ function notInRange (
   }
 }
 
-
 /**
- * @description Asserts that `actual` (a string) contains the specified `substring`.
- * @param {string} actual - The string to check.
- * @param {string} substring - The substring expected to appear within `actual`.
- * @param {string | Error} [message]
+ * @description Asserts that actual (a string) contains the specified substring.
+ * @param {string} actual
+ * @param {string} substring
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1844,10 +1700,10 @@ function stringContains (
   actual: StringLike,
   substring: StringLike,
   message?: Message): void {
-  /* Type validation */
+  /* validation */
   is(actual, ["string", String], message);
   is(substring, ["string", String], message);
-  /* Assertion */
+  /* assertion */
   if (!String(actual).includes(String(substring))) {
     _watchdog(message, stringContains);
     throw new AssertionError({
@@ -1859,12 +1715,11 @@ function stringContains (
   }
 }
 
-
 /**
- * @description Asserts that `actual` (a string) does NOT contain the specified `substring`.
- * @param {string} actual - The string to check.
- * @param {string} substring - The substring that must not appear in `actual`.
- * @param {string | Error} [message]
+ * @description Asserts that actual (a string) does NOT contain the specified substring.
+ * @param {string} actual
+ * @param {string} substring
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1872,10 +1727,10 @@ function stringNotContains (
   actual: StringLike,
   substring: StringLike,
   message?: Message): void {
-  /* Type validation */
+  /* validation */
   is(actual, ["string", String], message);
   is(substring, ["string", String], message);
-  /* Assertion */
+  /* assertion */
   if (actual.includes(String(substring))) {
     _watchdog(message, stringNotContains);
     throw new AssertionError({
@@ -1887,12 +1742,11 @@ function stringNotContains (
   }
 }
 
-
 /**
- * @description Asserts that `actual` (a string) starts with the specified `substring`.
- * @param {string} actual - The string to check.
- * @param {string} substring - The substring expected to appear within `actual`.
- * @param {string | Error} [message]
+ * @description Asserts that actual (a string) starts with the specified substring.
+ * @param {string} actual
+ * @param {string} substring
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1900,10 +1754,10 @@ function stringStartsWith (
   actual: StringLike,
   substring: StringLike,
   message?: Message): void {
-  /* Type validation */
+  /* validation */
   is(actual, ["string", String], message);
   is(substring, ["string", String], message);
-  /* Assertion */
+  /* assertion */
   if (!String(actual).startsWith(String(substring))) {
     _watchdog(message, stringStartsWith);
     throw new AssertionError({
@@ -1915,12 +1769,11 @@ function stringStartsWith (
   }
 }
 
-
 /**
- * @description Asserts that `actual` (a string) does not start with the specified `substring`.
- * @param {string} actual - The string to check.
- * @param {string} substring - The substring expected to appear within `actual`.
- * @param {string | Error} [message]
+ * @description Asserts that actual (a string) does not start with the specified substring.
+ * @param {string} actual
+ * @param {string} substring
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1928,10 +1781,10 @@ function stringNotStartsWith (
   actual: StringLike,
   substring: StringLike,
   message?: Message): void {
-  /* Type validation */
+  /* validation */
   is(actual, ["string", String], message);
   is(substring, ["string", String], message);
-  /* Assertion */
+  /* assertion */
   if (String(actual).startsWith(String(substring))) {
     _watchdog(message, stringNotStartsWith);
     throw new AssertionError({
@@ -1943,12 +1796,11 @@ function stringNotStartsWith (
   }
 }
 
-
 /**
- * @description Asserts that `actual` (a string) ends with the specified `substring`.
- * @param {string} actual - The string to check.
- * @param {string} substring - The substring expected to appear within `actual`.
- * @param {string | Error} [message]
+ * @description Asserts that actual (a string) ends with the specified substring.
+ * @param {string} actual
+ * @param {string} substring
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1956,10 +1808,10 @@ function stringEndsWith (
   actual: StringLike,
   substring: StringLike,
   message?: Message): void {
-  /* Type validation */
+  /* validation */
   is(actual, ["string", String], message);
   is(substring, ["string", String], message);
-  /* Assertion */
+  /* assertion */
   if (!String(actual).endsWith(String(substring))) {
     _watchdog(message, stringEndsWith);
     throw new AssertionError({
@@ -1971,12 +1823,11 @@ function stringEndsWith (
   }
 }
 
-
 /**
- * @description Asserts that `actual` (a string) does not end with the specified `substring`.
- * @param {string} actual - The string to check.
- * @param {string} substring - The substring expected to appear within `actual`.
- * @param {string | Error} [message]
+ * @description Asserts that actual (a string) does not end with the specified substring.
+ * @param {string} actual
+ * @param {string} substring
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
@@ -1984,10 +1835,10 @@ function stringNotEndsWith (
   actual: StringLike,
   substring: StringLike,
   message?: Message): void {
-  /* Type validation */
+  /* validation */
   is(actual, ["string", String], message);
   is(substring, ["string", String], message);
-  /* Assertion */
+  /* assertion */
   if (String(actual).endsWith(String(substring))) {
     _watchdog(message, stringNotEndsWith);
     throw new AssertionError({
@@ -1999,12 +1850,11 @@ function stringNotEndsWith (
   }
 }
 
-
 /**
  * @description Ensures a container includes a key and value.
- * @param {any} container The container to check.
- * @param {IncludesOptions} options Options object with the checking key and value.
- * @param {string | Error} [message]
+ * @param {any} container
+ * @param {IncludesOptions} options
+ * @param {Message} [message]
  * @returns {void}
  * @throws {TypeError} If parameter types are not matched.
  * @throws {AssertionError}
@@ -2013,9 +1863,9 @@ function includes (
   container: any,
   options: IncludesOptions,
   message?: Message): void {
-  /* Type validation */
+  /* validation */
   is(options, "object", message);
-  /* Assertion */
+  /* assertion */
   if (!_includes(container, options.keyOrValue, options?.value ?? undefined)) {
     _watchdog(message, includes);
     throw new AssertionError({
@@ -2027,12 +1877,11 @@ function includes (
   }
 }
 
-
 /**
  * @description Ensures a container does not include a key and value.
- * @param {any} container The container to check.
+ * @param {any} container
  * @param {IncludesOptions} options Options object with the checking key and value.
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {TypeError} If parameter types are not matched.
  * @throws {AssertionError}
@@ -2041,9 +1890,9 @@ function doesNotInclude (
   container: any,
   options: IncludesOptions,
   message?: Message): void {
-  /* Type validation */
+  /* validation */
   is(options, "object", message);
-  /* Assertion */
+  /* assertion */
   if (_includes(container, options.keyOrValue, options?.value ?? undefined)) {
     _watchdog(message, doesNotInclude);
     throw new AssertionError({
@@ -2055,36 +1904,76 @@ function doesNotInclude (
   }
 }
 
-
 /**
  * @description Ensures a value is in a flat collection (`Array`, iterables, etc.).
  * @param {unknown} value
  * @param {unknown} collection - List of the possibly values.
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
 const oneOf = (value: unknown, collection: unknown, message?: Message): void =>
   includes(collection, {keyOrValue: value}, message);
 
-
 /**
  * @description Ensures a value is not in a flat collection (`Array`, iterables, etc.).
  * @param {unknown} value
  * @param {unknown} collection - List of the possibly values.
- * @param {string | Error} [message]
+ * @param {Message} [message]
  * @returns {void}
  * @throws {AssertionError}
  */
-const notOneOf = (
-  value: unknown,
-  collection: unknown,
-  message?: Message): void =>
+const notOneOf =
+  (value: unknown, collection: unknown, message?: Message): void =>
   doesNotInclude(collection, {keyOrValue: value}, message);
+
+/**
+ * @description Ensures a value matches a comparison operator with another value.
+ * @param {any} value1
+ * @param {string} operatorStr
+ * @param {any} value2
+ * @param {Message} [message]
+ * @returns {void}
+ * @throws {AssertionError}
+ */
+function operator (
+  value1: any,
+  operatorStr: string,
+  value2: any,
+  message?: Message) {
+  /* validation */
+  oneOf(
+    operatorStr,
+    ["==", "!=", "===", "!==", "<", "<=", ">", ">=", "Object.is", "!Object.is"],
+    message
+  );
+  /* assertion */
+  let result = false;
+  switch (operatorStr) {
+    case "==": result = value1 == value2; break;
+    case "!=": result = value1 != value2; break;
+    case "===": result = value1 === value2; break;
+    case "!==": result = value1 !== value2; break;
+    case "<": result = value1 < value2; break;
+    case "<=": result = value1 <= value2; break;
+    case ">": result = value1 > value2; break;
+    case ">=": result = value1 >= value2; break;
+    case "Object.is": result = _oIs(value1, value2); break;
+    case "!Object.is": result = !_oIs(value1, value2); break;
+  }
+  if (!result) {
+    _watchdog(message, equal);
+    throw new AssertionError({
+      message: `[operator] Assertion failed: ${_str(value1)} does not match with the operator ${_str(operatorStr)} and ${_str(value2)}${_msg(message)}`,
+      actual: value1,
+      expected: value2,
+      operator: operatorStr
+    });
+  }
+}
 
 
 /* testrunner functions */
-
 
 /**
  * @description Synchronously runs a block of code and returns either its result or the caught error.
@@ -2107,7 +1996,6 @@ function testSync <T>(
   }
 }
 
-
 /**
  * @description Asynchronously runs a block of code and returns either its resolved result or the caught error.
  * @param {string} name
@@ -2116,8 +2004,7 @@ function testSync <T>(
  */
 async function testAsync <T>(
   name: string = "assert.testAsync",
-  block: () => Promise<T>
-  ): Promise<TestResult<T>> {
+  block: () => Promise<T>): Promise<TestResult<T>> {
   try {
     return {ok: true, value: await block(), block, name: _str(name)};
   } catch (error) {
@@ -2130,17 +2017,15 @@ async function testAsync <T>(
   }
 }
 
-
 /**
  * @description Checks if the result is successful and narrows the type accordingly.
- * @param {TestResult<T>} result - The result to check.
- * @returns {boolean} True if the result is successful, false otherwise.
+ * @param {TestResult<T>} result
+ * @returns {boolean}
  */
 function testCheck <T>(result: TestResult<T>):
   result is {ok: true, value: T, block: Function, name: string} {
   return result.ok;
 }
-
 
 /**
  * @description The TestSuite is a collection of TestResults with custom methods.
@@ -2157,56 +2042,53 @@ class TestSuite {
     for (let item of args) { this.results.push(item); }
     return this;
   }
-  /**
-   * @description Clear all testResults.
-   * @returns {TestSuite} this
-   */
+  /** * @description Clear all testResults. * @returns {TestSuite} this */
   clear(): this {
     this.results.length = 0;
     return this;
   }
   /**
-   * @description Return an IterableIterator with failed testCases.
-   * @returns {IterableIterator<TestResult<any>>}
+   * @description Return an Iterator with failed testCases.
+   * @returns {Iterator<TestResult<any>>}
    */
   get size(): number { return this.results.length; }
   /**
-   * @description Return an IterableIterator with success testCases.
-   * @returns {IterableIterator<TestResult<any>>}
+   * @description Return an Iterator with success testCases.
+   * @returns {Iterator<TestResult<any>>}
    */
-  success (): IterableIterator<TestResult<any>> {
+  success (): Iterator<TestResult<any>> {
     return this.results.filter((testCase) => testCase.ok).values();
   }
   /**
-   * @description Return an IterableIterator with failed testCases.
-   * @returns {IterableIterator<TestResult<any>>}
+   * @description Return an Iterator with failed testCases.
+   * @returns {Iterator<TestResult<any>>}
    */
-  failed (): IterableIterator<TestResult<any>> {
+  failed (): Iterator<TestResult<any>> {
     return this.results.filter((testCase) => !testCase.ok).values();
   }
   /**
-   * @description Return an IterableIterator with all testCases.
-   * @returns {IterableIterator<TestResult<any>>}
+   * @description Return an Iterator with all testCases.
+   * @returns {Iterator<TestResult<any>>}
    */
-  values (): IterableIterator<TestResult<any>> { return this.results.values(); }
+  values (): Iterator<TestResult<any>> { return this.results.values(); }
   /**
    * @description Return an Array with all testCases.
    * @returns {Array<TestResult<any>>}
    */
   toArray (): Array<TestResult<any>> { return this.results.slice(); }
   /**
-   * @description Return an IterableIterator with all testCases.
-   * @returns {IterableIterator<TestResult<any>>}
+   * @description Return an Iterator with all testCases.
+   * @returns {Iterator<TestResult<any>>}
    */
   [Symbol.iterator](): Iterator<TestResult<any>> {
-    return this.results[Symbol.iterator]();
+    return this.results.values();
   }
 }
 
 
 /* build the assert library function */
-assert.VERSION = VERSION;
-assert.config = config;
+assert.VERSION = "assert.js v1.2.2";
+assert.config = { "alwaysStrict": false };
 /** @see https://wiki.commonjs.org/wiki/Unit_Testing/1.0 */
 assert.AssertionError = AssertionError;
 assert.ok = ok;
@@ -2285,6 +2167,7 @@ assert.includes = includes;
 assert.doesNotInclude = doesNotInclude;
 assert.oneOf = oneOf;
 assert.notOneOf = notOneOf;
+assert.operator = operator;
 /* testrunner functions */
 assert.testSync = testSync;
 assert.test = testSync; /* alias */
@@ -2314,7 +2197,6 @@ assert._isEmpty = _isEmpty;
 assert._isPrimitive = _isPrimitive;
 assert._isFloat = _isFloat;
 assert._watchdog = _watchdog; */
-
 
 /* ESM export */
 export { assert };

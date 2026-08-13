@@ -1,6 +1,6 @@
 # assert.js
 
-Latest version: 1.2.1
+Latest version: 1.2.2
 
 Date: 2026-07-13T19:46:17.606Z
 
@@ -21,7 +21,7 @@ Basic      | `assert();`,<BR>`assert.ok();`, `assert.notOk();`,<BR>`assert.fail(
 Equality   | `assert.equal();`, `assert.notEqual();`,<BR>`assert.strictEqual();`, `assert.notStrictEqual();`,<BR>`assert.deepEqual();`, `assert.notDeepEqual();`,<BR>`assert.deepStrictEqual();`, `assert.notDeepStrictEqual();`,<BR>`assert.oneOf();`, `assert.notOneOf();`
 Exception  | `assert.throws();`,<BR>`await assert.rejects();`,<BR>`await assert.doesNotReject();`
 String     | `assert.match();`, `assert.doesNotMatch();`,<BR>`assert.stringContains();`, `assert.stringNotContains();`,<BR>`assert.stringStartsWith();`, `assert.stringNotStartsWith();`,<BR>`assert.stringEndsWith();`, `assert.stringNotEndsWith();`
-Comparison | `assert.lt();`, `assert.lte();`,<BR>`assert.gt();`, `assert.gte();`,<BR>`assert.inRange();`, `assert.notInRange();`
+Comparison | `assert.lt();`, `assert.lte();`,<BR>`assert.gt();`, `assert.gte();`,<BR>`assert.inRange();`, `assert.notInRange();`,<BR>`assert.operator();`
 Object     | `assert.includes();`, `assert.doesNotInclude();`,<BR>`assert.isEmpty();`, `assert.isNotEmpty();`
 Type       | `assert.is();`, `assert.isNot();`,<BR>`assert.typeOf();`, `assert.notTypeOf();`,<BR>`assert.instanceOf();`, `assert.notInstanceOf();`,<BR>`assert.isPrimitive();`, `assert.isNotPrimitive();`,<BR>`assert.isNullish();`, `assert.ifError();`, `assert.isNonNullable();`,<BR>`assert.isNull();`, `assert.isNotNull();`,<BR>`assert.isUndefined();`, `assert.isDefined();`,<BR> `assert.isString();`, `assert.isNotString();`,<BR>`assert.isNumber();`, `assert.isNotNumber();`,<BR>`assert.isInt();`, `assert.isNotInt();`,<BR>`assert.isFloat();`, `assert.isNotFloat();`,<BR>`assert.isBigInt();`, `assert.isNotBigInt();`,<BR> `assert.isBoolean();`, `assert.isNotBoolean();`,<BR>`assert.isTrue();`, `assert.isNotTrue();`,<BR>`assert.isFalse();`, `assert.isNotFalse();`,<BR>`assert.isSymbol();`, `assert.isNotSymbol();`,<BR>`assert.isFunction();`, `assert.isNotFunction();`,<BR>`assert.isObject();`, `assert.isNotObject();`,<BR>`assert.isNaN();`, `assert.isNotNaN();`
 Testrunner | `assert.testSync();`, `assert.test();`, `assert.it();`<BR>`await assert.testAsync();`,<BR>`assert.testCheck();`,<BR>`class assert.TestSuite();`
@@ -88,7 +88,7 @@ Added in v1.0.0
 Returns the library version string.
 
 ````javascript
-console.log(assert.VERSION); // "assert.js v1.2.1"
+console.log(assert.VERSION); // "assert.js v1.2.2"
 ````
 
 ---
@@ -142,7 +142,7 @@ assert(1 === 1); // passes
 
 Added in v1.0.0
 
-Alias for `assert(condition: unknown [, message: string | Error]): void;`.
+Alias of `assert(condition: unknown [, message: string | Error]): void;`.
 
 ````javascript
 assert.ok(1 === 1); // passes
@@ -477,6 +477,19 @@ assert.notInRange(0, 1, 3); // passes
 assert.notInRange(4, 1, 3); // passes
 assert.notInRange(2, 1n, 3); // passes
 // assert.notInRange(1, -5, 3); // throws an error
+````
+
+### `assert.operator(value1: any, operator: string, value2: any [, message: string | Error]): void;`
+
+Added in v1.2.2
+
+Ensures a value matches a comparison operator with another value.
+
+Operator values: `"=="`, `"!="`, `"==="`, `"!=="`, `"<"`, `"<="`, `">"`, `">="`, `"Object.is"`, `"!Object.is"`
+
+````javascript
+assert.operator(0, "==", "0"); // passes
+// assert.operator(0, "===", "0"); // throws an error
 ````
 
 ---
